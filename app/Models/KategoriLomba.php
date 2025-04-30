@@ -10,4 +10,8 @@ class KategoriLomba extends Model
     use HasFactory;
 
     protected $table = 'kategori_lomba';
+
+    protected $fillable = [
+        'name',
+    ];
 }
