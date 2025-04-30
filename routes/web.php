@@ -98,7 +98,8 @@ Route::post('/pendaftaran/store', [PendaftaranController::class, 'store'])->name
 Route::get('/my-event', [DashboardController::class, 'index'])->name('events.index');
 // pembayaran
 Route::get('/pembayaran', [PembayaranController::class, 'index'])->name('pembayaran.index');
-Route::get('/pembayaran/{id}', [PembayaranController::class, 'detail'])->name('pembayaran.detail');
+Route::get('/pembayaran/bayar/{id}', [PembayaranController::class, 'bayar'])->name('pembayaran.bayar');
+
 
 // nyoba halaman sukses
 // Route::get('/sukses', [PendaftaranController::class, 'sukses']);

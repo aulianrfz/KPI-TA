@@ -26,10 +26,15 @@
                     <p class="text-muted mb-2"><strong>Jurusan:</strong> {{ $event->jurusan }}</p>
                     <p class="text-muted mb-2"><strong>Maks Peserta:</strong> {{ $event->maks_peserta }}</p>
                     <p class="text-muted mb-2"><strong>Biaya Pendaftaran:</strong> {{ number_format($event->biaya_pendaftaran, 0, ',', '.') }}</p>
-                    <p class="text-muted mb-2"><strong>URL TOR:</strong> <a href="{{ $event->url_tor }}" target="_blank" style="color: #0367A6;">Klik Disini</a></p>
                 </div>
                 <a href="{{ route('pendaftaran.form', ['id_subkategori' => $event->id]) }}" class="btn mt-3 w-100" style="background-color: #2CC384; color: white; height: 50px; border-radius: 10px; font-weight: bold; text-transform: uppercase; border: none; transition: background-color 0.3s ease;">Daftar Sekarang</a>
             </div>
+        </div>
+        <div class="col-12 mt-4 text-center">
+            <p class="text-muted mb-2" style="font-size: 1.1rem;"><strong>URL TOR:</strong> 
+                <a href="{{ $event->url_tor }}" target="_blank" style="color: #0367A6; text-decoration: underline;">Klik Disini</a>
+            </p>
+            <p class="text-muted" style="font-size: 1.1rem; text-align: center;">{{ $event->deskripsi }}</p>
         </div>
     </div>
 </div>

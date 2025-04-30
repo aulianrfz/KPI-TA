@@ -20,8 +20,8 @@
         </div>
 
         <div class="mb-3">
-            <label for="name" class="form-label">Nama Sub Kategori</label>
-            <input type="text" name="name" id="name" class="form-control" value="{{ $subKategori->name }}" required>
+            <label for="name_lomba" class="form-label">Nama Sub Kategori</label>
+            <input type="text" name="name_lomba" id="name_lomba" class="form-control" value="{{ $subKategori->name_lomba }}" required>
         </div>
 
         <div class="mb-3">
@@ -40,16 +40,34 @@
         </div>
 
         <div class="mb-3">
-            <label for="foto_kompetisi" class="form-label">Foto Kompetisi (Opsional)</label>
-            <input type="file" name="foto_kompetisi" id="foto_kompetisi" class="form-control">
-            @if ($subKategori->foto_kompetisi)
-                <p class="mt-2">Foto lama: <img src="{{ asset('storage/' . $subKategori->foto_kompetisi) }}" alt="Foto" width="50"></p>
-            @endif
+            <label for="duration" class="form-label">Durasi Perlombaan (menit)</label>
+            <input type="number" name="duration" id="duration" class="form-control" value="{{ $subKategori->duration }}" required>
         </div>
 
         <div class="mb-3">
             <label for="url_tor" class="form-label">URL TOR (Opsional)</label>
             <input type="text" name="url_tor" id="url_tor" class="form-control" value="{{ $subKategori->url_tor }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="jenis_pelaksanaan" class="form-label">Jenis Pelaksanaan</label>
+            <select name="jenis_pelaksanaan" id="jenis_pelaksanaan" class="form-select" required>
+                <option value="Online" {{ $subKategori->jenis_pelaksanaan == 'Online' ? 'selected' : '' }}>Online</option>
+                <option value="Offline" {{ $subKategori->jenis_pelaksanaan == 'Offline' ? 'selected' : '' }}>Offline</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="deskripsi" class="form-label">Deskripsi</label>
+            <textarea name="deskripsi" id="deskripsi" class="form-control" rows="4">{{ $subKategori->deskripsi }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="foto_kompetisi" class="form-label">Foto Kompetisi (Opsional)</label>
+            <input type="file" name="foto_kompetisi" id="foto_kompetisi" class="form-control">
+            @if ($subKategori->foto_kompetisi)
+                <p class="mt-2">Foto lama: <img src="{{ asset('storage/' . $subKategori->foto_kompetisi) }}" alt="Foto" width="50"></p>
+            @endif
         </div>
 
         <button type="submit" class="btn btn-primary">Update</button>

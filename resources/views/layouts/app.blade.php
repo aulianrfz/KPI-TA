@@ -66,6 +66,8 @@
         }
 
 
+
+
         @media (max-width: 768px) {
             .navbar .input-group {
                 width: 100% !important;

@@ -41,37 +41,55 @@
                                     <th>Order ID</th>
                                     <th>Status</th>
                                     <th>Due Date</th>
+                                    <th>Aksi</th> <!-- Tambahkan kolom ini -->
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($peserta as $item)
-                                    <tr>
-                                        <td>{{ $item->subKategori->name_lomba }}</td>
-                                        <td>{{ $item->order_id }}</td>
-                                        <td>
-                                            @php
-                                                $status = strtolower($item->status);
-                                            @endphp
-                                            @if ($status === 'belum bayar')
-                                                <span class="badge text-dark" style="background-color: #FFDFDF;">Belum Dibayar</span>
-                                            @elseif ($status === 'menunggu verifikasi')
-                                                <span class="badge text-dark" style="background-color: #FFF6D1;">Menunggu Verifikasi</span>
-                                            @elseif ($status === 'sudah bayar')
-                                                <span class="badge text-dark" style="background-color: #D0F4FF;">Sudah Dibayar</span>
-                                            @else
-                                                <span class="badge bg-secondary">Tidak Diketahui</span>
-                                            @endif
-                                        </td>
-                                        <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d.m.Y') }}<br>
-                                            <small>{{ \Carbon\Carbon::parse($item->created_at)->format('h:i A') }}</small>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="4" class="text-center">Tidak ada data pembayaran.</td>
-                                    </tr>
-                                @endforelse
+                            @forelse ($peserta as $item)
+                                <tr>
+                                    <td>{{ $item->subKategori->name_lomba }}</td>
+                                    <td>{{ $item->order_id }}</td>
+                                    <td>
+                                        @php
+                                            $status = strtolower($item->status);
+                                        @endphp
+                                        @if ($status === 'belum bayar')
+                                            <span class="badge text-dark" style="background-color: #FFDFDF;">Belum Dibayar</span>
+                                        @elseif ($status === 'menunggu verifikasi')
+                                            <span class="badge text-dark" style="background-color: #FFF6D1;">Menunggu Verifikasi</span>
+                                        @elseif ($status === 'sudah bayar')
+                                            <span class="badge text-dark" style="background-color: #D0F4FF;">Sudah Dibayar</span>
+                                        @else
+                                            <span class="badge bg-secondary">Tidak Diketahui</span>
+                                        @endif
+                                    </td>
+                                    <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d.m.Y') }}<br>
+                                        <small>{{ \Carbon\Carbon::parse($item->created_at)->format('h:i A') }}</small>
+                                    </td>
+                                    <td>
+                                        <!-- Tombol Titik Tiga -->
+                                        <div class="dropdown">
+                                            <button class="btn btn-link text-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    <a class="dropdown-item" href="{{ route('pembayaran.bayar', $item->id) }}">
+                                                        Lihat Detail Pembayaran
+                                                    </a>
+                                                </li>
+                                                <!-- Tambahkan opsi lain jika perlu -->
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="text-center">Tidak ada data pembayaran.</td>
+                                </tr>
+                            @endforelse
                             </tbody>
+
                         </table>
                     </div>
 
