@@ -38,10 +38,8 @@ class SubKategoriController extends Controller
 
         $data = $request->all();
 
-        // Tentukan jenis lomba otomatis
         $data['jenis_lomba'] = $data['maks_peserta'] > 1 ? 'Kelompok' : 'Individu';
 
-        // Simpan foto jika ada
         if ($request->hasFile('foto_kompetisi')) {
             $data['foto_kompetisi'] = $request->file('foto_kompetisi')->store('foto_kompetisi', 'public');
         }

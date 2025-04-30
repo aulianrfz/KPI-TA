@@ -1,4 +1,3 @@
-<!-- Form Input Peserta -->
 <div class="card mb-4">
     <div class="card-body">
         <input type="hidden" name="id_subkategori" value="{{ $subKategori->id }}">
@@ -62,7 +61,6 @@
             </div>
         </div>
 
-        <!-- Tanda Tangan -->
         <div class="row mb-3">
             <div class="col-12">
                 <label class="form-label">Tanda Tangan</label>
@@ -80,22 +78,16 @@
 <!-- Signature Pad Script -->
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
 <script>
-    // Object untuk menampung semua SignaturePad
     var signaturePads = {};
-
-    // Setelah halaman siap
     window.onload = function () {
-        // Ambil semua canvas dengan ID mulai "signature-pad-"
         document.querySelectorAll("canvas[id^='signature-pad-']").forEach(function (canvas) {
-            var index = canvas.id.split('-').pop(); // Ambil index dari ID
+            var index = canvas.id.split('-').pop();
             var pad = new SignaturePad(canvas, {
-                backgroundColor: 'rgba(255, 255, 255, 0)', // opsional: transparan
+                backgroundColor: 'rgba(255, 255, 255, 0)',
             });
 
-            // Simpan ke object
             signaturePads[index] = pad;
 
-            // Setiap selesai tanda tangan
             pad.onEnd = function () {
                 var dataUrl = pad.toDataURL();
                 document.getElementById('signature_' + index).value = dataUrl;
@@ -103,7 +95,6 @@
         });
     };
 
-    // Fungsi hapus tanda tangan
     function clearSignature(index) {
         if (signaturePads[index]) {
             signaturePads[index].clear();

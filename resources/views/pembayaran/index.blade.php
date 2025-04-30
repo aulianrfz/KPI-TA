@@ -30,7 +30,6 @@
                         <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                             Filter by
                         </button>
-                        {{-- Tambahkan filter sesuai kebutuhan --}}
                     </div>
 
                     <div class="table-responsive">
@@ -41,7 +40,7 @@
                                     <th>Order ID</th>
                                     <th>Status</th>
                                     <th>Due Date</th>
-                                    <th>Aksi</th> <!-- Tambahkan kolom ini -->
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -67,7 +66,6 @@
                                         <small>{{ \Carbon\Carbon::parse($item->created_at)->format('h:i A') }}</small>
                                     </td>
                                     <td>
-                                        <!-- Tombol Titik Tiga -->
                                         <div class="dropdown">
                                             <button class="btn btn-link text-dark" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                 <i class="bi bi-three-dots-vertical"></i>
@@ -78,7 +76,6 @@
                                                         Lihat Detail Pembayaran
                                                     </a>
                                                 </li>
-                                                <!-- Tambahkan opsi lain jika perlu -->
                                             </ul>
                                         </div>
                                     </td>
