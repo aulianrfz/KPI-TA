@@ -4,13 +4,12 @@
 
 @include('layouts.navbar')
 
-<!-- HEADER -->
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center">
         <div class="d-flex align-items-center mb-3">
             <!-- <a href="{{ url()->previous() }}" class="me-3 text-dark fs-4"><i class="bi bi-arrow-left"></i></a> -->
             <a href="{{ route('event.list', 1) }}" class="me-2 text-dark"><i class="bi bi-arrow-left"></i></a>
-            <h5 class="mb-0 fw-bold">GENERAL COMPETITION</h5>
+            <h5 class="mb-0">PILIHAN KATEGORI </h5>
         </div>
     </div>
 
@@ -48,7 +47,7 @@
                     <div class="card border-0 shadow-sm h-100">
                         <img src="{{ asset('storage/' . $event->foto_kompetisi) }}" class="card-img-top" style="height: 180px; object-fit: cover;" alt="{{ $event->nama_subKategori }}">
                         <div class="card-body text-center">
-                            <h6 class="fw-bold">{{ $event->name_lomba }}</h6>
+                            <h6 class="fw-bold">{{ $event->nama_lomba }}</h6>
                             <small class="text-muted">Rp. {{ number_format($event->biaya_pendaftaran, 2) }} / {{ $event->jurusan }}</small>
                             <a href="{{ route('event.detail', $event->id) }}" class="btn btn-primary btn-sm w-100 mt-2">Pilih</a>
                         </div>

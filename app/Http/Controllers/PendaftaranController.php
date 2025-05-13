@@ -9,10 +9,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\SubKategori;
 use App\Models\Provinsi;
-use App\Models\Jurusan;
 use App\Models\Institusi;
 use App\Models\Peserta;
-
+use App\Models\Pendaftar;
+use App\Models\Tim;
 
 class PendaftaranController extends Controller
 {
@@ -20,35 +20,43 @@ class PendaftaranController extends Controller
     {
         $subKategori = SubKategori::findOrFail($id_subkategori);
         $provinsi = Provinsi::all();
-        $jurusan = Jurusan::all();
         $institusi = Institusi::all();
 
         $maksPeserta = $subKategori->maks_peserta;
 
-        return view('pendaftaran.formpeserta', compact('subKategori', 'provinsi', 'jurusan', 'institusi', 'maksPeserta'));
+        return view('pendaftaran.formpeserta', compact('subKategori', 'provinsi', 'institusi', 'maksPeserta'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'id_subkategori' => 'required|exists:sub_kategori,id',
-            'peserta.*.nama' => 'required',
+            'peserta.*.nama_peserta' => 'required',
             'peserta.*.nim' => 'required',
             'peserta.*.email' => 'required|email',
-            'peserta.*.hp' => 'required',
-            'nama_tim' => 'nullable|string|max:255',
+            'peserta.*.no_hp' => 'required',
             'peserta.*.signature' => 'nullable|string',
         ]);
 
-        foreach ($request->peserta as $key => $peserta) {
+        $subKategori = SubKategori::findOrFail($request->id_subkategori);
+        $jenisPeserta = $subKategori->maks_peserta == 1 ? 'Individu' : 'Kelompok';
+
+        $tim = null;
+        if ($jenisPeserta === 'Kelompok') {
+            $tim = Tim::create([
+                'nama_tim' => $request->input('nama_tim'),
+            ]);
+        }
+
+        foreach ($request->peserta as $key => $pesertaData) {
             $ktpPath = null;
             if ($request->hasFile('peserta.' . $key . '.ktp')) {
                 $ktpPath = $request->file('peserta.' . $key . '.ktp')->store('ktps', 'public');
             }
 
             $ttdPath = null;
-            if (!empty($peserta['signature'])) {
-                $base64Image = $peserta['signature'];
+            if (!empty($pesertaData['signature'])) {
+                $base64Image = $pesertaData['signature'];
                 if (preg_match('/^data:image\/(png|jpeg);base64,/', $base64Image)) {
                     $image = str_replace(['data:image/png;base64,', 'data:image/jpeg;base64,'], '', $base64Image);
                     $image = str_replace(' ', '+', $image);
@@ -66,21 +74,34 @@ class PendaftaranController extends Controller
                 }
             }
 
-            Peserta::create([
-                'nama' => $peserta['nama'],
-                'nim' => $peserta['nim'],
-                'email' => $peserta['email'],
-                'hp' => $peserta['hp'],
-                'jurusan_id' => $peserta['jurusan_id'] ?? null,
-                'provinsi_id' => $peserta['provinsi_id'] ?? null,
-                'institusi_id' => $peserta['institusi_id'] ?? null,
-                'sub_kategori_id' => $request->id_subkategori,
-                'user_id' => Auth::id(), 
-                'nama_tim' => $request->nama_tim,
-                'is_leader' => $key == 0 ? 1 : 0,
-                'ktm_path' => $ktpPath,
-                'ttd_path' => $ttdPath,
+            $peserta = Peserta::create([
+                'nama_peserta' => $pesertaData['nama_peserta'],
+                'nim' => $pesertaData['nim'],
+                'email' => $pesertaData['email'],
+                'no_hp' => $pesertaData['no_hp'],
+                'prodi' => $pesertaData['prodi'] ?? null,
+                'provinsi' => $pesertaData['provinsi'] ?? null,
+                'institusi' => $pesertaData['institusi'] ?? null,
+                'user_id' => Auth::id(),
+                'jenis_peserta' => $jenisPeserta,
+                'url_ktm' => $ktpPath,
+                'url_ttd' => $ttdPath,
             ]);
+
+            if (!$peserta instanceof Peserta) {
+                throw new \Exception('Peserta creation failed.');
+            }
+
+            Pendaftar::create([
+                'sub_kategori_id' => $request->id_subkategori,
+                'peserta_id' => $peserta->id,
+                'url_qrCode' => null,
+                'status' => 'Pending',
+            ]);
+
+            if ($tim) {
+                $tim->peserta()->attach($peserta->id, ['posisi' => $pesertaData['posisi'] ?? 'Anggota']);
+            }
         }
 
         return view('pendaftaran.berhasil')->with('success', 'Pendaftaran berhasil!');
@@ -91,4 +112,3 @@ class PendaftaranController extends Controller
         return view('pendaftaran.berhasil');
     }
 }
-

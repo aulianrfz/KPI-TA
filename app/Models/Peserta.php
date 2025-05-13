@@ -11,20 +11,17 @@ class Peserta extends Model
     protected $table = 'peserta';
 
     protected $fillable = [
-        'nama',
+        'nama_peserta',
         'nim',
-        'nama_tim',
-        'alamat_institusi',
-        'provinsi_id',
-        'institusi_id',
-        'jurusan_id',
-        'sub_kategori_id',
+        'provinsi',
+        'institusi',
+        'prodi',
         'user_id',
         'email',
-        'hp',
-        'ktm_path',
-        'ttd_path',
-        'is_leader',
+        'no_hp',
+        'url_ktm',
+        'url_ttd',
+        'jenis_peserta',
     ];
 
     public function provinsi()
@@ -37,15 +34,26 @@ class Peserta extends Model
         return $this->belongsTo(Institusi::class);
     }
 
-
     public function subKategori()
     {
-        return $this->belongsTo(SubKategori::class, 'sub_kategori_id');
+        return $this->belongsTo(SubKategori::class);
     }
 
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function tim()
+    {
+        return $this->belongsToMany(Tim::class, 'bergabung', 'peserta_id', 'tim_id')
+                    ->withPivot('posisi');
+    }
+
+    public function bergabung()
+    {
+        return $this->hasOne(Bergabung::class, 'peserta_id');
+    }
+    
 
 }

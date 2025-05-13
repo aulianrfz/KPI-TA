@@ -20,8 +20,8 @@
         <div class="col-md-8">
             <h5 class="fw-bold">KOMPETISI PARIWISATA INDONESIA 14</h5>
             <div class="d-flex align-items-center text-muted mb-2">
-                <i class="bi bi-calendar-event me-2 text-primary"></i>
-                <small>July 15 - 17, 2025 • 08.00 - 17.00 WIB</small>
+                <!-- <i class="bi bi-calendar-event me-2 text-primary"></i>
+                <small>July 15 - 17, 2025 • 08.00 - 17.00 WIB</small> -->
             </div>
             <div class="d-flex align-items-center text-muted mb-3">
                 <i class="bi bi-geo-alt-fill me-2 text-primary"></i>
@@ -47,7 +47,7 @@
                 <!-- <img src="{{ asset('images/' . $category->image) }}" class="card-img-top" alt="{{ $category->name }}"> -->
                 <img src="{{ asset('images/event.jpeg') }}" class="img-fluid rounded-3" alt="Event Image">
                 <div class="card-body text-center">
-                        <h6 class="fw-bold">{{ $category->name }}</h6>
+                        <h6 class="fw-bold">{{ $category->nama_kategori }}</h6>
                         <a href="{{ route('event.showCategory', $category->id) }}" class="btn btn-outline-primary w-100 mt-2">Pilih</a>
                     </div>
                 </div>

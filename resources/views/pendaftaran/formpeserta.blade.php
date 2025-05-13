@@ -16,6 +16,12 @@
             <input type="text" name="nama_tim" class="form-control mb-3" placeholder="Nama Tim" required>
             @for ($i = 0; $i < $maksPeserta; $i++)
                 <h5>Peserta {{ $i+1 }}</h5>
+                <label>Posisi</label>
+                <select name="peserta[{{ $i }}][posisi]" class="form-control mb-3" required>
+                    <option value="">-- Pilih Posisi --</option>
+                    <option value="Ketua">Ketua</option>
+                    <option value="Anggota">Anggota</option>
+                </select>
                 @include('pendaftaran.formkelompok', ['index' => $i])
             @endfor
         @endif

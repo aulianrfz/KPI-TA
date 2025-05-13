@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\SubKategori;
 use App\Models\KategoriLomba;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+
 
 class SubKategoriController extends Controller
 {
@@ -23,8 +25,8 @@ class SubKategoriController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'kategori_id' => 'required|exists:kategori_lomba,id',
-            'name_lomba' => 'required|string|max:255',
+            'kategori_id' => 'required|exists:kategori,id',
+            'nama_lomba' => 'required|string|max:255',
             'jurusan' => 'required|string|max:255',
             'maks_peserta' => 'required|integer|min:1',
             'biaya_pendaftaran' => 'required|numeric|min:0',
@@ -32,7 +34,7 @@ class SubKategoriController extends Controller
             'foto_kompetisi' => 'nullable|image|max:2048',
             'deskripsi' => 'nullable|string',
             'jenis_pelaksanaan' => 'required|in:Online,Offline',
-            'duration' => 'required|integer|min:1',
+            'durasi' => 'required|integer|min:1',
         ]);
 
 
@@ -64,8 +66,8 @@ class SubKategoriController extends Controller
     public function update(Request $request, SubKategori $subkategori)
     {
         $request->validate([
-            'kategori_id' => 'required|exists:kategori_lomba,id',
-            'name_lomba' => 'required|string|max:255',
+            'kategori_id' => 'required|exists:kategori,id',
+            'nama_lomba' => 'required|string|max:255',
             'jurusan' => 'required|string|max:255',
             'maks_peserta' => 'required|integer|min:1',
             'biaya_pendaftaran' => 'required|numeric|min:0',
@@ -73,7 +75,7 @@ class SubKategoriController extends Controller
             'foto_kompetisi' => 'nullable|image|max:2048',
             'deskripsi' => 'nullable|string',
             'jenis_pelaksanaan' => 'required|in:Online,Offline',
-            'duration' => 'required|integer|min:1',
+            'durasi' => 'required|integer|min:1',
         ]);
 
         $data = $request->all();

@@ -4,8 +4,8 @@
 
         <div class="row mb-3">
             <div class="col-md-6">
-                <label for="nama_{{ $index }}" class="form-label">Nama</label>
-                <input type="text" class="form-control" id="nama_{{ $index }}" name="peserta[{{ $index }}][nama]" required>
+                <label for="nama_peserta_{{ $index }}" class="form-label">Nama</label>
+                <input type="text" class="form-control" id="nama_peserta_{{ $index }}" name="peserta[{{ $index }}][nama_peserta]" required>
             </div>
             <div class="col-md-6">
                 <label for="nim_{{ $index }}" class="form-label">NIM</label>
@@ -20,26 +20,26 @@
             </div>
             <div class="col-md-6">
                 <label for="hp_{{ $index }}" class="form-label">No. HP</label>
-                <input type="text" class="form-control" id="hp_{{ $index }}" name="peserta[{{ $index }}][hp]" required>
+                <input type="text" class="form-control" id="no_hp_{{ $index }}" name="peserta[{{ $index }}][no_hp]" required>
             </div>
         </div>
 
         <div class="row mb-3">
             <div class="col-md-6">
                 <label for="provinsi_{{ $index }}" class="form-label">Provinsi</label>
-                <select name="peserta[{{ $index }}][provinsi_id]" class="form-select" id="provinsi_{{ $index }}" required>
+                <select name="peserta[{{ $index }}][provinsi]" class="form-select" id="provinsi_{{ $index }}" required>
                     <option value="">- Pilih Provinsi -</option>
                     @foreach ($provinsi as $prov)
-                        <option value="{{ $prov->id }}">{{ $prov->nama_provinsi }}</option>
+                        <option value="{{ $prov->nama_provinsi }}">{{ $prov->nama_provinsi }}</option>
                     @endforeach
                 </select>
             </div>
             <div class="col-md-6">
                 <label for="institusi_{{ $index }}" class="form-label">Institusi</label>
-                <select name="peserta[{{ $index }}][institusi_id]" class="form-select" id="institusi_{{ $index }}" required>
+                <select name="peserta[{{ $index }}][institusi]" class="form-select" id="institusi_{{ $index }}" required>
                     <option value="">- Pilih Institusi -</option>
                     @foreach ($institusi as $inst)
-                        <option value="{{ $inst->id }}">{{ $inst->nama_institusi }}</option>
+                        <option value="{{ $inst->nama_institusi }}">{{ $inst->nama_institusi }}</option>
                     @endforeach
                 </select>
             </div>
@@ -47,13 +47,8 @@
 
         <div class="row mb-3">
             <div class="col-md-6">
-                <label for="jurusan_{{ $index }}" class="form-label">Jurusan</label>
-                <select name="peserta[{{ $index }}][jurusan_id]" class="form-select" id="jurusan_{{ $index }}" required>
-                    <option value="">- Pilih Jurusan -</option>
-                    @foreach ($jurusan as $jur)
-                        <option value="{{ $jur->id }}">{{ $jur->nama_jurusan }}</option>
-                    @endforeach
-                </select>
+                <label for="hp" class="form-label">Prodi</label>
+                <input type="text" class="form-control" id="prodi_{{ $index }}" name="peserta[{{ $index }}][prodi]" required>
             </div>
             <div class="col-md-6">
                 <label class="form-label">Upload KTP</label>

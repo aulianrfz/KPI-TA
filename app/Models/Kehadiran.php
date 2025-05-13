@@ -1,17 +1,16 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class KategoriLomba extends Model
+class Kehadiran extends Model
 {
     use HasFactory;
-
-    protected $table = 'kategori';
-
+    protected $table = 'kehadiran';
     protected $fillable = [
-        'nama_kategori',
+        'tanggal',
+        'status'
     ];
+
 }

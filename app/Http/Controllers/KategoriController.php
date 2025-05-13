@@ -21,11 +21,11 @@ class KategoriController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'nama_kategori' => 'required|string|max:255',
         ]);
 
         KategoriLomba::create([
-            'name' => $request->name
+            'nama_kategori' => $request->nama_kategori
         ]);
 
         return redirect()->route('kategori.index')->with('success', 'Kategori berhasil dibuat.');
@@ -45,11 +45,11 @@ class KategoriController extends Controller
     public function update(Request $request, KategoriLomba $kategori)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'nama_kategori' => 'required|string|max:255',
         ]);
 
         $kategori->update([
-            'name' => $request->name
+            'nama_kategori' => $request->nama_kategori
         ]);
 
         return redirect()->route('kategori.index')->with('success', 'Kategori berhasil diperbarui.');

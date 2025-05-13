@@ -10,8 +10,19 @@
         </div>
 
         <div class="d-flex">
-            <a href="#" class="btn btn-outline-secondary me-2" style="border-color: #0367A6; color: #0367A6;">Login</a>
-            <a href="#" class="btn btn-primary" style="background-color: #0367A6; border-color: #0367A6;">Sign Up</a>
+            @guest
+                <a href="{{ route('login') }}" class="btn btn-outline-secondary me-2" style="border-color: #0367A6; color: #0367A6;">Login</a>
+                <a href="{{ route('register') }}" class="btn btn-primary" style="background-color: #0367A6; border-color: #0367A6;">Sign Up</a>
+            @endguest
+
+            @auth
+                <a href="{{ route('dashboard') }}" class="btn btn-outline-primary me-2" style="border-color: #0367A6;">Home</a>
+                <a href="{{ route('events.index') }}" class="btn btn-primary me-3" style="background-color: #0367A6; border-color: #0367A6;">My Event</a>
+                <a href="{{ route('profile.show') }}" class="d-flex align-items-center">
+                    <img src="https://ui-avatars.com/api/?name={{ Auth::user()->first_name }}+{{ Auth::user()->last_name }}&background=0367A6&color=fff" 
+                        alt="Profile" class="rounded-circle" width="35" height="35">
+                </a>    
+            @endauth
         </div>
     </div>
 </nav>

@@ -16,8 +16,8 @@
                 <div class="row mb-3">
                 <input type="hidden" name="id_subkategori" value="{{ $subKategori->id }}">
                     <div class="col-md-6">
-                        <label for="nama" class="form-label">Nama</label>
-                        <input type="text" class="form-control" id="nama" name="peserta[0][nama]" required>
+                        <label for="nama_peserta" class="form-label">Nama</label>
+                        <input type="text" class="form-control" id="nama_peserta" name="peserta[0][nama_peserta]" required>
                     </div>
                     <div class="col-md-6">
                         <label for="nim" class="form-label">NIM</label>
@@ -32,27 +32,27 @@
                     </div>
                     <div class="col-md-6">
                         <label for="hp" class="form-label">No HP</label>
-                        <input type="text" class="form-control" id="hp" name="peserta[0][hp]" required>
-                    </div>
+                        <input type="text" class="form-control" id="no_hp" name="peserta[0][no_hp]" required>
+                        </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="provinsi" class="form-label">Provinsi</label>
-                        <select name="peserta[0][provinsi_id]" class="form-select" required>
+                        <select name="peserta[0][provinsi]" class="form-select" required>
                             <option value="">- Pilih Provinsi -</option>
                             @foreach ($provinsi as $prov)
-                                <option value="{{ $prov->id }}">{{ $prov->nama_provinsi }}</option>
+                                <option value="{{ $prov->nama_provinsi }}">{{ $prov->nama_provinsi }}</option>
                             @endforeach
                         </select>
                     </div>
 
                     <div class="col-md-6">
                         <label for="institusi" class="form-label">Institusi</label>
-                        <select name="peserta[0][institusi_id]" class="form-select" required>
+                        <select name="peserta[0][institusi]" class="form-select" required>
                             <option value="">- Pilih Institusi -</option>
                             @foreach ($institusi as $inst)
-                                <option value="{{ $inst->id }}">{{ $inst->nama_institusi }}</option>
+                                <option value="{{ $inst->nama_institusi }}">{{ $inst->nama_institusi }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -60,7 +60,7 @@
 
                 <div class="col-md-6">
                     <label for="hp" class="form-label">Jurusan</label>
-                    <input type="text" class="form-control" id="jurusan_id" name="peserta[0][jurusan]" required>
+                    <input type="text" class="form-control" id="prodi" name="peserta[0][prodi]" required>
                 </div>
 
                 <div class="row mb-3">
@@ -127,9 +127,9 @@
             // Validate other required fields before submitting the form
             const provinsi = form.querySelector('select[name="peserta[0][provinsi_id]"]');
             const institusi = form.querySelector('select[name="peserta[0][institusi_id]"]');
-            const jurusan = form.querySelector('select[name="peserta[0][jurusan_id]"]');
+            const prodi = form.querySelector('select[name="peserta[0][prodi]"]');
 
-            if (!provinsi.value || !institusi.value || !jurusan.value) {
+            if (!provinsi.value || !institusi.value || !prodi.value) {
                 alert('Semua kolom wajib diisi!');
                 e.preventDefault();
             }

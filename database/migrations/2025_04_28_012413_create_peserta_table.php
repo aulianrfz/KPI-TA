@@ -13,29 +13,21 @@ return new class extends Migration
     {
         Schema::create('peserta', function (Blueprint $table) {
             $table->id();
-            $table->string('nama');
-            $table->bigInteger('nim')->nullable();
-            $table->string('nama_tim')->nullable();
-            $table->string('jurusan_id')->nullable();
-            $table->string('url_qrCode')->nullable();
+            $table->string('nama_peserta', 100);
+            $table->string('nim', 20);
+            $table->string('prodi', 50);
+            $table->string('institusi', 100);
+            $table->string('provinsi',50);
+            $table->string('jenis_peserta',10);
 
-            // Foreign Key Columns
-            $table->unsignedBigInteger('provinsi_id');
-            $table->unsignedBigInteger('institusi_id');
-            $table->unsignedBigInteger('sub_kategori_id');
             $table->unsignedBigInteger('user_id');
 
-            $table->string('email')->nullable();
-            $table->bigInteger('hp')->nullable();
-            $table->string('ktm_path')->nullable();
-            $table->string('ttd_path')->nullable();
-            $table->boolean('is_leader')->default(false);
+            $table->string('email');
+            $table->string('no_hp',15);
+            $table->string('url_ktm',255);
+            $table->string('url_ttd',255);
             $table->timestamps();
 
-            // Foreign key constraints
-            $table->foreign('provinsi_id')->references('id')->on('provinsi')->onDelete('cascade');
-            $table->foreign('institusi_id')->references('id')->on('institusi')->onDelete('cascade');
-            $table->foreign('sub_kategori_id')->references('id')->on('sub_kategori')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }

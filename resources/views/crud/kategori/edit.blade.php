@@ -10,8 +10,8 @@
         @csrf
         @method('PUT')
         <div class="form-group">
-            <label for="name">Nama Kategori</label>
-            <input type="text" name="name" class="form-control" value="{{ old('name', $kategori->name) }}" required>
+            <label for="nama_kategori">Nama Kategori</label>
+            <input type="text" name="nama_kategori" class="form-control" value="{{ old('nama_kategori', $kategori->nama_kategori) }}" required>
         </div>
         <br>
         <button type="submit" class="btn btn-success">Update</button>

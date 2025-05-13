@@ -4,11 +4,10 @@
 
 @include('layouts.navbar')
 
-<!-- Event Details -->
 <div class="container mt-5">
     <div class="d-flex align-items-center mb-3">
-        <a href="{{ url('/andingpage') }}" class="me-2"><i class="bi bi-arrow-left"></i></a>
-        <h5 class="mb-0">KEMBALI</h5>
+        <a href="{{ url('/landingpage') }}" class="me-2"><i class="bi bi-arrow-left"></i></a>
+        <h5 class="mb-0">HOME</h5>
     </div>
     <div class="row align-items-center">
         <div class="col-md-6">
@@ -23,12 +22,16 @@
                         <p class="card-text text-muted"><small>Dipusatkan di Bandung (POLBAN), Indonesia</small></p>
                     </div>
                     <div class="d-flex align-items-center mb-3">
-                        <i class="bi bi-calendar-event-fill text-primary me-2"></i>
-                        <p class="card-text text-muted"><small>25 Juni 2025</small></p>
+                        <!-- <i class="bi bi-calendar-event-fill text-primary me-2"></i>
+                        <p class="card-text text-muted"><small>25 Juni 2025</small></p> -->
                     </div>
                     <p>Prodi Usaha Perjalanan Wisata Politeknik Negeri Bandung (UPW Polban)  merupakan salah satu program studi D3 yang berada di bawah Jurusan Administrasi Niaga.  Setiap tahunnya, UPW Polban menyelenggarakan Kegiatan Kompetisi Pariwisata Indonesia (KPI). KPI merupakan ajang kompetisi pariwisata yang pertama kali diselenggarakan pada tahun 2011. Awalnya, kompetisi ini hanya diikuti oleh peserta nasional, namun sejak 2022, KPI mulai berkembang ke tingkat internasional dengan tujuan meningkatkan kompetensi mahasiswa agar mampu bersaing di industri pariwisata (KPI, 2024).   </p>
-
-                    <a href="{{ route('event.list', 1) }}" class="btn btn-success w-100 mt-2" style="background-color: #2CC384; border-color: #2CC384; height: 50px;">Daftar</a>
+                    
+                    @auth
+                        <a href="{{ route('event.list', 1) }}" class="btn btn-success w-100 mt-2" style="background-color: #2CC384; border-color: #2CC384; height: 50px;">Daftar</a>
+                    @else
+                        <a href="javascript:void(0)" class="btn btn-secondary w-100 mt-2" style="height: 50px;" id="showLoginModalBtn">Daftar</a>
+                    @endauth
                 </div>
             </div>
         </div>
@@ -39,6 +42,36 @@
     </div>
 </div>
 
+<div class="modal fade" id="loginAlertModal" tabindex="-1" aria-labelledby="loginAlertModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loginAlertModalLabel">Pemberitahuan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Silakan login terlebih dahulu untuk melanjutkan.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                <a href="{{ route('login') }}" class="btn btn-primary">Login</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 @include('layouts.footer')
 
 @endsection
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var showLoginModalBtn = document.getElementById('showLoginModalBtn');
+        if (showLoginModalBtn) {
+            showLoginModalBtn.addEventListener('click', function() {
+                var myModal = new bootstrap.Modal(document.getElementById('loginAlertModal'));
+                myModal.show();
+            });
+        }
+    });
+</script>

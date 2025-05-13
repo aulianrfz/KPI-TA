@@ -23,7 +23,7 @@
             @foreach($kategorislomba as $index => $kategori)
             <tr>
                 <td>{{ $index + 1 }}</td>
-                <td>{{ $kategori->name }}</td>
+                <td>{{ $kategori->nama_kategori }}</td>
                 <td>
                     <a href="{{ route('kategori.edit', $kategori->id) }}" class="btn btn-warning btn-sm">Edit</a>
                     <form action="{{ route('kategori.destroy', $kategori->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin mau hapus?')">

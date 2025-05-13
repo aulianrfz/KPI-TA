@@ -11,18 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kategori', function (Blueprint $table) {
+        Schema::create('kehadiran', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_kategori',50);
+            $table->unsignedBigInteger('peserta_id');
+            $table->dateTime('tanggal');
+            $table->string('status',25);
             $table->timestamps();
+
+            $table->foreign('peserta_id')->references('id')->on('peserta')->onDelete('cascade');
+
         });
     }
-
+    
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('kategori');
+        Schema::dropIfExists('kehadiran');
     }
 };

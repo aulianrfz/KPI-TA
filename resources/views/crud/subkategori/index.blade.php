@@ -28,8 +28,8 @@
             @foreach($subkategoris as $index => $subkategori)
             <tr>
                 <td>{{ $index + 1 }}</td>
-                <td>{{ $subkategori->kategori->name }}</td>
-                <td>{{ $subkategori->name }}</td>
+                <td>{{ $subkategori->kategori->nama_kategori }}</td>
+                <td>{{ $subkategori->nama_lomba }}</td>
                 <td>{{ $subkategori->jurusan }}</td>
                 <td>{{ $subkategori->maks_peserta }}</td>
                 <td>Rp {{ number_format($subkategori->biaya_pendaftaran, 0, ',', '.') }}</td>

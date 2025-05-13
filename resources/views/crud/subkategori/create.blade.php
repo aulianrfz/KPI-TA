@@ -23,14 +23,14 @@
             <label for="kategori_id">Kategori</label>
             <select name="kategori_id" id="kategori_id" class="form-control" required>
                 @foreach($kategoris as $kategori)
-                    <option value="{{ $kategori->id }}">{{ $kategori->name }}</option>
+                    <option value="{{ $kategori->id }}">{{ $kategori->nama_kategori }}</option>
                 @endforeach
             </select>
         </div>
 
         <div class="form-group">
-            <label for="name_lomba">Nama SubKategori</label>
-            <input type="text" name="name_lomba" id="name_lomba" class="form-control" required>
+            <label for="nama_lomba">Nama SubKategori</label>
+            <input type="text" name="nama_lomba" id="nama_lomba" class="form-control" required>
         </div>
 
         <div class="form-group">
@@ -44,8 +44,8 @@
         </div>
 
         <div class="form-group">
-            <label for="duration">Durasi Perlombaan (menit)</label>
-            <input type="integer" name="duration" id="duration" class="form-control" required>
+            <label for="durasi">Durasi Perlombaan (menit)</label>
+            <input type="integer" name="durasi" id="durasi" class="form-control" required>
         </div>
 
         <div class="form-group">

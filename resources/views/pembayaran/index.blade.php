@@ -46,7 +46,7 @@
                             <tbody>
                             @forelse ($peserta as $item)
                                 <tr>
-                                    <td>{{ $item->subKategori->name_lomba }}</td>
+                                    <td>{{ $item->subKategori->nama_lomba }}</td>
                                     <td>{{ $item->order_id }}</td>
                                     <td>
                                         @php

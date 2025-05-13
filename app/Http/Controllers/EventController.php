@@ -1,20 +1,28 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\SubKategori;
-
+use Illuminate\Support\Facades\Auth;
+use App\Models\Peserta;
+use App\Models\Bergabung;
+use App\Models\Pendaftar;
 use Illuminate\Http\Request;
 
 class EventController extends Controller
 {
-    public function showCategory($kategori_id) 
+    public function index()
     {
-        $events = SubKategori::where('kategori_id', $kategori_id)->get();
-        return view('event.general', compact('events'));
-    }
-    public function showDetail($id)
-    {
-        $event = SubKategori::findOrFail($id);
-        return view('event.showdetail', compact('event'));
+        $pendaftarList = Pendaftar::with(['subKategori', 'peserta.bergabung'])
+            ->whereHas('peserta', function ($query) {
+                $query->where('user_id', Auth::id())
+                      ->where(function ($q) {
+                          $q->whereDoesntHave('bergabung')
+                            ->orWhereHas('bergabung', function ($subQ) {
+                                $subQ->where('posisi', 'ketua');
+                            });
+                      });
+            })
+            ->get();
+    
+        return view('my-event.list', compact('pendaftarList'));
     }
 }

@@ -13,13 +13,13 @@ class SubKategori extends Model
 
     protected $fillable = [
         'kategori_id',
-        'name_lomba',
+        'nama_lomba',
         'jenis_lomba',
         'jurusan',
         'maks_peserta',
         'jenis_pelaksanaan',
         'deskripsi',
-        'duration',
+        'durasi',
         'biaya_pendaftaran',
         'url_tor',
         'foto_kompetisi',

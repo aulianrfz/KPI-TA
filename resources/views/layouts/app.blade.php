@@ -11,7 +11,7 @@
     <!-- Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"> -->
 
 
     <style>
@@ -65,7 +65,79 @@
             flex: 1;
         }
 
+        .auth-wrapper {
+        max-width: 400px;
+        margin: 60px auto;
+        background-color: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
+    }
 
+    .auth-header {
+        background-color: #0367A6;
+        padding: 20px;
+        text-align: center;
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .auth-tabs {
+        display: flex;
+        justify-content: center;
+        background-color: #f1f1f1;
+        border-bottom: 2px solid #0367A6;
+    }
+
+    .auth-tabs a {
+        flex: 1;
+        text-align: center;
+        padding: 12px 0;
+        font-weight: bold;
+        color: #0367A6;
+        border-bottom: 2px solid transparent;
+    }
+
+    .auth-tabs a.active {
+        background-color: #fff;
+        border-bottom: 2px solid #0367A6;
+        color: #0367A6;
+    }
+
+    .auth-form {
+        padding: 25px;
+    }
+
+    .auth-form input {
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 16px;
+    }
+
+    .auth-form button {
+        background-color: #0367A6;
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 8px;
+        width: 100%;
+        font-size: 16px;
+        margin-top: 10px;
+        cursor: pointer;
+    }
+
+    .auth-form button:hover {
+        background-color: #3F9BBF;
+    }
+
+    .auth-form p {
+        margin-top: 15px;
+        text-align: center;
+    }
 
 
         @media (max-width: 768px) {
