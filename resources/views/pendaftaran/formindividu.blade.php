@@ -113,18 +113,16 @@
             signaturePad.clear();
         });
 
-        // Set TTD ke input hidden sebelum submit
         const form = document.getElementById('pendaftaranForm');
         form.addEventListener('submit', function (e) {
             if (!signaturePad.isEmpty()) {
                 signatureInput.value = signaturePad.toDataURL();
             } else {
-                signatureInput.value = ''; // Add custom validation message if required
+                signatureInput.value = '';
                 alert('Tanda tangan tidak boleh kosong!');
                 e.preventDefault();
             }
 
-            // Validate other required fields before submitting the form
             const provinsi = form.querySelector('select[name="peserta[0][provinsi_id]"]');
             const institusi = form.querySelector('select[name="peserta[0][institusi_id]"]');
             const prodi = form.querySelector('select[name="peserta[0][prodi]"]');
