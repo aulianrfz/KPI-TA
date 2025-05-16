@@ -5,19 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Tim extends Model
+class Event extends Model
 {
     use HasFactory;
 
-    protected $table = 'tim';
+    protected $table = 'event';
 
     protected $fillable = [
-        'nama_tim',
+        'nama_event',
     ];
-
-    public function peserta()
-    {
-        return $this->belongsTo(Peserta::class, 'id_peserta');
-    }
-
 }

@@ -11,51 +11,59 @@
         </div>
     @endif
 
-    <div class="alert alert-danger text-center fw-semibold">
-        Please complete this payment before {{ $batas_pembayaran ?? 'DD.MM.YYYY' }}
+    <div class="alert alert-warning text-center fw-semibold">
+        Silakan selesaikan pembayaran sebelum <strong>{{ $batas_pembayaran ?? 'DD.MM.YYYY' }}</strong>
     </div>
 
-    <!-- Tabs -->
-    <ul class="nav nav-tabs mb-3" id="invoiceTabs" role="tablist">
+    <ul class="nav nav-tabs mb-4" id="invoiceTabs" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="invoice-tab" data-bs-toggle="tab" data-bs-target="#invoice" type="button" role="tab">Invoice</button>
+            <button class="nav-link active" id="invoice-tab" data-bs-toggle="tab" data-bs-target="#invoice" type="button" role="tab">
+                Invoice
+            </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="tahapan-tab" data-bs-toggle="tab" data-bs-target="#tahapan" type="button" role="tab">Teknis Pembayaran</button>
+            <button class="nav-link" id="tahapan-tab" data-bs-toggle="tab" data-bs-target="#tahapan" type="button" role="tab">
+                Teknis Pembayaran
+            </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="bayar-tab" data-bs-toggle="tab" data-bs-target="#bayar" type="button" role="tab">Bayar</button>
+            <button class="nav-link" id="bayar-tab" data-bs-toggle="tab" data-bs-target="#bayar" type="button" role="tab">
+                Bayar
+            </button>
         </li>
     </ul>
 
     <div class="tab-content" id="invoiceTabsContent">
-
-        <!-- Invoice Tab -->
+        <!-- INVOICE -->
         <div class="tab-pane fade show active" id="invoice" role="tabpanel">
-            <div class="p-4 rounded" style="background-color:rgb(179, 210, 241);">
-                <div class="row text-white">
-                    <!-- Left Side Info -->
+            <div class="p-4 rounded bg-light border">
+                <div class="row">
+                    <!-- Informasi Peserta -->
                     <div class="col-md-8">
-                        <h5 class="fw-bold" style="color: #000;">INVOICE</h5>
-                        <h6 class="fw-bold" style="color: #000; margin-bottom: 20px;">Information Details</h6>
-                        @if ($peserta->nama_tim)
-                            <p class="invoice-item" style="color: #333; margin-bottom: 5px;">{{ $peserta->nama_tim }}</p>
+                        <h5 class="fw-bold mb-3">INVOICE</h5>
+                        <p class="mb-1"><strong>Nama:</strong> {{ $peserta->nama_peserta }}</p>
+
+                        @if ($peserta->tim->isNotEmpty())
+                            <p class="mb-1"><strong>Nama Tim:</strong> {{ $peserta->tim->first()->nama_tim }}</p>
                         @endif
-                        <p class="invoice-item" style="color: #333; margin-bottom: 5px;">{{ $peserta->nama }}</p>
-                        <p class="invoice-item" style="color: #333; margin-bottom: 5px;">{{ $institusi->nama_institusi }}</p>
-                        <p class="invoice-item" style="color: #333; margin-bottom: 5px;">{{ $peserta->email }}</p>
-                        <p class="invoice-item" style="color: #333; margin-bottom: 5px;">{{ $peserta->hp }}</p>
+
+                        <p class="mb-1"><strong>Institusi:</strong> {{ $peserta->institusi }}</p>
+                        <p class="mb-1"><strong>Email:</strong> {{ $peserta->email }}</p>
+                        <p class="mb-1"><strong>No HP:</strong> {{ $peserta->no_hp }}</p>
                     </div>
 
-
-                    <!-- Right Bill Info -->
+                    <!-- Detail Biaya -->
                     <div class="col-md-4">
-                        <div class="bg-white text-dark p-3 rounded">
-                            <h6 class="fw-bold">Bill details</h6>
+                        <div class="bg-white p-3 rounded shadow-sm">
+                            <h6 class="fw-bold">Detail Pembayaran</h6>
                             <hr>
-                            <p>Kategori: {{ $peserta->subKategori->jenis_lomba ?? '-' }}</p>
-                            @if ($peserta->tim) <p>Tim: {{ $peserta->tim }}</p> @endif
-                            <p>Jumlah Peserta: {{ $peserta->jumlah_peserta ?? 1 }}</p>
+                            <p><strong>Kategori:</strong> {{ $peserta->pendaftar?->subKategori?->nama_lomba ?? '-' }}</p>
+
+                            @if ($peserta->tim->isNotEmpty())
+                                <p><strong>Tim:</strong> {{ $peserta->tim->first()->nama_tim }}</p>
+                            @endif
+
+                            <p><strong>Jumlah Peserta:</strong> {{ $peserta->tim->first()?->peserta->count() ?? 1 }}</p>
 
                             <hr>
                             <div class="d-flex justify-content-between fw-bold">
@@ -63,55 +71,56 @@
                                 <span>Rp{{ number_format($subkategori->biaya_pendaftaran ?? 0, 0, ',', '.') }}</span>
                             </div>
                         </div>
-
                         <div class="text-end mt-2">
-                            <a href="#" class="btn btn-danger"><i class="bi bi-printer"></i></a>
+                            <button class="btn btn-outline-secondary" onclick="window.print()">
+                                <i class="bi bi-printer"></i> Cetak
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Tahapan Pembayaran Tab -->
         <div class="tab-pane fade" id="tahapan" role="tabpanel">
             <div class="card card-body">
-                <ol>
-                    <li>Pembayaran dilakukan melalui:
-                        <br>Transfer Bank ke rekening (Nama Bank, Nomor Rekening, Atas Nama).
+                <ol class="mb-0">
+                    <li>Pembayaran dilakukan melalui transfer ke rekening berikut:<br>
+                        <strong>Nama Bank:</strong> [Isi Nama Bank]<br>
+                        <strong>Nomor Rekening:</strong> [Isi Nomor Rekening]<br>
+                        <strong>Atas Nama:</strong> [Nama Pemilik Rekening]
                     </li>
-                    <li>Mohon unggah bukti pembayaran setelah melakukan transfer.</li>
-                    <li>
-                        Bukti pembayaran akan diperiksa oleh panitia dalam waktu 1–2 hari kerja.
-                        <br>Status pembayaran akan berubah menjadi Sudah Dibayar.
-                    </li>
-                    <li>
-                        Jika pembayaran telah diverifikasi:
-                        <br>- Status pembayaran akan berubah menjadi Sudah Dibayar.
-                        <br>- Pendaftar dapat mengunduh kwitansi resmi dari sistem (jika meminta).
-                        <br>- Pendaftar mendapatkan QR Code melalui email.
-                    </li>
-                    <li>
-                        Jika ada kendala atau pembayaran tidak tervalidasi:
-                        <br>Pendaftar akan menerima notifikasi dan harus mengunggah ulang bukti pembayaran jika diperlukan.
-                    </li>
-                    <li>
-                        Untuk pertanyaan lebih lanjut, silakan hubungi admin.
-                    </li>
+                    <li>Unggah bukti pembayaran melalui tab "Bayar".</li>
+                    <li>Bukti akan diverifikasi dalam 1–2 hari kerja.</li>
+                    <li>Setelah validasi, status berubah menjadi <strong>Sudah Dibayar</strong> dan QR Code dikirim via email.</li>
+                    <li>Jika gagal validasi, Anda akan diminta mengunggah ulang bukti pembayaran.</li>
+                    <li>Hubungi admin jika mengalami kendala lebih lanjut.</li>
                 </ol>
             </div>
         </div>
 
-        <!-- Bayar Tab -->
         <div class="tab-pane fade" id="bayar" role="tabpanel">
             <div class="card card-body">
-                <p>Form atau upload bukti bayar akan ditaruh di sini.</p>
+                <form action="{{ route('pembayaran.upload', $peserta->id) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="bukti" class="form-label fw-semibold">Unggah Bukti Pembayaran</label>
+                        <input type="file" name="bukti" id="bukti" class="form-control" required>
+                        @error('bukti')
+                            <div class="text-danger mt-1">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-success px-4">Upload</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
     <div class="text-center mt-4">
         <a href="{{ route('pembayaran.bayar', $peserta->id) }}" class="btn text-white px-5 py-2" style="background-color: #2CC384;">
-            Next
+            Selanjutnya
         </a>
     </div>
 </div>

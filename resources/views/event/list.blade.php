@@ -4,7 +4,6 @@
 
 @include('layouts.navbar')
 
-<!-- PILIHAN EVENTS -->
 <div class="container mt-4">
     <div class="d-flex align-items-center mb-3">
         <a href="{{ route('event.show', 1) }}" class="me-2"><i class="bi bi-arrow-left"></i></a>
@@ -12,41 +11,35 @@
     </div>
 
     <div class="row align-items-start">
-        <!-- Deatail Event -->
-        <div class="col-md-4">
+        <div class="col-md-4" data-aos="fade-down">
             <img src="{{ asset('images/event.jpeg') }}" class="img-fluid rounded-3" alt="Event Image">
         </div>
 
-        <div class="col-md-8">
+        <div class="col-md-8" data-aos="fade-left" data-aos-delay="100">
             <h5 class="fw-bold">KOMPETISI PARIWISATA INDONESIA 14</h5>
-            <div class="d-flex align-items-center text-muted mb-2">
-                <!-- <i class="bi bi-calendar-event me-2 text-primary"></i>
-                <small>July 15 - 17, 2025 • 08.00 - 17.00 WIB</small> -->
-            </div>
             <div class="d-flex align-items-center text-muted mb-3">
                 <i class="bi bi-geo-alt-fill me-2 text-primary"></i>
                 <small>Politeknik Negeri Bandung</small>
             </div>
             <p style="text-align: justify;">
-            Kompetisi Pariwisata Indonesia (KPI) merupakan salah satu event kompetisi
-            pariwisata yang mulai bertaraf internasional yang diselenggarakan setiap tahunnya oleh
-            Program Studi D3 Usaha Perjalanan Wisata. Kopetisi ini telah dianakan sebanyak 14 kali. </p>
+                Kompetisi Pariwisata Indonesia (KPI) merupakan salah satu event kompetisi
+                pariwisata yang mulai bertaraf internasional yang diselenggarakan setiap tahunnya oleh
+                Program Studi D3 Usaha Perjalanan Wisata. Kopetisi ini telah dianakan sebanyak 14 kali.
+            </p>
         </div>
     </div>
 
-    <!-- Categories -->
-    <div class="text-center mt-5">
+    <div class="text-center mt-5" data-aos="fade-up">
         <h3 class="fw-bold">CATEGORIES</h3>
         <hr class="mx-auto" style="width: 100px; border-top: 2px solid #000;">
     </div>
 
     <div class="row justify-content-center mt-4">
-        @foreach ($categories as $category) 
-            <div class="col-md-3 mb-4">
-                <div class="card shadow-sm border-0">
-                <!-- <img src="{{ asset('images/' . $category->image) }}" class="card-img-top" alt="{{ $category->name }}"> -->
-                <img src="{{ asset('images/event.jpeg') }}" class="img-fluid rounded-3" alt="Event Image">
-                <div class="card-body text-center">
+        @foreach ($categories as $index => $category)
+            <div class="col-md-3 mb-4" data-aos="zoom-in" data-aos-delay="{{ $index * 100 }}">
+                <div class="card shadow-sm border-0 h-100">
+                    <img src="{{ asset('images/event.jpeg') }}" class="img-fluid rounded-3" alt="Event Image">
+                    <div class="card-body text-center">
                         <h6 class="fw-bold">{{ $category->nama_kategori }}</h6>
                         <a href="{{ route('event.showCategory', $category->id) }}" class="btn btn-outline-primary w-100 mt-2">Pilih</a>
                     </div>
@@ -56,7 +49,15 @@
     </div>
 </div>
 
-
 @include('layouts.footer')
+
+<!-- AOS JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script>
+    AOS.init({
+        duration: 800,
+        once: true
+    });
+</script>
 
 @endsection

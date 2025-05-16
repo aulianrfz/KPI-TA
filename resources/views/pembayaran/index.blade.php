@@ -4,11 +4,10 @@
 @section('content')
 <div class="container-fluid py-4">
     <div class="row">
-        {{-- Sidebar --}}
         <div class="col-md-2 d-none d-md-block bg-light border-end p-3">
             <ul class="nav flex-column mt-4">
                 <li class="nav-item mb-3">
-                    <a href="{{ route('dashboard') }}" class="nav-link text-dark">
+                    <a href="{{ route('events.index') }}" class="nav-link text-dark">
                         <i class="bi bi-person-circle me-2"></i> My Categories
                     </a>
                 </li>
@@ -20,7 +19,6 @@
             </ul>
         </div>
 
-        {{-- Main Content --}}
         <div class="col-md-10">
             <h4 class="fw-bold mb-4">Payment Categories</h4>
 
@@ -44,10 +42,10 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            @forelse ($peserta as $item)
+                            @forelse ($pendaftar as $item)
                                 <tr>
-                                    <td>{{ $item->subKategori->nama_lomba }}</td>
-                                    <td>{{ $item->order_id }}</td>
+                                    <td>{{ optional($item->subKategori)->nama_lomba ?? '-' }}</td>
+                                    <td>{{ $item->id }}</td>
                                     <td>
                                         @php
                                             $status = strtolower($item->status);

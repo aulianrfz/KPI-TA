@@ -3,12 +3,12 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ImportExcelController;
 use App\Http\Controllers\PenjadwalanController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\SubKategoriController;
 use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DashboardUserController;
+use App\Http\Controllers\DashboardAdminController;
 use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\ProfileController;
@@ -21,8 +21,8 @@ use App\Http\Middleware\RoleMiddleware;
 
 
 // Guest only
-Route::get('/', [HomeController::class, 'index']);
-Route::get('/events/{id}', [HomeController::class, 'show'])->name('event.show');
+Route::get('/', [DashboardUserController::class, 'index']);
+Route::get('/events/{id}', [DashboardUserController::class, 'show'])->name('event.show');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -47,9 +47,9 @@ Route::middleware('auth')->group(function () {
     })->name('dashboard');
 
     Route::middleware([RoleMiddleware::class . ':user'])->group(function () {
-        Route::get('/event/{eventId}', [HomeController::class, 'showEvent'])->name('event.list');
-        Route::get('/event/list/{kategori_id}', [DashboardController::class, 'showCategory'])->name('event.showCategory');
-        Route::get('/event/detail/{id}', [DashboardController::class, 'showDetail'])->name('event.detail');
+        Route::get('/event/{eventId}', [DashboardUserController::class, 'showEvent'])->name('event.list');
+        Route::get('/event/list/{kategori_id}', [DashboardUserController::class, 'showCategory'])->name('event.showCategory');
+        Route::get('/event/detail/{id}', [DashboardUserController::class, 'showDetail'])->name('event.detail');
         Route::resource('subkategori', SubKategoriController::class);
 
         // Pendaftaran
@@ -57,14 +57,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/pendaftaran/store', [PendaftaranController::class, 'store'])->name('pendaftaran.store');
 
         // // pembayaran
-        // Route::get('/my-event', [DashboardController::class, 'index'])->name('events.index');
+        // Route::get('/my-event', [DashboardUserController::class, 'index'])->name('events.index');
 
         // dashboard myevent
         Route::get('/my-event', [EventController::class, 'index'])->name('events.index');
         // pembayaran
         Route::get('/pembayaran', [PembayaranController::class, 'index'])->name('pembayaran.index');
         Route::get('/pembayaran/bayar/{id}', [PembayaranController::class, 'bayar'])->name('pembayaran.bayar');
-
+        Route::post('pembayaran/{id}/upload', [PembayaranController::class, 'uploadBuktiPembayaran'])->name('pembayaran.upload');
 
     });
 
@@ -73,6 +73,14 @@ Route::middleware('auth')->group(function () {
         Route::resource( 'kategori', KategoriController::class);
         Route::resource('subkategori', SubKategoriController::class);
         Route::resource('juri', JuriController::class);
+        Route::get('/dashboardadmin', [DashboardAdminController::class, 'index'])->name('admin.dashboard');
+        Route::post('/dashboard-admin/mark-present', [DashboardAdminController::class, 'markAsPresent'])->name('admin.markPresent');
+
+    
+        Route::get('/admin/transaksi', [PembayaranController::class, 'show'])->name('transaksi.index');
+        Route::post('/admin/transaksi/bulk-action', [PembayaranController::class, 'bulkAction'])->name('admin.transaksi.bulkAction');
+        Route::get('/verifikasi/qr/{id}', [PembayaranController::class, 'showQr'])->name('verifikasi.qr');
+
     });
 });
 

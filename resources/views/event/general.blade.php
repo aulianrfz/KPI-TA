@@ -14,7 +14,6 @@
     </div>
 
     <div class="row">
-        <!-- FILTER -->
         <div class="col-md-3">
             <h6 class="fw-bold">Filters</h6>
             <hr>
@@ -39,7 +38,6 @@
             </div>
         </div>
 
-        <!-- CARD LIST -->
         <div class="col-md-9">
             <div class="row">
             @foreach ($events as $event)

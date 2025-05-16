@@ -6,7 +6,6 @@
 
 <div class="container-fluid mt-4">
     <div class="row">
-        {{-- Sidebar --}}
         <div class="col-md-2 d-none d-md-block bg-light border-end" style="min-height: 100vh;">
             <ul class="nav flex-column mt-4 p-3">
                 <li class="nav-item mb-3">
@@ -22,7 +21,6 @@
             </ul>
         </div>
 
-        {{-- Main Content --}}
         <div class="col-md-10 px-4 pb-4">
             <h4 class="fw-bold mt-4 mb-4">Sub Kategori yang Kamu Ikuti</h4>
             <div class="row">

@@ -9,13 +9,13 @@ class Membayar extends Model
 {
     use HasFactory;
 
-    protected $table = 'pendaftaran';
+    protected $table = 'membayar';
 
     protected $fillable = [
-        'user_id',
+        'invoice_id',
         'peserta_id',
-        'tanggal_daftar',
-        'status',
+        'bukti_pembayaran',
+        'waktu',
     ];
 
     public function user()
@@ -27,4 +27,20 @@ class Membayar extends Model
     {
         return $this->belongsTo(Peserta::class);
     }
+
+    public function pendaftar()
+    {
+        return $this->belongsTo(Pendaftar::class);
+    }
+
+    public function subKategori()
+    {
+        return $this->belongsTo(SubKategori::class);
+    }
+
+    public function invoice()
+    {
+        return $this->belongsTo(Invoice::class);
+    }
+
 }

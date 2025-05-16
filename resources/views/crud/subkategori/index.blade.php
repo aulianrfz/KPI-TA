@@ -14,7 +14,7 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>#</th>
+                <th>No</th>
                 <th>Nama Kategori</th>
                 <th>Nama SubKategori</th>
                 <th>Jurusan</th>

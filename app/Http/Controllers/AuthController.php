@@ -25,16 +25,22 @@ class AuthController extends Controller
             'username' => 'required|string',
             'password' => 'required|string',
         ]);
-
+    
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
+            
+            if (Auth::user()->role === 'admin') {
+                return redirect()->route('admin.dashboard');
+            }
+            
             return redirect()->route('dashboard');
         }
-
+    
         return back()->withErrors([
             'username' => 'Username atau password salah.',
         ]);
     }
+    
 
     public function register(Request $request)
     {
@@ -57,7 +63,7 @@ class AuthController extends Controller
         
 
         Auth::login($user);
-        return view('auth.login');    
+        return view('auth.login');
     }
 
     public function logout(Request $request)

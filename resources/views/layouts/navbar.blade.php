@@ -2,12 +2,23 @@
     <div class="container-fluid py-2 px-4">
         <a class="navbar-brand fw-bold text-primary" href="#">LOGO APP</a>
 
-        <div class="d-flex flex-grow-1 justify-content-center">
-            <div class="input-group w-75 w-md-50">
-                <input type="text" class="form-control border" placeholder="Cari apa yang kamu mau di sini..." style="border-color: #0367A6;">
-                <span class="input-group-text" style="background-color: #0367A6; color: white;"><i class="bi bi-search"></i></span>
-            </div>
-        </div>
+        @auth
+            @if(Auth::user()->role === 'user')
+                <div class="d-flex flex-grow-1 justify-content-center">
+                    <div class="input-group w-75 w-md-50">
+                        <input type="text" class="form-control border" placeholder="Cari apa yang kamu mau di sini..." style="border-color: #0367A6;">
+                        <span class="input-group-text" style="background-color: #0367A6; color: white;"><i class="bi bi-search"></i></span>
+                    </div>
+                </div>
+            @endif
+            @if(Auth::user()->role === 'admin')
+                <div class="d-flex flex-grow-1 justify-content-center"">
+                    <a class="navbar-brand fw-bold text-primary" href="#">
+                        Kompetisi Pariwisata Indonesia
+                    </a>
+                </div>
+            @endif
+        @endauth
 
         <div class="d-flex">
             @guest
@@ -16,8 +27,11 @@
             @endguest
 
             @auth
-                <a href="{{ route('dashboard') }}" class="btn btn-outline-primary me-2" style="border-color: #0367A6;">Home</a>
-                <a href="{{ route('events.index') }}" class="btn btn-primary me-3" style="background-color: #0367A6; border-color: #0367A6;">My Event</a>
+                @if(Auth::user()->role === 'user')
+                    <a href="{{ route('dashboard') }}" class="btn btn-outline-primary me-2" style="border-color: #0367A6;">Home</a>
+                    <a href="{{ route('events.index') }}" class="btn btn-primary me-3" style="background-color: #0367A6; border-color: #0367A6;">My Event</a>
+                @endif
+
                 <a href="{{ route('profile.show') }}" class="d-flex align-items-center">
                     <img src="https://ui-avatars.com/api/?name={{ Auth::user()->first_name }}+{{ Auth::user()->last_name }}&background=0367A6&color=fff" 
                         alt="Profile" class="rounded-circle" width="35" height="35">

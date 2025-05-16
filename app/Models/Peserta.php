@@ -53,7 +53,11 @@ class Peserta extends Model
     public function bergabung()
     {
         return $this->hasOne(Bergabung::class, 'peserta_id');
+    }    
+
+    public function pendaftar()
+    {
+        return $this->hasOne(Pendaftar::class, 'peserta_id');
     }
-    
 
 }

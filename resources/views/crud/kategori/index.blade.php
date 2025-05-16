@@ -1,6 +1,5 @@
-@extends('layouts.app')
+@extends('layouts.apk')
 
-@include('layouts.navbar')
 
 @section('content')
 <div class="container">
@@ -14,7 +13,7 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>#</th>
+                <th>No</th>
                 <th>Nama Kategori</th>
                 <th>Aksi</th>
             </tr>
@@ -38,5 +37,4 @@
     </table>
 </div>
 
-@include('layouts.footer')
 @endsection
