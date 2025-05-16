@@ -10,12 +10,12 @@ class KategoriController extends Controller
     public function index()
     {
         $kategorislomba = KategoriLomba::all();
-        return view('crud.kategori.index', compact('kategorislomba'));
+        return view('admin.crud.kategori.index', compact('kategorislomba'));
     }
 
     public function create()
     {
-        return view('crud.kategori.create');
+        return view('admin.crud.kategori.create');
     }
 
     public function store(Request $request)
@@ -33,13 +33,13 @@ class KategoriController extends Controller
 
     public function show(KategoriLomba $kategori)
     {
-        return view('crud.kategori.show', compact('kategori'));
+        return view('admin.crud.kategori.show', compact('kategori'));
     }
 
     public function edit($id)
     {
         $kategori = KategoriLomba::findOrFail($id);
-        return view('crud.kategori.edit', compact('kategori'));
+        return view('admin.crud.kategori.edit', compact('kategori'));
     }
 
     public function update(Request $request, KategoriLomba $kategori)

@@ -13,13 +13,13 @@ class SubKategoriController extends Controller
     public function index()
     {
         $subkategoris = SubKategori::with('kategori')->get();
-        return view('crud.subkategori.index', compact('subkategoris'));
+        return view('admin.crud.subkategori.index', compact('subkategoris'));
     }
 
     public function create()
     {
         $kategoris = KategoriLomba::all();
-        return view('crud.subkategori.create', compact('kategoris'));
+        return view('admin.crud.subkategori.create', compact('kategoris'));
     }
 
     public function store(Request $request)
@@ -53,14 +53,14 @@ class SubKategoriController extends Controller
 
     public function show(SubKategori $subkategori)
     {
-        return view('crud.subkategori.show', compact('subkategori'));
+        return view('admin.crud.subkategori.show', compact('subkategori'));
     }
 
     public function edit($id)
     {
         $subKategori = SubKategori::findOrFail($id);
         $kategoris = KategoriLomba::all();
-        return view('crud.subkategori.edit', compact('subKategori', 'kategoris'));
+        return view('admin.crud.subkategori.edit', compact('subKategori', 'kategoris'));
     }
 
     public function update(Request $request, SubKategori $subkategori)

@@ -10,11 +10,11 @@ class JuriController extends Controller
 {
     public function index()
     {
-        return view('crud.juri.index');
+        return view('admin.crud.juri.index');
     }
 
     public function create()
     {
-        return view('crud.juri.create');
+        return view('admin.crud.juri.create');
     }
 }
