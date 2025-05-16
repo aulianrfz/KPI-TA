@@ -37,7 +37,7 @@ class DashboardAdminController extends Controller
                 ];
             });
 
-        return view('admin.dashboard', [
+        return view('admin.dashboard.home', [
             'totalPeserta' => $totalPeserta,
             'individuCount' => $individuCount,
             'timCount' => $timCount,

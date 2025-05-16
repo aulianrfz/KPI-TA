@@ -23,6 +23,6 @@ class EventController extends Controller
             })
             ->get();
     
-        return view('my-event.list', compact('pendaftarList'));
+        return view('user.my-event.list', compact('pendaftarList'));
     }
 }

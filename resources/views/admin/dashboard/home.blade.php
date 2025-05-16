@@ -1,4 +1,4 @@
-@extends('layouts.apK')
+@extends('layouts.apk')
 
 @section('content')
 <div class="container py-4">
@@ -36,14 +36,6 @@
                 <div class="col-6">
                     <div class="card shadow-sm border-0 rounded-4 text-center py-3 h-100">
                         <div class="card-body">
-                            <h6 class="text-secondary mb-2">Total Peserta</h6>
-                            <h3 class="fw-bold">{{ $totalPeserta }}</h3>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <div class="card shadow-sm border-0 rounded-4 text-center py-3 h-100">
-                        <div class="card-body">
                             <h6 class="text-secondary mb-2">Tim</h6>
                             <h3 class="fw-bold">{{ $timCount }}</h3>
                         </div>
@@ -65,21 +57,30 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-12">
-                    <div class="card shadow-sm border-0 rounded-4 text-center py-3 h-200">
+                <div class="col-6">
+                    <div class="card shadow-sm border-0 rounded-4 text-center py-3 h-100">
                         <div class="card-body">
                             <h6 class="text-secondary mb-2">Peserta Belum Hadir</h6>
                             <h3 class="fw-bold text-danger">{{ $belumDaftarUlang }}</h3>
                         </div>
                     </div>
                 </div>
-                <div class="text-center mb-4">
-                    <button class="btn btn-primary px-4 py-2 fw-semibold">
-                        <i class="bi bi-upc-scan me-2"></i> SCAN QR ATTENDANCE
-                    </button>
+                <div class="col-612">
+                    <div class="card shadow-sm border-0 rounded-4 text-center py-3 h-100">
+                        <div class="card-body">
+                            <h6 class="text-secondary mb-2">Total Peserta</h6>
+                            <h3 class="fw-bold">{{ $totalPeserta }}</h3>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="text-center mb-4">
+        <button class="btn btn-primary px-4 py-2 fw-semibold">
+            <i class="bi bi-upc-scan me-2"></i> SCAN QR ATTENDANCE
+        </button>
     </div>
 
     <div class="d-flex flex-column flex-md-row justify-content-between mb-3">
@@ -95,35 +96,43 @@
             <table class="table table-hover table-bordered mb-0">
                 <thead class="table-light text-center align-middle">
                     <tr>
-                        <th style="width: 50px;">No</th>
-                        <th>Nama</th>
-                        <th>Email</th>
-                        <th>Status Hadir</th>
-                        <th style="width: 100px;">Aksi</th>
+                        <th>No</th>
+                        <th>Nama Peserta</th>
+                        <th>Institusi</th>
+                        <th>No Handphone</th>
+                        <th>NIM</th>
+                        <th>Hari/Tanggal</th>
+                        <th>QR Code</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
-                <tbody class="align-middle">
-                    @forelse($pendaftarList as $index => $pendaftar)
+                <tbody class="align-middle text-center">
+                    @forelse ($pendaftarList as $index => $pendaftar)
                         <tr>
-                            <td class="text-center">{{ $loop->iteration }}</td>
-                            <td>{{ $pendaftar->nama }}</td>
-                            <td>{{ $pendaftar->email }}</td>
-                            <td class="text-center">
+                            <td>{{ str_pad($index + $pendaftarList->firstItem(), 2, '0', STR_PAD_LEFT) }}</td>
+                            <td>{{ $pendaftar->peserta->nama_peserta ?? '-' }}</td>
+                            <td>{{ $pendaftar->peserta->institusi ?? '-' }}</td>
+                            <td>{{ $pendaftar->peserta->no_hp ?? '-' }}</td>
+                            <td>{{ $pendaftar->peserta->nim ?? '-' }}</td>
+                            <td>{{ \Carbon\Carbon::parse($pendaftar->created_at)->translatedFormat('l, d-m-Y') }}</td>
+                            <td>
+                                @if ($pendaftar->url_qrCode)
+                                    <a href="{{url($pendaftar->url_qrCode) }}" target="_blank" class="btn btn-sm btn-outline-primary">Lihat</a>
+                                @else
+                                    <span class="text-muted">Tidak Ada</span>
+                                @endif
+                            </td>
+                            <td>
                                 @if ($pendaftar->status_hadir ?? false)
                                     <span class="badge bg-success">Hadir</span>
                                 @else
                                     <span class="badge bg-danger">Belum Hadir</span>
                                 @endif
                             </td>
-                            <td class="text-center">
-                                <a href="{{ route('peserta.detail', $pendaftar->id) }}" class="btn btn-sm btn-outline-primary">
-                                    Lihat
-                                </a>
-                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center py-4">Belum ada data peserta.</td>
+                            <td colspan="8" class="text-center py-4">Belum ada data peserta.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -142,7 +151,11 @@
         const now = new Date();
         const clock = document.getElementById('clock');
         if (clock) {
-            const time = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const time = now.toLocaleTimeString('id-ID', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
             clock.innerText = time;
         }
     }

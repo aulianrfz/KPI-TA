@@ -94,7 +94,7 @@ class PembayaranController extends Controller
 
         $transaksi = $query->orderBy('waktu', 'desc')->get();
 
-        return view('admin.transaksi', compact('transaksi'));
+        return view('admin.transaksi.konfirmasi_pembayaran', compact('transaksi'));
     }
 
     
@@ -127,7 +127,7 @@ class PembayaranController extends Controller
                 $updateData['url_qrCode'] = $qrUrl;
                 $email = $pendaftar->peserta->email ?? null;
                 if ($email) {
-                    Mail::send('emails.qr_code', [
+                    Mail::send('admin.emails.qr_code', [
                         'nama' => $pendaftar->peserta->nama_peserta,
                         'nama_lomba' => $pendaftar->subkategori->nama_lomba
                     ], function ($message) use ($email, $filename) {

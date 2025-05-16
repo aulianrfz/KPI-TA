@@ -43,7 +43,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/dashboard', function () {
-        return view(auth()->user()->role === 'admin' ? 'admin.dashboard' : 'landing');
+        return view(auth()->user()->role === 'admin' ? 'admin.dashboard.home' : 'landing');
     })->name('dashboard');
 
     Route::middleware([RoleMiddleware::class . ':user'])->group(function () {
@@ -77,6 +77,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/dashboard-admin/mark-present', [DashboardAdminController::class, 'markAsPresent'])->name('admin.markPresent');
 
     
+    //transaksi
         Route::get('/admin/transaksi', [PembayaranController::class, 'show'])->name('transaksi.index');
         Route::post('/admin/transaksi/bulk-action', [PembayaranController::class, 'bulkAction'])->name('admin.transaksi.bulkAction');
         Route::get('/verifikasi/qr/{id}', [PembayaranController::class, 'showQr'])->name('verifikasi.qr');
