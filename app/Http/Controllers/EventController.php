@@ -37,12 +37,12 @@ class EventController extends Controller
         return redirect()->route('listevent.index')->with('success', 'Event berhasil ditambahkan.');
     }
 
-    public function edit(Event $event)
+    public function edit(Event $listevent)
     {
-        return view('admin.crud.event.edit', compact('event'));
+        return view('admin.crud.event.edit', compact('listevent'));
     }
 
-    public function update(Request $request, Event $event)
+    public function update(Request $request, Event $listevent)
     {
         $validated = $request->validate([
             'nama_event' => 'required|string|max:255',
@@ -56,14 +56,14 @@ class EventController extends Controller
             $validated['foto'] = $request->file('foto')->store('event_foto', 'public');
         }
 
-        $event->update($validated);
+        $listevent->update($validated);
 
         return redirect()->route('listevent.index')->with('success', 'Event berhasil diperbarui.');
     }
 
-    public function destroy(Event $event)
+    public function destroy(Event $listevent)
     {
-        $event->delete();
+        $listevent->delete();
         return back()->with('success', 'Event berhasil dihapus.');
     }
 }
