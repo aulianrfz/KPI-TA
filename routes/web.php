@@ -24,7 +24,7 @@ use App\Http\Middleware\RoleMiddleware;
 
 
 // Guest only
-Route::get('/', [DashboardUserController::class, 'index']);
+Route::get('/', [DashboardUserController::class, 'index'])->name('landing');
 Route::get('/events/{id}', [DashboardUserController::class, 'show'])->name('event.show');
 
 Route::middleware('guest')->group(function () {

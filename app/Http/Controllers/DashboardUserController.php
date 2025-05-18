@@ -6,27 +6,20 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\SubKategori;
 use App\Models\KategoriLomba;
+use App\Models\Event;
 
 
 class DashboardUserController extends Controller
 {
     public function index()
     {
-        return view('landing');
+        $events = Event::all();
+        return view('landing', compact('events'));
     }
 
     public function show($id)
     {
-        $events = [
-            1 => ['title' => 'Kompetisi Pariwisata Indonesia', 'location' => 'Bandung (POLBAN), Indonesia', 'description' => 'Deskripsi acara yang lebih lengkap...'],
-        ];
-
-        if (!isset($events[$id])) {
-            abort(404);
-        }
-
-        $event = $events[$id];
-        
+        $event = Event::findOrFail($id);
         return view('event.show', compact('event'));
     }
 

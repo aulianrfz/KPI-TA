@@ -28,17 +28,19 @@
         <a href="#" class="text-primary">View All ></a>
     </div>
     <div class="row">
+    @foreach($events ?? [] as $event)
         <div class="col-md-4 mb-4" data-aos="zoom-in-down" data-aos-delay="100">
-            <a href="{{ route('event.show', 1) }}">
+            <a href="{{ route('event.show', $event->id) }}">
                 <div class="card shadow-sm h-100 hover-shadow">
-                    <img src="{{ asset('images/event.jpeg') }}" class="card-img-top" style="height: 180px; object-fit: cover;" alt="Event Image">
+                    <img src="{{ $event->foto ? asset('storage/' . $event->foto) : asset('images/event.jpeg') }}" class="card-img-top" style="height: 180px; object-fit: cover;" alt="Event Image">
                     <div class="card-body">
-                        <h6 class="card-title fw-bold">Kompetisi Pariwisata Indonesia</h6>
-                        <p class="card-text text-muted"><small>Dipusatkan di Bandung (POLBAN), Indonesia</small></p>
+                        <h6 class="card-title fw-bold">{{ $event->nama_event }}</h6>
+                        <p class="card-text text-muted"><small>{{ $event->penyelenggara }}</small></p>
                     </div>
                 </div>
             </a>
         </div>
+        @endforeach
     </div>
 </div>
 

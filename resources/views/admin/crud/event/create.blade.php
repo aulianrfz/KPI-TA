@@ -23,8 +23,8 @@
         </div>
 
         <div class="mb-3">
-            <label for="tahun" class="form-label">Tahun</label>
-            <input type="number" name="tahun" class="form-control" required>
+            <label for="tanggal" class="form-label">Dilaksanakan Pada Tanggal</label>
+            <input type="date" name="tanggal" class="form-control" required>
         </div>
 
         <div class="mb-3">

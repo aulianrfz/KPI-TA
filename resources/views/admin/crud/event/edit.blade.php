@@ -24,8 +24,8 @@
         </div>
 
         <div class="mb-3">
-            <label for="tahun" class="form-label">Tahun</label>
-            <input type="number" name="tahun" class="form-control" value="{{ $listevent->tahun }}" required>
+            <label for="tanggal" class="form-label">Dilaksanakan Pada Tanggal</label>
+            <input type="date" name="tanggal" class="form-control" value="{{ $listevent->tanggal }}" required>
         </div>
 
         <div class="mb-3">

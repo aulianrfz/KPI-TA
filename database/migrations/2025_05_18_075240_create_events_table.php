@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('nama_event');
             $table->string('penyelenggara');
             $table->text('deskripsi');
-            $table->year('tahun');
+            $table->date('tanggal');
             $table->string('foto');
             $table->timestamps();
         });

@@ -15,7 +15,7 @@ class Event extends Model
         'nama_event',
         'penyelenggara',
         'deskripsi',
-        'tahun',
+        'tanggal',
         'foto',
     ];
 }

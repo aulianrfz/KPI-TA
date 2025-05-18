@@ -24,7 +24,7 @@ class EventController extends Controller
             'nama_event' => 'required|string|max:255',
             'penyelenggara' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
-            'tahun' => 'required|digits:4|integer',
+            'tanggal' => 'required|Date',
             'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
@@ -48,7 +48,7 @@ class EventController extends Controller
             'nama_event' => 'required|string|max:255',
             'penyelenggara' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
-            'tahun' => 'required|digits:4|integer',
+            'tanggal' => 'required|Date',
             'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
