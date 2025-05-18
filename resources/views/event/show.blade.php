@@ -5,10 +5,10 @@
 @include('layouts.navbar')
 
 <div class="container mt-5">
-    <div class="d-flex align-items-center mb-3">
+    <!-- <div class="d-flex align-items-center mb-3">
         <a href="{{ url('/dashboard') }}" class="me-2"><i class="bi bi-arrow-left"></i></a>
         <h4 class="fw-bold mb-0">HOME</h4>
-    </div>
+    </div> -->
     <div class="row align-items-center">
         <div class="col-md-6">
             <img src="{{ asset('images/event.jpeg') }}" class="img-fluid rounded-4" style="object-fit: cover; width: 100%; height: 300px;" alt="Event Image">

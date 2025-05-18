@@ -5,7 +5,8 @@
 @include('layouts.navbar')
 
 <div class="container mt-4">
-    <h4 class="mb-4">Form Pendaftaran Individu</h4>
+    <h2 class="text-bold">Registration</h2>
+    <hr style="width: 230px; border-top: 2px solid #000;">
 
     <form action="{{ route('pendaftaran.store') }}" method="POST" enctype="multipart/form-data" id="pendaftaranForm">
         @csrf

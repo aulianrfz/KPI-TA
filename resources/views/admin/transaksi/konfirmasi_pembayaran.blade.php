@@ -10,17 +10,22 @@
 
     <div class="row align-items-start mb-3">
         <div class="col-md-6">
-            <form method="GET" action="{{ route('transaksi.index') }}" class="d-flex">
+            <!-- <form method="GET" action="{{ route('transaksi.index') }}" class="d-flex">
                 <input type="text" name="search" class="form-control me-2" placeholder="Cari nama peserta / institusi" value="{{ request('search') }}">
                 <button class="btn btn-primary" type="submit">Cari</button>
+            </form> -->
+            <form method="GET" action="{{ route('transaksi.index') }}" class="d-flex">
+                <div class="input-group w-75 w-md-50">
+                    <input type="text" class="form-control border" placeholder="Cari nama peserta / institusi" style="border-color: #0367A6;" value="{{ request('search') }}">
+                    <span class="input-group-text" style="background-color: #0367A6; color: white;"><i class="bi bi-search"></i></span>
+                </div>
             </form>
         </div>
-
         <div class="col-md-6 text-end">
             <form method="POST" action="{{ route('admin.transaksi.bulkAction') }}" id="bulk-action-form">
                 @csrf
-                <button type="submit" name="action" value="approve" class="btn btn-success me-1">Setujui</button>
-                <button type="submit" name="action" value="reject" class="btn btn-danger">Tolak</button>
+                <button type="submit" name="action" value="approve" style="background-color: #C7F5EE; color: #00B69B;"class="btn btn-success me-1">Setujui</button>
+                <button type="submit" name="action" value="reject" style="background-color: #FFD6D7; color: #FF1C20;" class="btn btn-danger">Tolak</button> 
             </form>
         </div>
     </div>

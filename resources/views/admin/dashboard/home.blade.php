@@ -84,11 +84,16 @@
     </div>
 
     <div class="d-flex flex-column flex-md-row justify-content-between mb-3">
-        <input type="text" class="form-control mb-2 mb-md-0 w-100 w-md-50 rounded-3" placeholder="Search for something">
         <div class="d-flex">
-            <button class="btn btn-outline-success me-2" title="Export Excel"><i class="bi bi-file-earmark-excel"></i></button>
-            <button class="btn btn-outline-secondary">Filter by</button>
+            <form method="GET" action="{{ route('transaksi.index') }}" class="d-flex">
+                <div class="input-group w-400 w-md-50">
+                    <input type="text" class="form-control border" placeholder="Cari nama peserta / institusi" style="border-color: #0367A6;" value="{{ request('search') }}">
+                    <span class="input-group-text" style="background-color: #0367A6; color: white;"><i class="bi bi-search"></i></span>
+                </div>
+            </form>
         </div>
+        <!-- <button class="btn btn-outline-success" title="Export Excel"><i class="bi bi-file-earmark-excel"></i></button> -->
+        <button class="btn btn-outline-secondary">Filter by</button>
     </div>
 
     <div class="card shadow-sm border-0 rounded-4">

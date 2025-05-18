@@ -103,26 +103,46 @@
                 <form action="{{ route('pembayaran.upload', $peserta->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="mb-3">
-                        <label for="bukti" class="form-label fw-semibold">Unggah Bukti Pembayaran</label>
-                        <input type="file" name="bukti" id="bukti" class="form-control" required>
+                        <label for="bukti" class="form-label fw-semibold">Upload Bukti Pembayaran</label>
+                        <p class="text-muted" style="font-size: 14px;">File bukti pembayaran maksimal 2MB (.jpg, .png, .pdf)</p>
+                        <div class="mb-3 text-center">
+                            <label for="bukti_pembayaran" class="form-label d-block">
+                                <i class="bi bi-cloud-upload" style="font-size: 48px; color: #007bff;"></i>
+                            </label>
+                            <input type="file" name="bukti" id="bukti" class="form-control" required>
+                        </div>
                         @error('bukti')
                             <div class="text-danger mt-1">{{ $message }}</div>
                         @enderror
+                        <div class="mb-3">
+                            <label for="bank" class="form-label">Bank</label>
+                            <input type="text" class="form-control" id="bank" name="bank" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="nama_pengirim" class="form-label">Nama Pengirim (Opsional)</label>
+                            <input type="text" class="form-control" id="nama_pengirim" name="nama_pengirim">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="catatan" class="form-label">Catatan (Opsional)</label>
+                            <textarea class="form-control" id="catatan" name="catatan" rows="2"></textarea>
+                        </div>
                     </div>
 
-                    <div class="text-end">
-                        <button type="submit" class="btn btn-success px-4">Upload</button>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-success px-4">Submit</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
-    <div class="text-center mt-4">
+    <!-- <div class="text-center mt-4">
         <a href="{{ route('pembayaran.bayar', $peserta->id) }}" class="btn text-white px-5 py-2" style="background-color: #2CC384;">
             Selanjutnya
         </a>
-    </div>
+    </div> -->
 </div>
 
 @include('layouts.footer')

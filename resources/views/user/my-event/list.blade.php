@@ -22,7 +22,7 @@
         </div>
 
         <div class="col-md-10 px-4 pb-4">
-            <h4 class="fw-bold mt-4 mb-4">Sub Kategori yang Kamu Ikuti</h4>
+            <h4 class="fw-bold mt-4 mb-4">My Event</h4>
             <div class="row">
             @forelse ($pendaftarList as $pendaftar)
                 @php

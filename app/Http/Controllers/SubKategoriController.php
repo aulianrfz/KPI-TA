@@ -10,11 +10,21 @@ use Illuminate\Support\Facades\Log;
 
 class SubKategoriController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $subkategoris = SubKategori::with('kategori')->get();
-        return view('admin.crud.subkategori.index', compact('subkategoris'));
+        $kategoriId = $request->kategori_id;
+
+        $subkategoris = SubKategori::with('kategori')
+            ->when($kategoriId, function ($query, $kategoriId) {
+                return $query->where('kategori_id', $kategoriId);
+            })
+            ->paginate(10)
+            ->appends(['kategori_id' => $kategoriId]);
+
+        return view('admin.crud.subkategori.index', compact('subkategoris', 'kategoriId'));
     }
+
+
 
     public function create()
     {

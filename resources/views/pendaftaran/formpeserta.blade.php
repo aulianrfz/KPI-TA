@@ -5,7 +5,8 @@
 @include('layouts.navbar')
 
 <div class="container">
-    <h2 class="text-center">Registration</h2>
+    <h2 class="text-bold">Registration</h2>
+    <hr style="width: 230px; border-top: 2px solid #000;">
     <h4 class="text-center">{{ $subKategori->nama_subKategori }}</h4>
 
     <form action="{{ route('pendaftaran.store') }}" method="POST" enctype="multipart/form-data">

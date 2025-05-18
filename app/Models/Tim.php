@@ -15,9 +15,11 @@ class Tim extends Model
         'nama_tim',
     ];
 
-    public function peserta()
-    {
-        return $this->belongsTo(Peserta::class, 'id_peserta');
-    }
+public function peserta()
+{
+    return $this->belongsToMany(Peserta::class, 'bergabung', 'tim_id', 'peserta_id')
+                ->withPivot('posisi');
+}
+
 
 }

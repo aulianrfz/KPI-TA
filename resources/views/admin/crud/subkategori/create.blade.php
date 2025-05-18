@@ -1,6 +1,4 @@
-@extends('layouts.app')
-
-@include('layouts.navbar')
+@extends('layouts.apk')
 
 @section('content')
 <div class="container">
