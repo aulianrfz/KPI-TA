@@ -3,7 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ImportExcelController;
 use App\Http\Controllers\PenjadwalanController;
+use App\Http\Controllers\MyEventController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\ProvinsiController;
+use App\Http\Controllers\InstitusiController;
 use App\Http\Controllers\SubKategoriController;
 use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\AuthController;
@@ -50,17 +53,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/event/{eventId}', [DashboardUserController::class, 'showEvent'])->name('event.list');
         Route::get('/event/list/{kategori_id}', [DashboardUserController::class, 'showCategory'])->name('event.showCategory');
         Route::get('/event/detail/{id}', [DashboardUserController::class, 'showDetail'])->name('event.detail');
-        Route::resource('subkategori', SubKategoriController::class);
 
         // Pendaftaran
         Route::get('/pendaftaran/{id_subkategori}', [PendaftaranController::class, 'showForm'])->name('pendaftaran.form');
         Route::post('/pendaftaran/store', [PendaftaranController::class, 'store'])->name('pendaftaran.store');
 
-        // // pembayaran
-        // Route::get('/my-event', [DashboardUserController::class, 'index'])->name('events.index');
-
         // dashboard myevent
-        Route::get('/my-event', [EventController::class, 'index'])->name('events.index');
+        Route::get('/my-event', [MyEventController::class, 'index'])->name('events.list');
         // pembayaran
         Route::get('/pembayaran', [PembayaranController::class, 'index'])->name('pembayaran.index');
         Route::get('/pembayaran/bayar/{id}', [PembayaranController::class, 'bayar'])->name('pembayaran.bayar');
@@ -70,9 +69,14 @@ Route::middleware('auth')->group(function () {
 
     // ADMIN ROUTES
     Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
+        Route::resource('listevent', EventController::class);
         Route::resource( 'kategori', KategoriController::class);
         Route::resource('subkategori', SubKategoriController::class);
         Route::resource('juri', JuriController::class);
+        Route::resource('provinsi', ProvinsiController::class);
+        Route::resource('institusi', InstitusiController::class);
+
+
         Route::get('/dashboardadmin', [DashboardAdminController::class, 'index'])->name('admin.dashboard');
         Route::post('/dashboard-admin/mark-present', [DashboardAdminController::class, 'markAsPresent'])->name('admin.markPresent');
 

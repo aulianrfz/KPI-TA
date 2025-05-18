@@ -7,7 +7,7 @@
         <div class="col-md-2 d-none d-md-block bg-light border-end p-3">
             <ul class="nav flex-column mt-4">
                 <li class="nav-item mb-3">
-                    <a href="{{ route('events.index') }}" class="nav-link text-dark">
+                    <a href="{{ route('events.list') }}" class="nav-link text-dark">
                         <i class="bi bi-person-circle me-2"></i> My Categories
                     </a>
                 </li>

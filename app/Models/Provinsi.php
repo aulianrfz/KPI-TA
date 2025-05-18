@@ -9,6 +9,9 @@ class Provinsi extends Model
 {
     protected $table = 'provinsi';
 
+    protected $fillable = [
+        'nama_provinsi',
+    ];
     public function peserta()
     {
         return $this->hasMany(Peserta::class);

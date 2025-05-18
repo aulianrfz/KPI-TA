@@ -60,10 +60,10 @@
                 <li><a href="{{ url('/kategori') }}" class="nav-link {{ request()->is('kategori') ? 'active' : 'text-dark' }}"><i class="bi bi-tags"></i> Kategori</a></li>
                 <li><a href="#" class="nav-link text-dark"><i class="bi bi-calendar-event"></i> Penjadwalan</a></li>
                 <li><a href="#" class="nav-link text-dark"><i class="bi bi-ui-checks"></i> Kuisioner</a></li>
-                <li><a href="#" class="nav-link text-dark"><i class="bi bi-people"></i> Juri</a></li>
+                <li><a href="{{ url('/provinsi') }}" class="nav-link text-dark"><i class="bi bi-people"></i> Juri</a></li>
                 <li><a href="#" class="nav-link text-dark"><i class="bi bi-geo-alt"></i> Venue</a></li>
-                <li><a href="#" class="nav-link text-dark"><i class="bi bi-award"></i> Sertifikat</a></li>
-                <li><a href="#" class="nav-link text-dark"><i class="bi bi-upload"></i> Pengajuan</a></li>
+                <li><a href="{{ url('/institusi') }}" class="nav-link text-dark"><i class="bi bi-award"></i> Sertifikat</a></li>
+                <li><a href="{{ url('/listevent') }}" class="nav-link text-dark"><i class="bi bi-upload"></i> Pengajuan</a></li>
             </ul>
         </div>
         @yield('content')

@@ -29,7 +29,7 @@
             @auth
                 @if(Auth::user()->role === 'user')
                     <a href="{{ route('dashboard') }}" class="btn btn-outline-primary me-2" style="border-color: #0367A6;">Home</a>
-                    <a href="{{ route('events.index') }}" class="btn btn-primary me-3" style="background-color: #0367A6; border-color: #0367A6;">My Event</a>
+                    <a href="{{ route('events.list') }}" class="btn btn-primary me-3" style="background-color: #0367A6; border-color: #0367A6;">My Event</a>
                 @endif
 
                 <a href="{{ route('profile.show') }}" class="d-flex align-items-center">
