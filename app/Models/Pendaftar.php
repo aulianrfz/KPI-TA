@@ -12,15 +12,15 @@ class Pendaftar extends Model
     protected $table = 'pendaftar';
 
     protected $fillable = [
-        'sub_kategori_id', 
+        'mata_lomba_id',
         'peserta_id',
         'url_qrCode',
         'status',
     ];
 
-    public function subKategori()
+    public function mataLomba()
     {
-        return $this->belongsTo(SubKategori::class, 'sub_kategori_id');
+        return $this->belongsTo(MataLomba::class, 'mata_lomba_id');
     }
 
     public function peserta()

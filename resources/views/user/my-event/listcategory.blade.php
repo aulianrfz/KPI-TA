@@ -44,8 +44,8 @@
                             <tbody>
                                 @forelse ($pendaftarList as $item)
                                     <tr>
-                                        <td>{{ optional($item->subKategori)->nama_lomba ?? '-' }}</td>
-                                        <td>{{ optional($item->subKategori)->jenis_lomba ?? '-' }}</td>
+                                        <td>{{ optional($item->mataLomba)->nama_lomba ?? '-' }}</td>
+                                        <td>{{ optional($item->mataLomba)->jenis_lomba ?? '-' }}</td>
                                         <td>
                                             @php
                                                 $status = strtolower($item->status);

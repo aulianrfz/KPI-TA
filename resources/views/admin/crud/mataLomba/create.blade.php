@@ -14,7 +14,7 @@
         </div>
     @endif
 
-    <form action="{{ route('subkategori.store') }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('mataLomba.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         <div class="form-group">
@@ -27,7 +27,7 @@
         </div>
 
         <div class="form-group">
-            <label for="nama_lomba">Nama SubKategori</label>
+            <label for="nama_lomba">Nama mataLomba</label>
             <input type="text" name="nama_lomba" id="nama_lomba" class="form-control" required>
         </div>
 
@@ -76,7 +76,7 @@
         </div>
 
         <button type="submit" class="btn btn-success mt-3">Simpan</button>
-        <a href="{{ route('subkategori.index') }}" class="btn btn-secondary mt-3">Batal</a>
+        <a href="{{ route('mataLomba.index') }}" class="btn btn-secondary mt-3">Batal</a>
     </form>
 </div>
 

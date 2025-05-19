@@ -1,6 +1,6 @@
 <div class="card mb-4">
     <div class="card-body">
-        <input type="hidden" name="id_subkategori" value="{{ $subKategori->id }}">
+        <input type="hidden" name="id_mataLomba" value="{{ $mataLomba->id }}">
 
         <div class="row mb-3">
             <div class="col-md-6">

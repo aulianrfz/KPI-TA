@@ -7,7 +7,7 @@
 <div class="container mt-5">
     <div class="row gx-4 align-items-center">
         <div class="col-md-6 mb-4 mb-md-0">
-            <img src="{{ $event->foto ? asset('storage/' . $event->foto) : asset('images/event.jpeg') }}" 
+            <img src="{{ $events->foto ? asset('storage/' . $events->foto) : asset('images/event.jpeg') }}" 
                 class="img-fluid rounded-4"
                 style="object-fit: cover; width: 140%;"
                 alt="Event Image">
@@ -15,21 +15,21 @@
         <div class="col-md-5">
             <div class="card shadow-sm rounded-4 mb-4">
                 <div class="card-body text-center p-4">
-                    <h5 class="fw-bold mb-5">{{ $event->nama_event }}</h5>
+                    <h5 class="fw-bold mb-5">{{ $events->nama_event }}</h5>
                     <div class="d-flex align-items-center mb-3">
                         <i class="bi bi-geo-alt-fill text-primary me-2"></i>
-                        <small>{{ $event->penyelenggara }}</small>
+                        <small>{{ $events->penyelenggara }}</small>
                     </div>
                     <div class="d-flex align-items-center mb-3">
                         <i class="bi bi-calendar-date text-primary me-2"></i>
-                        <small>{{ $event->tanggal }}</small>
+                        <small>{{ $events->tanggal }}</small>
                     </div>
                 </div>
             </div>
             <div class="card shadow-sm rounded-4">
                 <div class="card-body text-center p-">
                     @auth
-                        <a href="{{ route('event.list', $event->id) }}" 
+                        <a href="{{ route('event.list', $events->id) }}" 
                             class="btn btn-success w-100" 
                             style="background-color: #2CC384; border-color: #2CC384; height: 50px;">
                             Daftar Sekarang
@@ -45,8 +45,8 @@
     </div>
 
     <div class="mt-5">
-        <h5 class="fw-semibold mb-3">Tentang {{ $event->nama_event }}</h5>
-        <p>{{ $event->deskripsi }}</p>
+        <h5 class="fw-semibold mb-3">Tentang {{ $events->nama_event }}</h5>
+        <p>{{ $events->deskripsi }}</p>
     </div>
 </div>
 

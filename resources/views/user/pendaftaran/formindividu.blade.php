@@ -15,7 +15,7 @@
             <div class="card-body">
 
                 <div class="row mb-3">
-                <input type="hidden" name="id_subkategori" value="{{ $subKategori->id }}">
+                <input type="hidden" name="id_mataLomba" value="{{ $mataLomba->id }}">
                     <div class="col-md-6">
                         <label for="nama_peserta" class="form-label">Nama</label>
                         <input type="text" class="form-control" id="nama_peserta" name="peserta[0][nama_peserta]" required>

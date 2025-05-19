@@ -43,7 +43,7 @@
             @foreach ($events as $event)
                 <div class="col-md-4 mb-4">
                     <div class="card border-0 shadow-sm h-100">
-                        <img src="{{ asset('storage/' . $event->foto_kompetisi) }}" class="card-img-top" style="height: 180px; object-fit: cover;" alt="{{ $event->nama_subKategori }}">
+                        <img src="{{ asset('storage/' . $event->foto_kompetisi) }}" class="card-img-top" style="height: 180px; object-fit: cover;" alt="{{ $event->nama_mataLomba }}">
                         <div class="card-body text-center">
                             <h6 class="fw-bold">{{ $event->nama_lomba }}</h6>
                             <small class="text-muted">Rp. {{ number_format($event->biaya_pendaftaran, 2) }} / {{ $event->jurusan }}</small>

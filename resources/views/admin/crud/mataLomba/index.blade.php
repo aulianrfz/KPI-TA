@@ -4,14 +4,14 @@
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4 class="mb-0">Sub Kategori</h4>
-        <a href="{{ route('subkategori.create') }}" class="btn btn-primary">+ Tambah Data</a>
+        <a href="{{ route('mataLomba.create') }}" class="btn btn-primary">+ Tambah Data</a>
     </div>
 
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    <form method="GET" action="{{ route('subkategori.index') }}" class="mb-3">
+    <form method="GET" action="{{ route('mataLomba.index') }}" class="mb-3">
         <div class="input-group" style="max-width: 400px;">
             <select name="kategori_id" class="form-select">
                 <option value="">Semua Kategori</option>
@@ -25,7 +25,7 @@
                 <i class="fa fa-search"></i> Cari
             </button>
             @if(request('kategori_id'))
-                <a href="{{ route('subkategori.index') }}" class="btn btn-outline-danger">
+                <a href="{{ route('mataLomba.index') }}" class="btn btn-outline-danger">
                     <i class="fa fa-times"></i> Reset
                 </a>
             @endif
@@ -39,7 +39,7 @@
                 <tr>
                     <th>No</th>
                     <th>Nama Kategori</th>
-                    <th>Nama SubKategori</th>
+                    <th>Nama mataLomba</th>
                     <th>Jurusan</th>
                     <th>Maks Peserta</th>
                     <th>Biaya</th>
@@ -48,26 +48,26 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse($subkategoris as $index => $subkategori)
+                @forelse($mataLombas as $index => $mataLomba)
                 <tr>
-                    <td>{{ $subkategoris->firstItem() + $index }}</td>
-                    <td>{{ $subkategori->kategori->nama_kategori ?? '-' }}</td>
-                    <td>{{ $subkategori->nama_lomba }}</td>
-                    <td>{{ $subkategori->jurusan }}</td>
-                    <td>{{ $subkategori->maks_peserta }}</td>
-                    <td>Rp {{ number_format($subkategori->biaya_pendaftaran, 0, ',', '.') }}</td>
+                    <td>{{ $mataLombas->firstItem() + $index }}</td>
+                    <td>{{ $mataLomba->kategori->nama_kategori ?? '-' }}</td>
+                    <td>{{ $mataLomba->nama_lomba }}</td>
+                    <td>{{ $mataLomba->jurusan }}</td>
+                    <td>{{ $mataLomba->maks_peserta }}</td>
+                    <td>Rp {{ number_format($mataLomba->biaya_pendaftaran, 0, ',', '.') }}</td>
                     <td>
-                        @if($subkategori->foto_kompetisi)
-                            <img src="{{ asset('storage/' . $subkategori->foto_kompetisi) }}" width="70">
+                        @if($mataLomba->foto_kompetisi)
+                            <img src="{{ asset('storage/' . $mataLomba->foto_kompetisi) }}" width="70">
                         @else
                             -
                         @endif
                     </td>
                     <td>
-                        <a href="{{ route('subkategori.edit', $subkategori->id) }}" class="btn btn-sm btn-warning me-1" title="Edit">
+                        <a href="{{ route('mataLomba.edit', $mataLomba->id) }}" class="btn btn-sm btn-warning me-1" title="Edit">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <form action="{{ route('subkategori.destroy', $subkategori->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin hapus?')">
+                        <form action="{{ route('mataLomba.destroy', $mataLomba->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin hapus?')">
                             @csrf
                             @method('DELETE')
                             <button class="btn btn-sm btn-danger" title="Hapus">
@@ -86,7 +86,7 @@
     </div>
 
     <div class="d-flex justify-content-end">
-        {{ $subkategoris->withQueryString()->links() }}
+        {{ $mataLombas->withQueryString()->links() }}
     </div>
 </div>
 @endsection

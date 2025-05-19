@@ -2,22 +2,31 @@
 
 @section('content')
 <div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div class="container">
-        <h1>Edit Kategori</h1>
+    <h1>Edit Kategori</h1>
 
-        <form action="{{ route('kategori.update', $kategori->id) }}" method="POST">
-            @csrf
-            @method('PUT')
-            <div class="form-group">
-                <label for="nama_kategori">Nama Kategori</label>
-                <input type="text" name="nama_kategori" class="form-control" value="{{ old('nama_kategori', $kategori->nama_kategori) }}" required>
-            </div>
-            <br>
-            <button type="submit" class="btn btn-success">Update</button>
-            <a href="{{ route('kategori.index') }}" class="btn btn-secondary">Kembali</a>
-        </form>
-    </div>        
+    <form action="{{ route('kategori.update', $kategori->id) }}" method="POST">
+        @csrf
+        @method('PUT')
+
+        <div class="mb-3">
+            <label for="event_id" class="form-label">Pilih Event</label>
+            <select name="event_id" id="event_id" class="form-select" required>
+                <option value="">-- Pilih Event --</option>
+                @foreach($events as $event)
+                    <option value="{{ $event->id }}" {{ $kategori->event_id == $event->id ? 'selected' : '' }}>
+                        {{ $event->nama_event }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="nama_kategori" class="form-label">Nama Kategori</label>
+            <input type="text" name="nama_kategori" class="form-control" value="{{ old('nama_kategori', $kategori->nama_kategori) }}" required>
+        </div>
+
+        <button type="submit" class="btn btn-success">Update</button>
+        <a href="{{ route('kategori.index') }}" class="btn btn-secondary">Kembali</a>
+    </form>
 </div>
-
 @endsection

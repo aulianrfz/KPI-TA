@@ -57,7 +57,7 @@
                         <div class="bg-white p-3 rounded shadow-sm">
                             <h6 class="fw-bold">Detail Pembayaran</h6>
                             <hr>
-                            <p><strong>Kategori:</strong> {{ $peserta->pendaftar?->subKategori?->nama_lomba ?? '-' }}</p>
+                            <p><strong>Kategori:</strong> {{ $peserta->pendaftar?->mataLomba?->nama_lomba ?? '-' }}</p>
 
                             @if ($peserta->tim->isNotEmpty())
                                 <p><strong>Tim:</strong> {{ $peserta->tim->first()->nama_tim }}</p>
@@ -68,7 +68,7 @@
                             <hr>
                             <div class="d-flex justify-content-between fw-bold">
                                 <span>Total</span>
-                                <span>Rp{{ number_format($subkategori->biaya_pendaftaran ?? 0, 0, ',', '.') }}</span>
+                                <span>Rp{{ number_format($mataLomba->biaya_pendaftaran ?? 0, 0, ',', '.') }}</span>
                             </div>
                         </div>
                         <div class="text-end mt-2">

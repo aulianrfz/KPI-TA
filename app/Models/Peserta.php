@@ -34,9 +34,9 @@ class Peserta extends Model
         return $this->belongsTo(Institusi::class);
     }
 
-    public function subKategori()
+    public function mataLomba()
     {
-        return $this->belongsTo(SubKategori::class);
+        return $this->belongsTo(MataLomba::class, 'mata_lomba_id');
     }
 
     public function user()
@@ -59,5 +59,6 @@ class Peserta extends Model
     {
         return $this->hasOne(Pendaftar::class, 'peserta_id');
     }
+
 
 }

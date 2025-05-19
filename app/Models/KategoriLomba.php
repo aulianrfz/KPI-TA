@@ -12,6 +12,13 @@ class KategoriLomba extends Model
     protected $table = 'kategori';
 
     protected $fillable = [
+        'event_id',
         'nama_kategori',
     ];
+
+    public function event()
+    {
+        return $this->belongsTo(Event::class);
+    }
+
 }

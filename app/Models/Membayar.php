@@ -33,9 +33,9 @@ class Membayar extends Model
         return $this->belongsTo(Pendaftar::class);
     }
 
-    public function subKategori()
+    public function mataLomba()
     {
-        return $this->belongsTo(SubKategori::class);
+        return $this->belongsTo(MataLomba::class);
     }
 
     public function invoice()

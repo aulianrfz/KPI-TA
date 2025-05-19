@@ -8,18 +8,32 @@
     </div>
 
     <form method="GET" action="{{ route('kategori.index') }}" class="mb-3">
-        <div class="input-group" style="max-width: 400px;">
-            <input type="text" name="search" class="form-control" placeholder="Cari nama kategori..." value="{{ request('search') }}">
-            <button class="btn btn-outline-secondary" type="submit">
-                <i class="fa fa-search"></i> Cari
-            </button>
-            @if(request('search'))
-                <a href="{{ route('kategori.index') }}" class="btn btn-outline-danger">
-                    <i class="fa fa-times"></i> Reset
-                </a>
+        <div class="row g-2 align-items-center">
+            <div class="col-auto">
+                <select name="event_id" class="form-select" onchange="this.form.submit()">
+                    <option value="">Semua Event</option>
+                    @foreach($events as $event)
+                        <option value="{{ $event->id }}" {{ request('event_id') == $event->id ? 'selected' : '' }}>
+                            {{ $event->nama_event }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-outline-secondary" type="submit">
+                    <i class="fa fa-search"></i> Cari
+                </button>
+            </div>
+            @if(request('search') || request('event_id'))
+                <div class="col-auto">
+                    <a href="{{ route('kategori.index') }}" class="btn btn-outline-danger">
+                        <i class="fa fa-times"></i> Reset
+                    </a>
+                </div>
             @endif
         </div>
     </form>
+
 
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
@@ -39,7 +53,7 @@
                         <tr>
                             <td class="align-middle text-center">{{ $kategori->nama_kategori }}</td>
                             <td class="align-middle text-center">
-                                <a href="{{ route('subkategori.index', ['kategori_id' => $kategori->id]) }}" class="btn btn-info btn-sm">
+                                <a href="{{ route('mataLomba.index', ['kategori_id' => $kategori->id]) }}" class="btn btn-info btn-sm">
                                     <i class="fa fa-eye"></i> Sub Kategori
                                 </a>
                                 <a href="{{ route('kategori.edit', $kategori->id) }}" class="btn btn-warning btn-sm">

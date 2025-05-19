@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\SubKategori;
+use App\Models\MataLomba;
 use App\Models\KategoriLomba;
 use App\Models\Event;
 
@@ -19,26 +19,26 @@ class DashboardUserController extends Controller
 
     public function show($id)
     {
-        $event = Event::findOrFail($id);
-        return view('event.show', compact('event'));
+        $events = Event::findOrFail($id);
+        return view('user.event.show', compact('events'));
     }
 
     public function showEvent($eventId)
     {
-        $event = KategoriLomba::findOrFail($eventId);
+        $events = KategoriLomba::findOrFail($eventId);
         $categories = KategoriLomba::all();
-        return view('event.list', compact('event', 'categories'));
+        return view('user.event.list', compact('events', 'categories'));
     }
 
     public function showCategory($kategori_id) 
     {
-        $events = SubKategori::where('kategori_id', $kategori_id)->get();
-        return view('event.general', compact('events'));
+        $events = MataLomba::where('kategori_id', $kategori_id)->get();
+        return view('user.event.general', compact('events'));
     }
 
     public function showDetail($id)
     {
-        $event = SubKategori::findOrFail($id);
-        return view('event.showdetail', compact('event'));
+        $events = MataLomba::findOrFail($id);
+        return view('user.event.showdetail', compact('events'));
     }
 }

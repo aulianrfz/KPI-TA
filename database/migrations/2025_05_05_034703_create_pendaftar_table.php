@@ -12,13 +12,13 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('pendaftar', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('sub_kategori_id');
+            $table->unsignedBigInteger('mata_lomba_id');
             $table->unsignedBigInteger('peserta_id');
             $table->string('url_qrCode',255)->nullable();
             $table->string('status', 25)->nullable();
             $table->timestamps();
 
-            $table->foreign('sub_kategori_id')->references('id')->on('sub_kategori')->onDelete('cascade');
+            $table->foreign('mata_lomba_id')->references('id')->on('mata_lomba')->onDelete('cascade');
             $table->foreign('peserta_id')->references('id')->on('peserta')->onDelete('cascade');
         });
     }

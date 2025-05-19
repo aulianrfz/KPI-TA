@@ -3,34 +3,42 @@
 namespace App\Http\Controllers;
 
 use App\Models\KategoriLomba;
+use App\Models\Event;
 use Illuminate\Http\Request;
 
 class KategoriController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->input('search');
+        $eventId = $request->event_id;
 
-        $kategorislomba = KategoriLomba::when($search, function ($query, $search) {
-            return $query->where('nama_kategori', 'like', "%{$search}%");
-        })->paginate(10);
+        $kategorislomba = KategoriLomba::with('event')
+            ->when($eventId, function ($query, $eventId) {
+                return $query->where('event_id', $eventId);
+            })
+            ->paginate(10)
+            ->appends(['event_id' => $eventId]);
 
-        return view('admin.crud.kategori.index', compact('kategorislomba', 'search'));
+        $events = Event::all();
+
+        return view('admin.crud.kategori.index', compact('kategorislomba', 'eventId', 'events'));
     }
-
 
     public function create()
     {
-        return view('admin.crud.kategori.create');
+        $events = Event::all();
+        return view('admin.crud.kategori.create', compact('events'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
+            'event_id' => 'required|exists:event,id',
             'nama_kategori' => 'required|string|max:255',
         ]);
 
         KategoriLomba::create([
+            'event_id' => $request->event_id,
             'nama_kategori' => $request->nama_kategori
         ]);
 
@@ -45,16 +53,19 @@ class KategoriController extends Controller
     public function edit($id)
     {
         $kategori = KategoriLomba::findOrFail($id);
-        return view('admin.crud.kategori.edit', compact('kategori'));
+        $events = Event::all();
+        return view('admin.crud.kategori.edit', compact('kategori', 'events'));
     }
 
     public function update(Request $request, KategoriLomba $kategori)
     {
         $request->validate([
+            'event_id' => 'required|exists:event,id',
             'nama_kategori' => 'required|string|max:255',
         ]);
 
         $kategori->update([
+            'event_id' => $request->event_id,
             'nama_kategori' => $request->nama_kategori
         ]);
 

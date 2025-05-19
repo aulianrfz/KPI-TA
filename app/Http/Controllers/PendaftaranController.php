@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use App\Models\SubKategori;
+use App\Models\MataLomba;
 use App\Models\Provinsi;
 use App\Models\Institusi;
 use App\Models\Peserta;
@@ -16,21 +16,21 @@ use App\Models\Tim;
 
 class PendaftaranController extends Controller
 {
-    public function showForm($id_subkategori)
+    public function showForm($id_mataLomba)
     {
-        $subKategori = SubKategori::findOrFail($id_subkategori);
+        $mataLomba = MataLomba::findOrFail($id_mataLomba);
         $provinsi = Provinsi::all();
         $institusi = Institusi::all();
 
-        $maksPeserta = $subKategori->maks_peserta;
+        $maksPeserta = $mataLomba->maks_peserta;
 
-        return view('pendaftaran.formpeserta', compact('subKategori', 'provinsi', 'institusi', 'maksPeserta'));
+        return view('user.pendaftaran.formpeserta', compact('mataLomba', 'provinsi', 'institusi', 'maksPeserta'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'id_subkategori' => 'required|exists:sub_kategori,id',
+            'id_mataLomba' => 'required|exists:mata_lomba,id',
             'peserta.*.nama_peserta' => 'required',
             'peserta.*.nim' => 'required',
             'peserta.*.email' => 'required|email',
@@ -38,8 +38,8 @@ class PendaftaranController extends Controller
             'peserta.*.signature' => 'nullable|string',
         ]);
 
-        $subKategori = SubKategori::findOrFail($request->id_subkategori);
-        $jenisPeserta = $subKategori->maks_peserta == 1 ? 'Individu' : 'Kelompok';
+        $mataLomba = MataLomba::findOrFail($request->id_mataLomba);
+        $jenisPeserta = $mataLomba->maks_peserta == 1 ? 'Individu' : 'Kelompok';
 
         $tim = null;
         if ($jenisPeserta === 'Kelompok') {
@@ -93,7 +93,7 @@ class PendaftaranController extends Controller
             }
 
             Pendaftar::create([
-                'sub_kategori_id' => $request->id_subkategori,
+                'mata_lomba_id' => $request->id_mataLomba,
                 'peserta_id' => $peserta->id,
                 'url_qrCode' => null,
                 'status' => 'Pending',
@@ -104,11 +104,11 @@ class PendaftaranController extends Controller
             }
         }
 
-        return view('pendaftaran.berhasil')->with('success', 'Pendaftaran berhasil!');
+        return view('user.pendaftaran.berhasil')->with('success', 'Pendaftaran berhasil!');
     }
 
     public function sukses()
     {
-        return view('pendaftaran.berhasil');
+        return view('user.pendaftaran.berhasil');
     }
 }

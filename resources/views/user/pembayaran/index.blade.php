@@ -42,9 +42,9 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            @forelse ($pendaftar as $item)
+                            @forelse ($peserta as $item)
                                 <tr>
-                                    <td>{{ optional($item->subKategori)->nama_lomba ?? '-' }}</td>
+                                    <td>{{ optional($item->pendaftar)->mataLomba->nama_lomba ?? '-' }}</td>
                                     <td>{{ $item->id }}</td>
                                     <td>
                                         @php

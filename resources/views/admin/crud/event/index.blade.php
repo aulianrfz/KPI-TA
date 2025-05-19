@@ -17,7 +17,7 @@
                 <th>No</th>
                 <th>Nama Event</th>
                 <th>Penyelenggara</th>
-                <th>Tahun</th>
+                <th>Mulai Dilaksanakan Pada Tanggal</th>
                 <th>Foto</th>
                 <th>Aksi</th>
             </tr>
@@ -28,7 +28,7 @@
                 <td>{{ $events->firstItem() + $index }}</td>
                 <td>{{ $event->nama_event }}</td>
                 <td>{{ $event->penyelenggara }}</td>
-                <td>{{ $event->tahun }}</td>
+                <td>{{ $event->tanggal }}</td>
                 <td>
                     @if($event->foto)
                         <img src="{{ asset('storage/' . $event->foto) }}" width="80">

@@ -8,30 +8,21 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    <div class="row align-items-start mb-3">
-        <div class="col-md-6">
-            <!-- <form method="GET" action="{{ route('transaksi.index') }}" class="d-flex">
-                <input type="text" name="search" class="form-control me-2" placeholder="Cari nama peserta / institusi" value="{{ request('search') }}">
-                <button class="btn btn-primary" type="submit">Cari</button>
-            </form> -->
-            <form method="GET" action="{{ route('transaksi.index') }}" class="d-flex">
-                <div class="input-group w-75 w-md-50">
-                    <input type="text" class="form-control border" placeholder="Cari nama peserta / institusi" style="border-color: #0367A6;" value="{{ request('search') }}">
+    <form method="POST" action="{{ route('admin.transaksi.bulkAction') }}" id="bulk-action-form">
+        @csrf
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="input-group w-100">
+                    <input type="text" name="search" class="form-control border" placeholder="Cari nama peserta / institusi" style="border-color: #0367A6;" value="{{ request('search') }}">
                     <span class="input-group-text" style="background-color: #0367A6; color: white;"><i class="bi bi-search"></i></span>
                 </div>
-            </form>
+            </div>
+            <div class="col-md-6 text-end">
+                <button type="submit" name="action" value="approve" style="background-color: #C7F5EE; color: #00B69B;" class="btn btn-success me-1">Setujui</button>
+                <button type="submit" name="action" value="reject" style="background-color: #FFD6D7; color: #FF1C20;" class="btn btn-danger">Tolak</button>
+            </div>
         </div>
-        <div class="col-md-6 text-end">
-            <form method="POST" action="{{ route('admin.transaksi.bulkAction') }}" id="bulk-action-form">
-                @csrf
-                <button type="submit" name="action" value="approve" style="background-color: #C7F5EE; color: #00B69B;"class="btn btn-success me-1">Setujui</button>
-                <button type="submit" name="action" value="reject" style="background-color: #FFD6D7; color: #FF1C20;" class="btn btn-danger">Tolak</button> 
-            </form>
-        </div>
-    </div>
 
-    <form method="POST" action="{{ route('admin.transaksi.bulkAction') }}" id="table-form">
-        @csrf
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
@@ -46,34 +37,35 @@
                 </tr>
             </thead>
             <tbody>
-            @forelse($transaksi as $item)
-                <tr>
-                    <td><input type="checkbox" name="ids[]" form="bulk-action-form" value="{{ $item->id }}"></td>
-                    <td>{{ $item->peserta->nama_peserta ?? '-' }}</td>
-                    <td>{{ $item->invoice->jabatan ?? '-' }}</td>
-                    <td>{{ $item->peserta->institusi ?? '-' }}</td>
-                    <td>{{ $item->peserta->subKategori->nama_lomba ?? '-' }}</td>
-                    <td>
-                        @if($item->bukti_pembayaran)
-                            <a href="{{ asset('storage/' . $item->bukti_pembayaran) }}" target="_blank">Lihat File</a>
-                        @else
-                            Tidak ada
-                        @endif
-                    </td>
-                    <td>
-                        @if($item->status == 'Disetujui')
-                            <span class="badge bg-success">Disetujui</span>
-                        @elseif($item->status == 'Ditolak')
-                            <span class="badge bg-danger">Ditolak</span>
-                        @else
-                            <span class="badge bg-secondary">Pending</span>
-                        @endif
-                    </td>
-                    <td>{{ $item->waktu }}</td>
-                </tr>
-            @empty
-                <tr><td colspan="8" class="text-center">Belum ada pembayaran.</td></tr>
-            @endforelse
+                @forelse($transaksi as $item)
+                    <tr>
+                        <td><input type="checkbox" name="ids[]" value="{{ $item->id }}"></td>
+                        <td>{{ $item->peserta->nama_peserta ?? '-' }}</td>
+                        <td>{{ $item->invoice->jabatan ?? '-' }}</td>
+                        <td>{{ $item->peserta->institusi ?? '-' }}</td>
+                        <td>{{ $item->peserta->mataLomba->nama_lomba ?? '-' }}</td>
+                        <td>
+                            @if($item->bukti_pembayaran)
+                                <a href="{{ asset('storage/' . $item->bukti_pembayaran) }}" target="_blank">Lihat File</a>
+                            @else
+                                Tidak ada
+                            @endif
+                        </td>
+                        <td>
+                            @php $status = $item->peserta->pendaftar->status ?? 'Pending'; @endphp
+                            @if($status === 'Disetujui')
+                                <span class="badge bg-success">Disetujui</span>
+                            @elseif($status === 'Ditolak')
+                                <span class="badge bg-danger">Ditolak</span>
+                            @else
+                                <span class="badge bg-secondary">Pending</span>
+                            @endif
+                        </td>
+                        <td>{{ $item->waktu }}</td>
+                    </tr>
+                @empty
+                    <tr><td colspan="8" class="text-center">Belum ada pembayaran.</td></tr>
+                @endforelse
             </tbody>
         </table>
     </form>
@@ -81,10 +73,8 @@
 
 <script>
     document.getElementById('select-all').onclick = function() {
-        var checkboxes = document.querySelectorAll('input[name="ids[]"]');
-        for (var checkbox of checkboxes) {
-            checkbox.checked = this.checked;
-        }
+        let checkboxes = document.querySelectorAll('input[name="ids[]"]');
+        checkboxes.forEach(cb => cb.checked = this.checked);
     }
 </script>
 @endsection

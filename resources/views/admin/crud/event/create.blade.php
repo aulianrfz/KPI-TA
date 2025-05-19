@@ -23,7 +23,7 @@
         </div>
 
         <div class="mb-3">
-            <label for="tanggal" class="form-label">Dilaksanakan Pada Tanggal</label>
+            <label for="tanggal" class="form-label">Mulai Dilaksanakan Pada Tanggal</label>
             <input type="date" name="tanggal" class="form-control" required>
         </div>
 

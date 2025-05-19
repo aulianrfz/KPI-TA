@@ -10,12 +10,17 @@ class Bergabung extends Pivot
 
     protected $fillable = [
         'peserta_id',
+        'tim_id',
         'posisi',
     ];
 
     public function peserta()
     {
-        return $this->belongsToMany(Peserta::class, 'bergabung', 'bergabung_id', 'peserta_id');
+        return $this->belongsTo(Peserta::class, 'peserta_id');
     }
 
+    public function tim()
+    {
+        return $this->belongsTo(Tim::class, 'tim_id');
+    }
 }
