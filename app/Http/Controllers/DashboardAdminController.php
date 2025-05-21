@@ -55,8 +55,11 @@ class DashboardAdminController extends Controller
         ]);
 
         $pendaftar = Pendaftar::find($request->pendaftar_id);
-        $pendaftar->status = 'Hadir';
-        $pendaftar->save();
+
+        if ($pendaftar->status !== 'Hadir') {
+            $pendaftar->status = 'Hadir';
+            $pendaftar->save();
+        }
 
         return response()->json(['success' => true, 'message' => 'Status kehadiran diperbarui.']);
     }

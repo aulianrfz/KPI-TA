@@ -12,7 +12,7 @@ use App\Mail\QrCodeMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
-
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Writer\PngWriter;
 use Endroid\QrCode\Encoding\Encoding;
@@ -103,28 +103,51 @@ class PembayaranController extends Controller
         return view('admin.transaksi.konfirmasi_pembayaran', compact('transaksi'));
     }
 
-    public function bulkAction(Request $request)
-    {
-        $ids = $request->input('ids');
-        $action = $request->input('action');
+public function bulkAction(Request $request)
+{
+    $ids = $request->input('ids');
+    $action = $request->input('action');
 
-        if (!$ids || !in_array($action, ['approve', 'reject'])) {
-            return redirect()->back()->with('error', 'Tidak ada data yang dipilih atau aksi tidak valid.');
+    if (!$ids || !in_array($action, ['approve', 'reject'])) {
+        return redirect()->back()->with('error', 'Tidak ada data yang dipilih atau aksi tidak valid.');
+    }
+
+    $status = $action === 'approve' ? 'Disetujui' : 'Ditolak';
+
+    foreach ($ids as $membayarId) {
+        $membayar = Membayar::with('peserta.pendaftar', 'peserta.tim.peserta', 'peserta.mataLomba.kategori')->find($membayarId);
+        if (!$membayar || !$membayar->peserta) {
+            continue;
         }
 
-        $status = $action === 'approve' ? 'Disetujui' : 'Ditolak';
+        $peserta = $membayar->peserta;
 
-        foreach ($ids as $membayarId) {
-            $membayar = Membayar::with('peserta.pendaftar', 'peserta.mataLomba', 'peserta.mataLomba.kategori')->find($membayarId);
+        // Cek apakah peserta ini anggota tim dan dia ketua
+        $isKelompok = $peserta->tim->isNotEmpty();
+        $isKetua = $peserta->tim->first()?->pivot->posisi === 'Ketua';
 
-            if (!$membayar || !$membayar->peserta || !$membayar->peserta->pendaftar) {
-                continue;
-            }
+        // Ambil semua peserta dalam satu tim (kalau kelompok dan ketua)
+        $semuaPeserta = collect();
 
-            $pendaftar = $membayar->peserta->pendaftar;
+        if ($isKelompok && $isKetua) {
+            // Ambil semua peserta dari tim tersebut
+            $tim = $peserta->tim->first();
+            $semuaPeserta = $tim->peserta;
+        } else {
+            // Peserta individu atau bukan ketua
+            $semuaPeserta = collect([$peserta]);
+        }
+
+        // Loop tiap peserta untuk update status & generate QR code
+        foreach ($semuaPeserta as $p) {
+            $pendaftar = $p->pendaftar;
+
+            if (!$pendaftar) continue;
+
             $updateData = ['status' => $status];
 
             if ($action === 'approve') {
+                // Buat QR code
                 $qrContent = route('verifikasi.qr', ['id' => $pendaftar->id]);
                 $result = Builder::create()
                     ->writer(new PngWriter())
@@ -135,17 +158,17 @@ class PembayaranController extends Controller
                     ->build();
 
                 $filename = 'qr_codes/pendaftar_' . $pendaftar->id . '.png';
-
                 Storage::disk('public')->put($filename, $result->getString());
                 $qrPath = storage_path('app/public/' . $filename);
+
                 $updateData['url_qrCode'] = asset('storage/' . $filename);
 
-                $email = $membayar->peserta->email ?? null;
-                if ($email) {
-                    Mail::to($email)->send(new QrCodeMail(
-                        $membayar->peserta->nama_peserta,
-                        $membayar->peserta->pendaftar->mataLomba->nama_lomba ?? '-',
-                        $membayar->peserta->pendaftar->mataLomba->kategori->nama_kategori ?? '-',
+                // Kirim email (jika ada email)
+                if ($p->email) {
+                    Mail::to($p->email)->send(new QrCodeMail(
+                        $p->nama_peserta,
+                        $pendaftar->mataLomba->nama_lomba ?? '-',
+                        $pendaftar->mataLomba->kategori->nama_kategori ?? '-',
                         $qrPath
                     ));
                 }
@@ -153,7 +176,8 @@ class PembayaranController extends Controller
 
             $pendaftar->update($updateData);
         }
-
-        return redirect()->back()->with('success', 'Status pendaftar berhasil diperbarui.');
     }
+
+    return redirect()->back()->with('success', 'Status pendaftar berhasil diperbarui.');
+}
 }
