@@ -16,6 +16,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Writer\PngWriter;
 use Endroid\QrCode\Encoding\Encoding;
+use Illuminate\Support\Facades\Validator;
 use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
 
 class PembayaranController extends Controller
@@ -49,13 +50,20 @@ class PembayaranController extends Controller
         ));
     }
 
-    public function uploadBuktiPembayaran(Request $request, $id)
+    public function uploadBuktiPembayaran(Request $request, $id) 
     {
         $request->validate([
             'bukti' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
 
-        $peserta = Peserta::findOrFail($id);
+        $peserta = Peserta::with('mataLomba')->findOrFail($id);
+        $mataLomba = $peserta->pendaftar->mataLomba;
+
+        if (!$mataLomba) {
+            return back()->with('error', 'Mata lomba tidak ditemukan.');
+        }
+
+        $biaya = $mataLomba->biaya_pendaftaran;
 
         $invoice = Membayar::where('peserta_id', $peserta->id)
                     ->whereNotNull('invoice_id')
@@ -65,7 +73,7 @@ class PembayaranController extends Controller
 
         if (!$invoice) {
             $invoice = Invoice::create([
-                'total_tagihan' => 0,
+                'total_tagihan' => $biaya,
                 'jabatan' => 'Tim ' . $peserta->nama,
             ]);
         }
@@ -83,9 +91,10 @@ class PembayaranController extends Controller
         return redirect()->route('pembayaran.index')->with('success', 'Bukti pembayaran berhasil diunggah.');
     }
 
+
     public function show(Request $request)
     {
-        $query = Membayar::with(['peserta.pendaftar', 'invoice', 'mataLomba'])
+        $query = Membayar::with(['peserta.pendaftar.mataLomba', 'invoice', 'mataLomba'])
             ->whereHas('peserta.pendaftar', function ($q) {
                 $q->whereNotIn('status', ['Disetujui', 'Ditolak']);
             });
@@ -98,86 +107,88 @@ class PembayaranController extends Controller
             });
         }
 
-        $transaksi = $query->orderBy('waktu', 'desc')->get();
+        $sortOrder = $request->input('sort', 'desc');
+        if (!in_array($sortOrder, ['asc', 'desc'])) {
+            $sortOrder = 'desc';
+        }
+
+        $query->orderBy('waktu', $sortOrder);
+
+        $transaksi = $query->paginate(10)->appends($request->query());
 
         return view('admin.transaksi.konfirmasi_pembayaran', compact('transaksi'));
     }
 
-public function bulkAction(Request $request)
-{
-    $ids = $request->input('ids');
-    $action = $request->input('action');
 
-    if (!$ids || !in_array($action, ['approve', 'reject'])) {
-        return redirect()->back()->with('error', 'Tidak ada data yang dipilih atau aksi tidak valid.');
-    }
+    //belom enkrip qr coode
+    public function bulkAction(Request $request)
+    {
+        $ids = $request->input('ids');
+        $action = $request->input('action');
 
-    $status = $action === 'approve' ? 'Disetujui' : 'Ditolak';
-
-    foreach ($ids as $membayarId) {
-        $membayar = Membayar::with('peserta.pendaftar', 'peserta.tim.peserta', 'peserta.mataLomba.kategori')->find($membayarId);
-        if (!$membayar || !$membayar->peserta) {
-            continue;
+        if (!$ids || !in_array($action, ['approve', 'reject'])) {
+            return redirect()->back()->with('error', 'Tidak ada data yang dipilih atau aksi tidak valid.');
         }
 
-        $peserta = $membayar->peserta;
+        $status = $action === 'approve' ? 'Disetujui' : 'Ditolak';
 
-        // Cek apakah peserta ini anggota tim dan dia ketua
-        $isKelompok = $peserta->tim->isNotEmpty();
-        $isKetua = $peserta->tim->first()?->pivot->posisi === 'Ketua';
-
-        // Ambil semua peserta dalam satu tim (kalau kelompok dan ketua)
-        $semuaPeserta = collect();
-
-        if ($isKelompok && $isKetua) {
-            // Ambil semua peserta dari tim tersebut
-            $tim = $peserta->tim->first();
-            $semuaPeserta = $tim->peserta;
-        } else {
-            // Peserta individu atau bukan ketua
-            $semuaPeserta = collect([$peserta]);
-        }
-
-        // Loop tiap peserta untuk update status & generate QR code
-        foreach ($semuaPeserta as $p) {
-            $pendaftar = $p->pendaftar;
-
-            if (!$pendaftar) continue;
-
-            $updateData = ['status' => $status];
-
-            if ($action === 'approve') {
-                // Buat QR code
-                $qrContent = route('verifikasi.qr', ['id' => $pendaftar->id]);
-                $result = Builder::create()
-                    ->writer(new PngWriter())
-                    ->data($qrContent)
-                    ->encoding(new Encoding('UTF-8'))
-                    ->size(300)
-                    ->margin(10)
-                    ->build();
-
-                $filename = 'qr_codes/pendaftar_' . $pendaftar->id . '.png';
-                Storage::disk('public')->put($filename, $result->getString());
-                $qrPath = storage_path('app/public/' . $filename);
-
-                $updateData['url_qrCode'] = asset('storage/' . $filename);
-
-                // Kirim email (jika ada email)
-                if ($p->email) {
-                    Mail::to($p->email)->send(new QrCodeMail(
-                        $p->nama_peserta,
-                        $pendaftar->mataLomba->nama_lomba ?? '-',
-                        $pendaftar->mataLomba->kategori->nama_kategori ?? '-',
-                        $qrPath
-                    ));
-                }
+        foreach ($ids as $membayarId) {
+            $membayar = Membayar::with('peserta.pendaftar', 'peserta.tim.peserta', 'peserta.mataLomba.kategori')->find($membayarId);
+            if (!$membayar || !$membayar->peserta) {
+                continue;
             }
 
-            $pendaftar->update($updateData);
-        }
-    }
+            $peserta = $membayar->peserta;
+            $isKelompok = $peserta->tim->isNotEmpty();
+            $isKetua = $peserta->tim->first()?->pivot->posisi === 'Ketua';
+            $semuaPeserta = collect();
 
-    return redirect()->back()->with('success', 'Status pendaftar berhasil diperbarui.');
-}
+            if ($isKelompok && $isKetua) {
+                $tim = $peserta->tim->first();
+                $semuaPeserta = $tim->peserta;
+            } else {
+                $semuaPeserta = collect([$peserta]);
+            }
+
+            foreach ($semuaPeserta as $p) {
+                $pendaftar = $p->pendaftar;
+
+                if (!$pendaftar) continue;
+
+                $updateData = ['status' => $status];
+
+                if ($action === 'approve') {
+                    $encryptedId = encrypt($pendaftar->id);
+                    $qrContent = route('verifikasi.qr', ['id' => $encryptedId]);
+
+                    $result = Builder::create()
+                        ->writer(new PngWriter())
+                        ->data($qrContent)
+                        ->encoding(new Encoding('UTF-8'))
+                        ->size(300)
+                        ->margin(10)
+                        ->build();
+
+                    $filename = 'qr_codes/pendaftar_' . $pendaftar->id . '.png';
+                    Storage::disk('public')->put($filename, $result->getString());
+                    $qrPath = storage_path('app/public/' . $filename);
+
+                    $updateData['url_qrCode'] = asset('storage/' . $filename);
+
+                    if ($p->email) {
+                        Mail::to($p->email)->send(new QrCodeMail(
+                            $p->nama_peserta,
+                            $pendaftar->mataLomba->nama_lomba ?? '-',
+                            $pendaftar->mataLomba->kategori->nama_kategori ?? '-',
+                            $qrPath
+                        ));
+                    }
+                }
+
+                $pendaftar->update($updateData);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Status pendaftar berhasil diperbarui.');
+    }
 }

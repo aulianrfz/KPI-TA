@@ -18,4 +18,9 @@ class Event extends Model
         'tanggal',
         'foto',
     ];
+
+    public function kategori()
+    {
+        return $this->hasMany(KategoriLomba::class);
+    }
 }

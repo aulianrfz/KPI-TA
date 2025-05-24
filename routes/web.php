@@ -80,14 +80,15 @@ Route::middleware('auth')->group(function () {
 
 
         Route::get('/dashboardadmin', [DashboardAdminController::class, 'index'])->name('admin.dashboard');
-        Route::post('/dashboard-admin/mark-present', [DashboardAdminController::class, 'markAsPresent'])->name('admin.markPresent');
+        Route::post('/admin/mark-present', [DashboardAdminController::class, 'markAsPresent'])->name('admin.markPresent');
+        Route::get('/admin/peserta/{id}/identitas', [DashboardAdminController::class, 'showIdentitas'])->name('admin.peserta.identitas');
+        Route::get('/verifikasi/qr/{id}', [DashboardAdminController::class, 'verifikasiQR'])->name('verifikasi.qr');
 
     
     //transaksi
         Route::get('/admin/transaksi', [PembayaranController::class, 'show'])->name('transaksi.index');
         Route::post('/admin/transaksi/bulk-action', [PembayaranController::class, 'bulkAction'])->name('admin.transaksi.bulkAction');
         Route::get('/verifikasi/qr/{id}', [PembayaranController::class, 'showQr'])->name('verifikasi.qr');
-
     });
 });
 

@@ -12,18 +12,23 @@ class MataLombaController extends Controller
 {
     public function index(Request $request)
     {
-        $kategoriId = $request->kategori_id;
+        $kategoriId = $request->input('kategori_id');
+        $search = $request->input('search');
 
-        $mataLombas = mataLomba::with('kategori')
-            ->when($kategoriId, function ($query, $kategoriId) {
-                return $query->where('kategori_id', $kategoriId);
-            })
-            ->paginate(10)
-            ->appends(['kategori_id' => $kategoriId]);
+        $query = mataLomba::with('kategori');
+
+        if ($kategoriId) {
+            $query->where('kategori_id', $kategoriId);
+        }
+
+        if ($search) {
+            $query->where('nama_lomba', 'like', '%' . $search . '%');
+        }
+
+        $mataLombas = $query->paginate(10)->appends($request->only(['kategori_id', 'search']));
 
         return view('admin.crud.mataLomba.index', compact('mataLombas', 'kategoriId'));
     }
-
 
 
     public function create()
@@ -58,7 +63,8 @@ class MataLombaController extends Controller
 
         mataLomba::create($data);
 
-        return redirect()->route('mataLomba.index')->with('success', 'Sub Kategori berhasil dibuat.');
+        return redirect()->route('mataLomba.index', ['kategori_id' => $data['kategori_id']])
+            ->with('success', 'Sub Kategori berhasil dibuat.');
     }
 
     public function show(mataLomba $mataLomba)
@@ -97,7 +103,8 @@ class MataLombaController extends Controller
 
         $mataLomba->update($data);
 
-        return redirect()->route('mataLomba.index')->with('success', 'Sub Kategori berhasil diperbarui.');
+        return redirect()->route('mataLomba.index', ['kategori_id' => $data['kategori_id']])
+            ->with('success', 'Sub Kategori berhasil dibuat.');
     }
 
     public function destroy(mataLomba $mataLomba)

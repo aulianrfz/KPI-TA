@@ -6,7 +6,7 @@
 
 <div class="container mt-4">
     <div class="d-flex align-items-center mb-3">
-        <a href="{{ route('event.show', 1) }}" class="me-2"><i class="bi bi-arrow-left"></i></a>
+        <a href="{{ route('event.show', $event->id) }}" class="me-2"><i class="bi bi-arrow-left"></i></a>
         <h5 class="mb-0">PILIHAN EVENTS</h5>
     </div>
 
@@ -16,15 +16,13 @@
         </div>
 
         <div class="col-md-8" data-aos="fade-left" data-aos-delay="100">
-            <h5 class="fw-bold">KOMPETISI PARIWISATA INDONESIA 14</h5>
+            <h5 class="fw-bold">{{ $event->nama_event }}</h5>
             <div class="d-flex align-items-center text-muted mb-3">
                 <i class="bi bi-geo-alt-fill me-2 text-primary"></i>
-                <small>Politeknik Negeri Bandung</small>
+                <small>{{ $event->lokasi ?? 'Lokasi tidak tersedia' }}</small>
             </div>
             <p style="text-align: justify;">
-                Kompetisi Pariwisata Indonesia (KPI) merupakan salah satu event kompetisi
-                pariwisata yang mulai bertaraf internasional yang diselenggarakan setiap tahunnya oleh
-                Program Studi D3 Usaha Perjalanan Wisata. Kopetisi ini telah dianakan sebanyak 14 kali.
+                {{ $event->deskripsi ?? 'Deskripsi event belum tersedia.' }}
             </p>
         </div>
     </div>

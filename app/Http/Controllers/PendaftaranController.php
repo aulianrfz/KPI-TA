@@ -27,6 +27,8 @@ class PendaftaranController extends Controller
         return view('user.pendaftaran.formpeserta', compact('mataLomba', 'provinsi', 'institusi', 'maksPeserta'));
     }
 
+
+    //belom handle gak boleh lebih dari 3 kali daftar dan ketua wajib dip[ilih sekali dan gak boleh lebih
     public function store(Request $request)
     {
         $request->validate([

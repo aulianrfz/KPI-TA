@@ -45,6 +45,23 @@
                 margin-left: 0;
             }
         }
+        .pagination .page-link {
+            font-size: 0.75rem; /* Lebih kecil */
+            padding: 0.3rem 0.6rem; /* Lebih kompak */
+        }
+
+        .pagination .page-item.disabled .page-link,
+        .pagination .page-item.active .page-link {
+            font-weight: 500;
+        }
+
+        @media (max-width: 576px) {
+            .pagination {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -80,4 +97,5 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

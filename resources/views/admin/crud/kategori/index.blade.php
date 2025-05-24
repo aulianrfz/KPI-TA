@@ -1,36 +1,27 @@
 @extends('layouts.apk')
 
 @section('content')
-<div class="container mt-4">
+<div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4>Data Kategori</h4>
         <a href="{{ route('kategori.create') }}" class="btn btn-primary">+ Tambah Kategori</a>
     </div>
 
+
     <form method="GET" action="{{ route('kategori.index') }}" class="mb-3">
-        <div class="row g-2 align-items-center">
-            <div class="col-auto">
-                <select name="event_id" class="form-select" onchange="this.form.submit()">
-                    <option value="">Semua Event</option>
-                    @foreach($events as $event)
-                        <option value="{{ $event->id }}" {{ request('event_id') == $event->id ? 'selected' : '' }}>
-                            {{ $event->nama_event }}
-                        </option>
-                    @endforeach
-                </select>
+        <div class="d-flex justify-content-start align-items-center gap-2 flex-wrap">
+            <div class="position-relative" style="width: 300px;">
+                <input
+                    type="text"
+                    name="search"
+                    class="form-control rounded-pill ps-4"
+                    placeholder="Cari berdasarkan nama kategori"
+                    value="{{ request('search') }}"
+                >
             </div>
-            <div class="col-auto">
-                <button class="btn btn-outline-secondary" type="submit">
-                    <i class="fa fa-search"></i> Cari
-                </button>
-            </div>
-            @if(request('search') || request('event_id'))
-                <div class="col-auto">
-                    <a href="{{ route('kategori.index') }}" class="btn btn-outline-danger">
-                        <i class="fa fa-times"></i> Reset
-                    </a>
-                </div>
-            @endif
+            <button type="submit" class="btn btn-success">
+            <i class="fa fa-search"></i>
+            </button>
         </div>
     </form>
 
@@ -53,17 +44,17 @@
                         <tr>
                             <td class="align-middle text-center">{{ $kategori->nama_kategori }}</td>
                             <td class="align-middle text-center">
-                                <a href="{{ route('mataLomba.index', ['kategori_id' => $kategori->id]) }}" class="btn btn-info btn-sm">
-                                    <i class="fa fa-eye"></i> Sub Kategori
-                                </a>
                                 <a href="{{ route('kategori.edit', $kategori->id) }}" class="btn btn-warning btn-sm">
-                                    <i class="fa fa-edit"></i> Edit
+                                    <i class="fa fa-edit"></i>
                                 </a>
                                 <form action="{{ route('kategori.destroy', $kategori->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin mau hapus?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Hapus</button>
+                                    <button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> </button>
                                 </form>
+                                <a href="{{ route('mataLomba.index', ['kategori_id' => $kategori->id]) }}" class="btn btn-info btn-sm">
+                                    <i class="fa fa-eye"></i> Sub Kategori
+                                </a>
                             </td>
                         </tr>
                     @empty
@@ -75,9 +66,20 @@
             </table>
         </div>
     </div>
-
-    <div class="mt-3">
-        {{ $kategorislomba->withQueryString()->links() }}
+    <div class="d-flex justify-content-end align-items-center mt-3 gap-2">
+        <span class="small text-muted mb-0">
+            Page {{ $kategorislomba->currentPage() }} of {{ $kategorislomba->lastPage() }}
+        </span>
+        @if ($kategorislomba->onFirstPage())
+            <span class="btn btn-sm btn-light disabled" style="pointer-events: none;">‹</span>
+        @else
+            <a href="{{ $kategorislomba->previousPageUrl() }}" class="btn btn-sm btn-outline-secondary">‹</a>
+        @endif
+        @if ($kategorislomba->hasMorePages())
+            <a href="{{ $kategorislomba->nextPageUrl() }}" class="btn btn-sm btn-outline-secondary">›</a>
+        @else
+            <span class="btn btn-sm btn-light disabled" style="pointer-events: none;">›</span>
+        @endif
     </div>
 </div>
 @endsection

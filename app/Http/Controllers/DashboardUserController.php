@@ -25,9 +25,10 @@ class DashboardUserController extends Controller
 
     public function showEvent($eventId)
     {
-        $events = KategoriLomba::findOrFail($eventId);
-        $categories = KategoriLomba::all();
-        return view('user.event.list', compact('events', 'categories'));
+        $event = Event::with('kategori')->findOrFail($eventId);
+        $categories = $event->kategori;
+
+        return view('user.event.list', compact('event', 'categories'));
     }
 
     public function showCategory($kategori_id) 

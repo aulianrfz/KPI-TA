@@ -7,9 +7,18 @@ use Illuminate\Http\Request;
 
 class InstitusiController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $institusis = Institusi::paginate(10);
+        $search = $request->input('search');
+
+        $query = Institusi::query();
+
+        if ($search) {
+            $query->where('nama_institusi', 'like', '%' . $search . '%');
+        }
+
+        $institusis = $query->paginate(10)->appends(['search' => $search]);
+
         return view('admin.crud.institusi.index', compact('institusis'));
     }
 

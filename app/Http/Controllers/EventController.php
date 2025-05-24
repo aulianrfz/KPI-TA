@@ -7,9 +7,18 @@ use Illuminate\Http\Request;
 
 class EventController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $events = Event::paginate(10);
+        $search = $request->input('search');
+
+        $query = Event::query();
+
+        if ($search) {
+            $query->where('nama_event', 'like', '%' . $search . '%');
+        }
+
+        $events = $query->paginate(10)->appends(['search' => $search]);
+
         return view('admin.crud.event.index', compact('events'));
     }
 

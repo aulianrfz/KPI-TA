@@ -81,9 +81,9 @@
     </div>
 
     <div class="d-flex flex-column flex-md-row justify-content-between mb-3">
-        <form method="GET" action="{{ route('transaksi.index') }}" class="d-flex">
+        <form method="GET" action="{{ route('admin.dashboard') }}" class="d-flex">
             <div class="input-group w-400 w-md-50">
-                <input type="text" name="search" class="form-control border" placeholder="Cari nama peserta / institusi" style="border-color: #0367A6;" value="{{ request('search') }}">
+                <input type="text" name="search" class="form-control border" placeholder="Cari peserta" style="border-color: #0367A6;" value="{{ request('search') }}">
                 <span class="input-group-text" style="background-color: #0367A6; color: white;"><i class="bi bi-search"></i></span>
             </div>
         </form>
@@ -115,11 +115,12 @@
                             <td>{{ $pendaftar->peserta->nim ?? '-' }}</td>
                             <td>{{ \Carbon\Carbon::parse($pendaftar->created_at)->translatedFormat('l, d-m-Y') }}</td>
                             <td>
-                                @if ($pendaftar->url_qrCode)
-                                    <a href="{{ url($pendaftar->url_qrCode) }}" target="_blank" class="btn btn-sm btn-outline-primary">Lihat</a>
+                                @if ($pendaftar->url_qrCode && $pendaftar->peserta)
+                                    <a href="{{ route('admin.peserta.identitas', ['id' => $pendaftar->peserta->id]) }}" class="btn btn-sm btn-outline-primary">Lihat</a>
                                 @else
                                     <span class="text-muted">Tidak Ada</span>
                                 @endif
+
                             </td>
                             <td>
                                 @if ($pendaftar->status === 'Hadir')
@@ -137,10 +138,21 @@
                 </tbody>
             </table>
         </div>
-    </div>
-
-    <div class="mt-3 d-flex justify-content-end">
-        {{ $pendaftarList->links() }}
+        <div class="d-flex justify-content-end align-items-center mt-3 gap-2">
+            <span class="small text-muted mb-0">
+                Page {{ $pendaftarList->currentPage() }} of {{ $pendaftarList->lastPage() }}
+            </span>
+            @if ($pendaftarList->onFirstPage())
+                <span class="btn btn-sm btn-light disabled" style="pointer-events: none;">‹</span>
+            @else
+                <a href="{{ $pendaftarList->previousPageUrl() }}" class="btn btn-sm btn-outline-secondary">‹</a>
+            @endif
+            @if ($pendaftarList->hasMorePages())
+                <a href="{{ $pendaftarList->nextPageUrl() }}" class="btn btn-sm btn-outline-secondary">›</a>
+            @else
+                <span class="btn btn-sm btn-light disabled" style="pointer-events: none;">›</span>
+            @endif
+        </div>
     </div>
 
 </div>
@@ -177,46 +189,75 @@
 </script>
 
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <script>
-    let html5QrcodeScanner;
+    let html5QrcodeScanner = null;
 
     function onScanSuccess(decodedText, decodedResult) {
-        const pendaftarId = decodedText.match(/\d+/)?.[0]; // ambil angka dari QR
+        // Contoh QR code berisi teks dengan angka ID peserta, ambil angka saja
+        const pendaftarId = decodedText.match(/\d+/)?.[0];
 
         if (!pendaftarId) {
             alert("QR tidak valid.");
             return;
         }
 
-        html5QrcodeScanner.clear().then(() => {
-            fetch('{{ route("admin.markPresent") }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({ pendaftar_id: pendaftarId })
-            })
-            .then(res => res.json())
-            .then(data => {
-                alert(data.message || "Berhasil ditandai hadir.");
-                location.reload();
-            })
-            .catch(err => {
-                alert("Gagal update status kehadiran.");
-                console.error(err);
-            });
+        // Stop scanner sementara untuk proses update
+        if (html5QrcodeScanner) {
+            html5QrcodeScanner.pause();
+        }
+
+        fetch('{{ route("admin.markPresent") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ pendaftar_id: pendaftarId })
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert(data.message || "Berhasil ditandai hadir.");
+            location.reload();
+        })
+        .catch(err => {
+            alert("Gagal update status kehadiran.");
+            console.error(err);
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.resume();
+            }
         });
     }
 
     const modal = document.getElementById('qrScanModal');
+
     modal.addEventListener('shown.bs.modal', () => {
-        html5QrcodeScanner = new Html5Qrcode("qr-reader");
+        if (!html5QrcodeScanner) {
+            html5QrcodeScanner = new Html5Qrcode("qr-reader");
+        }
+        console.log("Modal dibuka, mencoba akses kamera belakang...");
+
+        // Coba buka kamera belakang dulu
         html5QrcodeScanner.start(
-            { facingMode: "environment" },
+            { facingMode: { exact: "environment" } },
             { fps: 10, qrbox: 250 },
             onScanSuccess
-        );
+        ).then(() => {
+            console.log("Kamera environment berhasil dibuka.");
+        }).catch(err => {
+            console.warn("Kamera belakang tidak tersedia, mencoba kamera depan...", err);
+            // Jika kamera belakang gagal, coba kamera depan
+            html5QrcodeScanner.start(
+                { facingMode: "user" },
+                { fps: 10, qrbox: 250 },
+                onScanSuccess
+            ).then(() => {
+                console.log("Kamera depan berhasil dibuka.");
+            }).catch(error => {
+                console.error("Gagal membuka kamera depan:", error);
+                alert("Tidak dapat mengakses kamera. Periksa izin dan perangkat.");
+            });
+        });
     });
 
     modal.addEventListener('hidden.bs.modal', () => {
@@ -227,5 +268,6 @@
         }
     });
 </script>
+
 
 @endsection

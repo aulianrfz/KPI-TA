@@ -13,4 +13,9 @@ class Kehadiran extends Model
         'status'
     ];
 
+    public function pendaftar()
+    {
+        return $this->belongsTo(Pendaftar::class, 'pendaftar_id');
+    }
+
 }

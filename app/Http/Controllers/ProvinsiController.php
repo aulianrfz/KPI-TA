@@ -7,9 +7,18 @@ use Illuminate\Http\Request;
 
 class ProvinsiController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $provinsis = Provinsi::paginate(10);
+        $search = $request->input('search');
+
+        $query = Provinsi::query();
+
+        if ($search) {
+            $query->where('nama_provinsi', 'like', '%' . $search . '%');
+        }
+
+        $provinsis = $query->paginate(10)->appends(['search' => $search]);
+
         return view('admin.crud.provinsi.index', compact('provinsis'));
     }
 

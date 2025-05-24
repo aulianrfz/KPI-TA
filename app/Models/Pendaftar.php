@@ -28,4 +28,9 @@ class Pendaftar extends Model
         return $this->belongsTo(Peserta::class, 'peserta_id');
     }
 
+    public function kehadiran()
+    {
+        return $this->hasOne(Kehadiran::class, 'pendaftar_id');
+    }
+
 }

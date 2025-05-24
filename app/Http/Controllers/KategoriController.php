@@ -8,21 +8,21 @@ use Illuminate\Http\Request;
 
 class KategoriController extends Controller
 {
-    public function index(Request $request)
+   public function index(Request $request)
     {
-        $eventId = $request->event_id;
+        $search = $request->input('search');
 
-        $kategorislomba = KategoriLomba::with('event')
-            ->when($eventId, function ($query, $eventId) {
-                return $query->where('event_id', $eventId);
-            })
-            ->paginate(10)
-            ->appends(['event_id' => $eventId]);
+        $query = KategoriLomba::query();
 
-        $events = Event::all();
+        if ($search) {
+            $query->where('nama_kategori', 'like', '%' . $search . '%');
+        }
 
-        return view('admin.crud.kategori.index', compact('kategorislomba', 'eventId', 'events'));
+        $kategorislomba = $query->paginate(10)->appends(['search' => $search]);
+
+        return view('admin.crud.kategori.index', compact('kategorislomba'));
     }
+
 
     public function create()
     {
