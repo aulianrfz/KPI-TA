@@ -54,7 +54,7 @@ class PendaftaranController extends Controller
             ]);
 
             $invoice = Invoice::create([
-                'total_tagihan' => 50000 * count($request->peserta), // atau sesuai logika tarif
+                'total_tagihan' => $mataLomba->biaya_pendaftaran,
                 'jabatan' => 'Ketua / Tim'
             ]);
         }
@@ -106,7 +106,7 @@ class PendaftaranController extends Controller
             Pendaftar::create([
                 'mata_lomba_id' => $request->id_mataLomba,
                 'peserta_id' => $peserta->id,
-                'url_qrCode' => null,
+                'url_qrCode' => 0,
                 'status' => 'Pending',
             ]);
 
