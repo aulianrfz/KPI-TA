@@ -38,21 +38,22 @@
         <div class="tab-pane fade show active" id="invoice" role="tabpanel">
             <div class="p-4 rounded bg-light border">
                 <div class="row">
-                    <!-- Informasi Peserta -->
+                    <!-- Info peserta -->
                     <div class="col-md-8">
                         <h5 class="fw-bold mb-3">INVOICE</h5>
-                        <p class="mb-1"><strong>Nama:</strong> {{ $peserta->nama_peserta }}</p>
-
-                        @if ($peserta->tim->isNotEmpty())
-                            <p class="mb-1"><strong>Nama Tim:</strong> {{ $peserta->tim->first()->nama_tim }}</p>
+                        @if ($pesertaSatuInvoice->isNotEmpty())
+                            <h6>Anggota Tim:</h6>
+                            <ul>
+                                @foreach ($pesertaSatuInvoice as $anggota)
+                                    <li>{{ $anggota->nama_peserta }}</li>
+                                    <p class="mb-1"><strong>Institusi:</strong> {{ $peserta->institusi }}</p>
+                                    <p class="mb-1"><strong>Email:</strong> {{ $peserta->email }}</p>
+                                    <p class="mb-1"><strong>No HP:</strong> {{ $peserta->no_hp }}</p>
+                                @endforeach
+                            </ul>
                         @endif
-
-                        <p class="mb-1"><strong>Institusi:</strong> {{ $peserta->institusi }}</p>
-                        <p class="mb-1"><strong>Email:</strong> {{ $peserta->email }}</p>
-                        <p class="mb-1"><strong>No HP:</strong> {{ $peserta->no_hp }}</p>
                     </div>
-
-                    <!-- Detail Biaya -->
+                    <!-- Detail biaya -->
                     <div class="col-md-4">
                         <div class="bg-white p-3 rounded shadow-sm">
                             <h6 class="fw-bold">Detail Pembayaran</h6>

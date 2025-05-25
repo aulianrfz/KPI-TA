@@ -8,7 +8,7 @@ use App\Models\Peserta;
 use App\Models\Membayar;
 use App\Models\Invoice;
 use App\Mail\QrCodeMail;
-
+use Illuminate\Support\Facades\Abort;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -23,7 +23,7 @@ class PembayaranController extends Controller
 {
     public function index()
     {
-        $peserta = Peserta::with(['mataLomba.kategori.event', 'tim'])
+        $peserta = Peserta::with(['mataLomba.kategori.event','tim','membayar.invoice'])
             ->where('user_id', Auth::id())
             ->where(function ($query) {
                 $query->whereDoesntHave('tim')
@@ -35,18 +35,39 @@ class PembayaranController extends Controller
 
         return view('user.pembayaran.index', compact('peserta'));
     }
-
     public function bayar($id)
     {
-        $peserta = Peserta::with(['institusi', 'mataLomba.kategori', 'tim.peserta'])->findOrFail($id);
-        $tim = $peserta->tim->first();
-        $jumlah_peserta = $tim ? $tim->peserta->count() : 1;
+        $peserta = Peserta::with([
+            'mataLomba.kategori',
+            'tim.peserta',
+            'membayar.invoice'
+        ])->findOrFail($id);
 
+        $pembayaranPertama = $peserta->membayar->first();
+
+        if (!$pembayaranPertama || !$pembayaranPertama->invoice) {
+            abort(404, 'Invoice tidak ditemukan untuk peserta ini.');
+        }
+
+        $invoice = $pembayaranPertama->invoice;
+        $pesertaSatuInvoice = Peserta::whereHas('membayar', function ($query) use ($invoice) {
+            $query->where('invoice_id', $invoice->id);
+        })->with(['tim'])->get();
+
+        $tim = $peserta->tim->first();
+        $jumlah_peserta = $pesertaSatuInvoice->count();
         $batas_pembayaran = now()->addDays(3)->format('d M Y');
+
         $mataLomba = $peserta->mataLomba;
 
         return view('user.pembayaran.detail', compact(
-            'peserta', 'tim', 'jumlah_peserta', 'batas_pembayaran', 'mataLomba'
+            'peserta',
+            'tim',
+            'jumlah_peserta',
+            'batas_pembayaran',
+            'mataLomba',
+            'invoice',
+            'pesertaSatuInvoice'
         ));
     }
 

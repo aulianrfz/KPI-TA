@@ -45,7 +45,7 @@
                             @forelse ($peserta as $item)
                                 <tr>
                                     <td>{{ optional($item->pendaftar)->mataLomba->nama_lomba ?? '-' }}</td>
-                                    <td>{{ $item->id }}</td>
+                                    <td>{{ optional($item->membayar->first()?->invoice)->id ?? '-' }}</td>
                                     <td>
                                         @php
                                             $status = strtolower($item->status);

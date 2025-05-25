@@ -11,6 +11,8 @@ use App\Models\MataLomba;
 use App\Models\Provinsi;
 use App\Models\Institusi;
 use App\Models\Peserta;
+use App\Models\Invoice;
+use App\Models\Membayar;
 use App\Models\Pendaftar;
 use App\Models\Tim;
 
@@ -44,9 +46,16 @@ class PendaftaranController extends Controller
         $jenisPeserta = $mataLomba->maks_peserta == 1 ? 'Individu' : 'Kelompok';
 
         $tim = null;
+        $invoice = null;
+
         if ($jenisPeserta === 'Kelompok') {
             $tim = Tim::create([
                 'nama_tim' => $request->input('nama_tim'),
+            ]);
+
+            $invoice = Invoice::create([
+                'total_tagihan' => 50000 * count($request->peserta), // atau sesuai logika tarif
+                'jabatan' => 'Ketua / Tim'
             ]);
         }
 
@@ -104,10 +113,24 @@ class PendaftaranController extends Controller
             if ($tim) {
                 $tim->peserta()->attach($peserta->id, ['posisi' => $pesertaData['posisi'] ?? 'Anggota']);
             }
+
+            if ($jenisPeserta === 'Individu') {
+                $invoice = Invoice::create([
+                    'total_tagihan' => 50000,
+                    'jabatan' => 'Individu'
+                ]);
+            }
+
+            Membayar::create([
+                'peserta_id' => $peserta->id,
+                'invoice_id' => $invoice->id,
+                'bukti_pembayaran' => null,
+            ]);
         }
 
         return view('user.pendaftaran.berhasil')->with('success', 'Pendaftaran berhasil!');
     }
+
 
     public function sukses()
     {
