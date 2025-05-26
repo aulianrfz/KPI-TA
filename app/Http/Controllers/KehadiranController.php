@@ -9,6 +9,7 @@ use App\Models\Pendaftar;
 use App\Models\Peserta;
 use App\Models\Kehadiran;
 use App\Models\Bergabung;
+use App\Models\KategoriLomba;
 use App\Models\Tim;
 use Carbon\Carbon;
 
@@ -42,9 +43,9 @@ class KehadiranController extends Controller
 
     public function edit($id)
     {
-        $pendaftar = Pendaftar::with('peserta', 'mataLomba')->findOrFail($id);
-        $kategori = KategoriLomba::all();
-        return view('admin.kehadiran.edit', compact('pendaftar', 'kategori'));
+        $pendaftar = Pendaftar::with('peserta', 'mataLomba', 'kehadiran')->findOrFail($id);
+        $kehadiran = Kehadiran::all();
+        return view('admin.kehadiran.edit', compact('pendaftar', 'kehadiran'));
     }
 
     public function update(Request $request, $id)
