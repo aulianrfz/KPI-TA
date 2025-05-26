@@ -14,9 +14,9 @@ use App\Http\Controllers\DashboardUserController;
 use App\Http\Controllers\DashboardAdminController;
 use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\KehadiranController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\RoleMiddleware;
-
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -81,10 +81,14 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/dashboardadmin', [DashboardAdminController::class, 'index'])->name('admin.dashboard');
         Route::post('/admin/mark-present', [DashboardAdminController::class, 'markAsPresent'])->name('admin.markPresent');
-
         Route::get('/admin/peserta/{id}/identitas', [DashboardAdminController::class, 'showIdentitas'])->name('admin.peserta.identitas');
         Route::get('/verifikasi/qr/{id}', [DashboardAdminController::class, 'verifikasiQR'])->name('verifikasi.qr');
 
+        //kehairan
+        Route::get('/kehadiran', [KehadiranController::class, 'index'])->name('kehadiran.index');
+        Route::get('/kehadiran/{id}/qr', [KehadiranController::class, 'showQR'])->name('admin.qr.show');
+        Route::get('/kehadiran/{id}/edit', [KehadiranController::class, 'edit'])->name('pendaftar.edit');
+        Route::put('/kehadiran/{id}', [KehadiranController::class, 'update'])->name('pendaftar.update');
     
     //transaksi
         Route::get('/admin/transaksi', [PembayaranController::class, 'show'])->name('transaksi.index');
