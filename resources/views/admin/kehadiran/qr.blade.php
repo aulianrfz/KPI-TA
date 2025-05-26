@@ -1,18 +1,55 @@
 @extends('layouts.apk')
 
+@section('title', 'Lihat QR')
+
 @section('content')
-<div class="p-6">
-    <div class="bg-white rounded-xl p-6 shadow max-w-lg mx-auto text-center">
-        <h2 class="text-xl font-bold mb-4">QR Code Peserta</h2>
-        <div class="mb-4">
-            <p class="font-medium">{{ $pendaftar->peserta->nama_peserta }}</p>
-            <p class="text-sm text-gray-500">{{ $pendaftar->peserta->institusi }}</p>
-        </div>
-        <div class="flex justify-center">
-            <img src="{{ asset('storage/qrcode/'.$pendaftar->id.'.png') }}" alt="QR Code" class="w-60 h-60">
-        </div>
-        <div class="mt-4">
-            <a href="{{ route('kehadiran.index') }}" class="text-blue-600 hover:underline">← Kembali</a>
+<div class="container mt-5">
+        <div class="card-body-4">
+
+            <h4 class="fw-bold mb-4">Lihat QR</h4>
+
+            <div class="d-flex justify-content-center mb-4">
+                <img src="{{ asset('storage/qr_codes/pendaftar_' . $pendaftar->id . '.png') }}"
+                    alt="QR Code"
+                    class="img-fluid"
+                    style="max-width: 700px;">
+            </div>
+            <form action="{{ route('kehadiran.edit', $pendaftar->id) }}" method="POST">
+                @csrf
+                @method('PUT')
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Nama Peserta</label>
+                        <input type="text" class="form-control" value="{{ $pendaftar->peserta->nama_peserta ?? '-' }}" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Institusi</label>
+                        <input type="text" class="form-control" value="{{ $pendaftar->peserta->institusi ?? '-' }}" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" value="{{ $pendaftar->peserta->email ?? '-' }}" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Status QR Code</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="aktif" value="1" id="aktif" {{ $pendaftar->aktif ? 'checked' : '' }}>
+                            <label class="form-check-label" for="aktif">Aktif</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="aktif" value="0" id="tidak_aktif" {{ !$pendaftar->aktif ? 'checked' : '' }}>
+                            <label class="form-check-label" for="tidak_aktif">Tidak Aktif</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="{{ route('kehadiran.index') }}" class="btn btn-danger">Batal</a>
+                    <button type="submit" class="btn btn-success">Simpan</button>
+                </div>
+
+            </form>
         </div>
     </div>
 </div>

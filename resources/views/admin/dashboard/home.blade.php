@@ -92,7 +92,7 @@
 
     <div class="card shadow-sm border-0 rounded-4">
         <div class="card-body table-responsive p-0">
-            <table class="table table-hover table-bordered mb-0">
+            <table class="table table-hover mb-0" style="border-left: none; border-right: none;">
                 <thead class="table-light text-center align-middle">
                     <tr>
                         <th>No</th>
@@ -116,7 +116,7 @@
                             <td>{{ \Carbon\Carbon::parse($pendaftar->created_at)->translatedFormat('l, d-m-Y') }}</td>
                             <td>
                                 @if ($pendaftar->url_qrCode && $pendaftar->peserta)
-                                    <a href="{{ route('admin.peserta.identitas', ['id' => $pendaftar->peserta->id]) }}" class="btn btn-sm btn-outline-primary">Lihat</a>
+                                    <a href="{{ route('admin.peserta.identitas', ['id' => $pendaftar->peserta->id]) }}" class="btn btn-sm" style="background-color: #A6C9E5; color: #0064B6;">Lihat</a>
                                 @else
                                     <span class="text-muted">Tidak Ada</span>
                                 @endif
@@ -199,8 +199,7 @@
         const url = new URL(decodedText);
         const segments = url.pathname.split('/');
 
-        // Ambil segmen terakhir dari path: .../qr/{encrypted_id}
-        pendaftarId = segments.pop() || segments.pop(); // handle trailing slash
+        pendaftarId = segments.pop() || segments.pop();
     } catch (e) {
         alert("QR code tidak valid (bukan URL).");
         console.error("Error parsing QR code:", e);
@@ -212,7 +211,6 @@
         return;
     }
 
-    // Kirim ID ke backend
     fetch('{{ route("admin.markPresent") }}', {
         method: 'POST',
         headers: {

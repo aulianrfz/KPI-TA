@@ -52,7 +52,16 @@ class KehadiranController extends Controller
     {
         $pendaftar = Pendaftar::findOrFail($id);
         $pendaftar->update($request->only(['kategori', 'mata_lomba_id']));
-        return redirect()->route('kehadiran.index')->with('success', 'Data berhasil diperbarui.');
+
+        if ($request->filled('status')) {
+            $kehadiran = new Kehadiran();
+            $kehadiran->pendaftar_id = $pendaftar->id;
+            $kehadiran->tanggal = now();
+            $kehadiran->status = 'Hadir';
+            $kehadiran->save();
+        }
+
+        return redirect()->route('kehadiran.index')->with('success', 'Data kehadiran berhasil diperbarui.');
     }
 
 }

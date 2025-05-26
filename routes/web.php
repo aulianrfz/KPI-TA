@@ -87,8 +87,8 @@ Route::middleware('auth')->group(function () {
         //kehairan
         Route::get('/kehadiran', [KehadiranController::class, 'index'])->name('kehadiran.index');
         Route::get('/kehadiran/{id}/qr', [KehadiranController::class, 'showQR'])->name('admin.qr.show');
-        Route::get('/kehadiran/{id}/edit', [KehadiranController::class, 'edit'])->name('pendaftar.edit');
-        Route::put('/kehadiran/{id}', [KehadiranController::class, 'update'])->name('pendaftar.update');
+        Route::get('/kehadiran/{id}/edit', [KehadiranController::class, 'edit'])->name('kehadiran.edit');
+        Route::put('/kehadiran/{id}', [KehadiranController::class, 'update'])->name('kehadiran.update');
     
     //transaksi
         Route::get('/admin/transaksi', [PembayaranController::class, 'show'])->name('transaksi.index');

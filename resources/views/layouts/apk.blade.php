@@ -26,10 +26,40 @@
             overflow-x: hidden;
         }
         .sidebar {
+            background-color: #f8f9fa;
+            padding: 1rem;
             height: 100vh;
+            width: 50px; /* <--- diperkecil dari 250px */
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
             position: fixed;
-            width: 250px;
-            z-index: 1000;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .nav-link i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+
+        .nav-link.text-dark:hover {
+            background-color: #e2e6ea;
+            color: #000;
+        }
+
+        .nav-link.active {
+            background-color: #0d6efd;
+            color: #fff !important;
+        }
+
+        .nav-link.active i {
+            color: #fff;
         }
         .main-content {
             margin-left: 250px;
@@ -66,22 +96,22 @@
 </head>
 <body>
     <div class="d-flex flex-column flex-md-row">
-        <div class="col-md-2 d-none d-md-block bg-light border-end" style="min-height: 100vh;">
+        <div class="d-none d-md-block bg-light border-end" style="width: 250px; min-height: 100vh;">
             <hr>
             <ul class="nav nav-pills flex-column mb-auto">
-                <li><a href="/dashboardadmin" class="nav-link {{ request()->is('dashboardadmin') ? 'active' : 'text-dark' }}"><i class="bi bi-house-door"></i> Home</a></li>
-                <li><a href="#" class="nav-link text-dark"><i class="bi bi-person-plus"></i> Pendaftaran</a></li>
-                <li><a href="/admin/transaksi" class="nav-link {{ request()->is('admin/transaksi') ? 'active' : 'text-dark' }}"><i class="bi bi-receipt"></i> Transaksi</a></li>
-                <li><a href="/kehadiran" class="nav-link text-dark"><i class="bi bi-clipboard-check"></i> Daftar Hadir</a></li>
-                <li><a href="#" class="nav-link text-dark"><i class="bi bi-bar-chart-line"></i> Laporan Penjualan</a></li>
-                <li><a href="{{ url('/kategori') }}" class="nav-link {{ request()->is('kategori') ? 'active' : 'text-dark' }}"><i class="bi bi-tags"></i> Kategori</a></li>
-                <li><a href="#" class="nav-link text-dark"><i class="bi bi-calendar-event"></i> Penjadwalan</a></li>
-                <li><a href="#" class="nav-link text-dark"><i class="bi bi-ui-checks"></i> Kuisioner</a></li>
-                <li><a href="{{ url('/provinsi') }}" class="nav-link text-dark"><i class="bi bi-people"></i> Juri</a></li>
-                <li><a href="#" class="nav-link text-dark"><i class="bi bi-geo-alt"></i> Venue</a></li>
-                <li><a href="{{ url('/institusi') }}" class="nav-link text-dark"><i class="bi bi-award"></i> Sertifikat</a></li>
-                <li><a href="{{ url('/listevent') }}" class="nav-link text-dark"><i class="bi bi-upload"></i> Pengajuan</a></li>
-            </ul>
+                    <li class="mb-2"><a href="/dashboardadmin" class="nav-link {{ request()->is('dashboardadmin') ? 'active' : 'text-dark' }}"><i class="bi bi-house-door"></i> Home</a></li>
+                    <li class="mb-2"><a href="#" class="nav-link text-dark"><i class="bi bi-person-plus"></i> Pendaftaran</a></li>
+                    <li class="mb-2"><a href="/admin/transaksi" class="nav-link {{ request()->is('admin/transaksi') ? 'active' : 'text-dark' }}"><i class="bi bi-receipt"></i> Transaksi</a></li>
+                    <li class="mb-2"><a href="/kehadiran" class="nav-link {{ request()->is('kehadiran') ? 'active' : 'text-dark' }}"><i class="bi bi-clipboard-check"></i> Daftar Hadir</a></li>
+                    <li class="mb-2"><a href="#" class="nav-link text-dark"><i class="bi bi-bar-chart-line"></i> Laporan Penjualan</a></li>
+                    <li class="mb-2"><a href="{{ url('/kategori') }}" class="nav-link {{ request()->is('kategori') ? 'active' : 'text-dark' }}"><i class="bi bi-tags"></i> Kategori</a></li>
+                    <li class="mb-2"><a href="#" class="nav-link text-dark"><i class="bi bi-calendar-event"></i> Penjadwalan</a></li>
+                    <li class="mb-2"><a href="#" class="nav-link text-dark"><i class="bi bi-ui-checks"></i> Kuisioner</a></li>
+                    <li class="mb-2"><a href="{{ url('/provinsi') }}" class="nav-link text-dark"><i class="bi bi-people"></i> Juri</a></li>
+                    <li class="mb-2"><a href="#" class="nav-link text-dark"><i class="bi bi-geo-alt"></i> Venue</a></li>
+                    <li class="mb-2"><a href="{{ url('/institusi') }}" class="nav-link text-dark"><i class="bi bi-award"></i> Sertifikat</a></li>
+                    <li class="mb-2"><a href="{{ url('/listevent') }}" class="nav-link text-dark"><i class="bi bi-upload"></i> Pengajuan</a></li>
+                </ul>
         </div>
         @yield('content')
     </div>
