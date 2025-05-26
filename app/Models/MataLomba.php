@@ -17,6 +17,7 @@ class MataLomba extends Model
         'jenis_lomba',
         'jurusan',
         'maks_peserta',
+        'maks_total_peserta',
         'jenis_pelaksanaan',
         'deskripsi',
         'durasi',

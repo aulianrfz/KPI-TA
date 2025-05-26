@@ -48,16 +48,18 @@
                                     <td>{{ optional($item->membayar->first()?->invoice)->id ?? '-' }}</td>
                                     <td>
                                         @php
-                                            $status = strtolower($item->status);
+                                            $latestPembayaran = $item->membayar->sortByDesc('waktu')->first();
+                                            $status = strtolower($latestPembayaran->status ?? 'belum dibayar');
                                         @endphp
-                                        @if ($status === 'belum bayar')
-                                            <span class="badge text-dark" style="background-color: #FFDFDF;">Belum Dibayar</span>
-                                        @elseif ($status === 'menunggu verifikasi')
+
+                                        @if ($status === 'menunggu verifikasi')
                                             <span class="badge text-dark" style="background-color: #FFF6D1;">Menunggu Verifikasi</span>
-                                        @elseif ($status === 'sudah bayar')
+                                        @elseif ($status === 'sudah membayar')
                                             <span class="badge text-dark" style="background-color: #D0F4FF;">Sudah Dibayar</span>
+                                        @elseif ($status === 'ditolak')
+                                            <span class="badge text-dark" style="background-color: #FFBABA;">Ditolak</span>
                                         @else
-                                            <span class="badge bg-secondary">Tidak Diketahui</span>
+                                            <span class="badge text-dark" style="background-color: #FFDFDF;">Belum Dibayar</span>
                                         @endif
                                     </td>
                                     <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d.m.Y') }}<br>

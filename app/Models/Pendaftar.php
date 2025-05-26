@@ -15,7 +15,6 @@ class Pendaftar extends Model
         'mata_lomba_id',
         'peserta_id',
         'url_qrCode',
-        'status',
     ];
 
     public function mataLomba()

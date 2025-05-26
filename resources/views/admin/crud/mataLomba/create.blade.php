@@ -40,6 +40,11 @@
             <label for="maks_peserta">Maksimal Peserta</label>
             <input type="number" name="maks_peserta" id="maks_peserta" class="form-control" required>
         </div>
+        
+        <div class="form-group">
+            <label for="maks_total_peserta">Maksimal Total Peserta</label>
+            <input type="number" name="maks_total_peserta" id="maks_total_peserta" class="form-control" required>
+        </div>
 
         <div class="form-group">
             <label for="durasi">Durasi Perlombaan (menit)</label>

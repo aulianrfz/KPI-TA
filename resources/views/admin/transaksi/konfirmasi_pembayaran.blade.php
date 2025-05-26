@@ -67,7 +67,7 @@
                     <tr>
                         <td><input type="checkbox" name="ids[]" value="{{ $item->id }}"></td>
                         <td>{{ $item->peserta->nama_peserta ?? '-' }}</td>
-                        <td>{{ $item->invoice->jabatan ?? '-' }}</td>
+                        <td>{{ $item->invoice->id ?? '-' }}</td>
                         <td>{{ $item->peserta->institusi ?? '-' }}</td>
                         <td>{{ $item->peserta->pendaftar->mataLomba->nama_lomba ?? '-' }}</td>
                         <td>

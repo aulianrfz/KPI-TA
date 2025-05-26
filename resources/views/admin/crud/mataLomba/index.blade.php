@@ -39,6 +39,7 @@
                         <th>Nama mataLomba</th>
                         <th>Jurusan</th>
                         <th>Maks Peserta</th>
+                        <th>Maks Total Peserta</th>
                         <th>Biaya</th>
                         <th>Foto</th>
                         <th style="width: 120px;">Aksi</th>
@@ -52,6 +53,7 @@
                         <td>{{ $mataLomba->nama_lomba }}</td>
                         <td>{{ $mataLomba->jurusan }}</td>
                         <td>{{ $mataLomba->maks_peserta }}</td>
+                        <td>{{ $mataLomba->maks_total_peserta }}</td>
                         <td>Rp {{ number_format($mataLomba->biaya_pendaftaran, 0, ',', '.') }}</td>
                         <td>
                             @if($mataLomba->foto_kompetisi)

@@ -107,7 +107,6 @@ class PendaftaranController extends Controller
                 'mata_lomba_id' => $request->id_mataLomba,
                 'peserta_id' => $peserta->id,
                 'url_qrCode' => 0,
-                'status' => 'Pending',
             ]);
 
             if ($tim) {

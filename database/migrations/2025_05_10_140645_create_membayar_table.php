@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('invoice_id');
             $table->unsignedBigInteger('peserta_id');
             $table->string('bukti_pembayaran')->nullable();
+            $table->string('status', 25)->nullable();
             $table->dateTime('waktu')->default(now());
             $table->timestamps();
 

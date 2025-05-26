@@ -8,7 +8,7 @@ use App\Models\Peserta;
 use App\Models\Membayar;
 use App\Models\Invoice;
 use App\Mail\QrCodeMail;
-use Illuminate\Support\Facades\Abort;
+
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -23,7 +23,7 @@ class PembayaranController extends Controller
 {
     public function index()
     {
-        $peserta = Peserta::with(['mataLomba.kategori.event','tim','membayar.invoice'])
+        $peserta = Peserta::with(['mataLomba.kategori.event', 'tim'])
             ->where('user_id', Auth::id())
             ->where(function ($query) {
                 $query->whereDoesntHave('tim')
@@ -35,6 +35,7 @@ class PembayaranController extends Controller
 
         return view('user.pembayaran.index', compact('peserta'));
     }
+
     public function bayar($id)
     {
         $peserta = Peserta::with([
@@ -71,13 +72,13 @@ class PembayaranController extends Controller
         ));
     }
 
-    public function uploadBuktiPembayaran(Request $request, $id) 
+    public function uploadBuktiPembayaran(Request $request, $id)
     {
         $request->validate([
             'bukti' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
 
-        $peserta = Peserta::with('mataLomba')->findOrFail($id);
+        $peserta = Peserta::with('pendaftar.mataLomba')->findOrFail($id);
         $mataLomba = $peserta->pendaftar->mataLomba;
 
         if (!$mataLomba) {
@@ -87,10 +88,10 @@ class PembayaranController extends Controller
         $biaya = $mataLomba->biaya_pendaftaran;
 
         $invoice = Membayar::where('peserta_id', $peserta->id)
-                    ->whereNotNull('invoice_id')
-                    ->with('invoice')
-                    ->latest()
-                    ->first()?->invoice;
+            ->whereNotNull('invoice_id')
+            ->with('invoice')
+            ->latest()
+            ->first()?->invoice;
 
         if (!$invoice) {
             $invoice = Invoice::create([
@@ -106,19 +107,17 @@ class PembayaranController extends Controller
             'peserta_id' => $peserta->id,
             'invoice_id' => $invoice->id,
             'bukti_pembayaran' => $filePath,
+            'status' => 'Menunggu Verifikasi',
             'waktu' => now(),
         ]);
 
         return redirect()->route('pembayaran.index')->with('success', 'Bukti pembayaran berhasil diunggah.');
     }
 
-
     public function show(Request $request)
     {
         $query = Membayar::with(['peserta.pendaftar.mataLomba', 'invoice', 'mataLomba'])
-            ->whereHas('peserta.pendaftar', function ($q) {
-                $q->whereNotIn('status', ['Disetujui', 'Ditolak']);
-            });
+            ->whereNotIn('status', ['Sudah Membayar', 'Ditolak']);
 
         if ($request->filled('search')) {
             $search = $request->input('search');
@@ -129,19 +128,13 @@ class PembayaranController extends Controller
         }
 
         $sortOrder = $request->input('sort', 'desc');
-        if (!in_array($sortOrder, ['asc', 'desc'])) {
-            $sortOrder = 'desc';
-        }
-
-        $query->orderBy('waktu', $sortOrder);
+        $query->orderBy('waktu', in_array($sortOrder, ['asc', 'desc']) ? $sortOrder : 'desc');
 
         $transaksi = $query->paginate(10)->appends($request->query());
 
         return view('admin.transaksi.konfirmasi_pembayaran', compact('transaksi'));
     }
 
-
-    //belom enkrip qr coode
     public function bulkAction(Request $request)
     {
         $ids = $request->input('ids');
@@ -151,32 +144,20 @@ class PembayaranController extends Controller
             return redirect()->back()->with('error', 'Tidak ada data yang dipilih atau aksi tidak valid.');
         }
 
-        $status = $action === 'approve' ? 'Disetujui' : 'Ditolak';
+        $status = $action === 'approve' ? 'Sudah Membayar' : 'Ditolak';
 
         foreach ($ids as $membayarId) {
             $membayar = Membayar::with('peserta.pendaftar', 'peserta.tim.peserta', 'peserta.mataLomba.kategori')->find($membayarId);
-            if (!$membayar || !$membayar->peserta) {
-                continue;
-            }
+            if (!$membayar || !$membayar->peserta) continue;
 
             $peserta = $membayar->peserta;
             $isKelompok = $peserta->tim->isNotEmpty();
             $isKetua = $peserta->tim->first()?->pivot->posisi === 'Ketua';
-            $semuaPeserta = collect();
-
-            if ($isKelompok && $isKetua) {
-                $tim = $peserta->tim->first();
-                $semuaPeserta = $tim->peserta;
-            } else {
-                $semuaPeserta = collect([$peserta]);
-            }
+            $semuaPeserta = $isKelompok && $isKetua ? $peserta->tim->first()->peserta : collect([$peserta]);
 
             foreach ($semuaPeserta as $p) {
                 $pendaftar = $p->pendaftar;
-
                 if (!$pendaftar) continue;
-
-                $updateData = ['status' => $status];
 
                 if ($action === 'approve') {
                     $encryptedId = encrypt($pendaftar->id);
@@ -193,8 +174,9 @@ class PembayaranController extends Controller
                     $filename = 'qr_codes/pendaftar_' . $pendaftar->id . '.png';
                     Storage::disk('public')->put($filename, $result->getString());
                     $qrPath = storage_path('app/public/' . $filename);
+                    $qrUrl = asset('storage/' . $filename);
 
-                    $updateData['url_qrCode'] = asset('storage/' . $filename);
+                    $pendaftar->update(['url_qrCode' => $qrUrl]);
 
                     if ($p->email) {
                         Mail::to($p->email)->send(new QrCodeMail(
@@ -206,10 +188,10 @@ class PembayaranController extends Controller
                     }
                 }
 
-                $pendaftar->update($updateData);
+                $membayar->update(['status' => $status]);
             }
         }
 
-        return redirect()->back()->with('success', 'Status pendaftar berhasil diperbarui.');
+        return redirect()->back()->with('success', 'Status pembayaran berhasil diperbarui.');
     }
 }

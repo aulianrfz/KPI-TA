@@ -189,45 +189,52 @@
 </script>
 
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <script>
     let html5QrcodeScanner = null;
 
     function onScanSuccess(decodedText, decodedResult) {
-        // Contoh QR code berisi teks dengan angka ID peserta, ambil angka saja
-        const pendaftarId = decodedText.match(/\d+/)?.[0];
+    let pendaftarId = null;
 
-        if (!pendaftarId) {
-            alert("QR tidak valid.");
-            return;
-        }
+    try {
+        const url = new URL(decodedText);
+        const segments = url.pathname.split('/');
 
-        // Stop scanner sementara untuk proses update
-        if (html5QrcodeScanner) {
-            html5QrcodeScanner.pause();
-        }
-
-        fetch('{{ route("admin.markPresent") }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({ pendaftar_id: pendaftarId })
-        })
-        .then(res => res.json())
-        .then(data => {
-            alert(data.message || "Berhasil ditandai hadir.");
-            location.reload();
-        })
-        .catch(err => {
-            alert("Gagal update status kehadiran.");
-            console.error(err);
-            if (html5QrcodeScanner) {
-                html5QrcodeScanner.resume();
-            }
-        });
+        // Ambil segmen terakhir dari path: .../qr/{encrypted_id}
+        pendaftarId = segments.pop() || segments.pop(); // handle trailing slash
+    } catch (e) {
+        alert("QR code tidak valid (bukan URL).");
+        console.error("Error parsing QR code:", e);
+        return;
     }
+
+    if (!pendaftarId) {
+        alert("QR code tidak valid: tidak ada parameter 'id'.");
+        return;
+    }
+
+    // Kirim ID ke backend
+    fetch('{{ route("admin.markPresent") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ id: pendaftarId })
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert(data.message || "Berhasil ditandai hadir.");
+        location.reload();
+    })
+    .catch(err => {
+        alert("Gagal update status kehadiran.");
+        console.error(err);
+        if (html5QrcodeScanner) {
+            html5QrcodeScanner.resume();
+        }
+    });
+}
+
 
     const modal = document.getElementById('qrScanModal');
 
@@ -235,27 +242,19 @@
         if (!html5QrcodeScanner) {
             html5QrcodeScanner = new Html5Qrcode("qr-reader");
         }
-        console.log("Modal dibuka, mencoba akses kamera belakang...");
 
-        // Coba buka kamera belakang dulu
         html5QrcodeScanner.start(
             { facingMode: { exact: "environment" } },
             { fps: 10, qrbox: 250 },
             onScanSuccess
-        ).then(() => {
-            console.log("Kamera environment berhasil dibuka.");
-        }).catch(err => {
-            console.warn("Kamera belakang tidak tersedia, mencoba kamera depan...", err);
-            // Jika kamera belakang gagal, coba kamera depan
+        ).catch(err => {
             html5QrcodeScanner.start(
                 { facingMode: "user" },
                 { fps: 10, qrbox: 250 },
                 onScanSuccess
-            ).then(() => {
-                console.log("Kamera depan berhasil dibuka.");
-            }).catch(error => {
-                console.error("Gagal membuka kamera depan:", error);
-                alert("Tidak dapat mengakses kamera. Periksa izin dan perangkat.");
+            ).catch(error => {
+                alert("Tidak dapat mengakses kamera.");
+                console.error(error);
             });
         });
     });
@@ -264,7 +263,7 @@
         if (html5QrcodeScanner) {
             html5QrcodeScanner.stop().then(() => {
                 html5QrcodeScanner.clear();
-            }).catch(err => console.error("Stop scan gagal", err));
+            }).catch(console.error);
         }
     });
 </script>

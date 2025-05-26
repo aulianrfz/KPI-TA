@@ -15,6 +15,7 @@ class Membayar extends Model
         'invoice_id',
         'peserta_id',
         'bukti_pembayaran',
+        'status',
         'waktu',
     ];
 
