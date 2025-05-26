@@ -132,8 +132,8 @@ class PendaftaranController extends Controller
     }
 
 
-    public function sukses()
-    {
-        return view('user.pendaftaran.berhasil');
-    }
+    // public function sukses()
+    // {
+    //     return view('user.pendaftaran.berhasil');
+    // }
 }
