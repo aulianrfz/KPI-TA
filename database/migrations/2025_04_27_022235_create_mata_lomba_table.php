@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('mata_lomba', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('kategori_id');
+            $table->unsignedBigInteger('venue_id')->nullable();
             $table->string('nama_lomba',100);
             $table->string('jenis_lomba',25);
             $table->string('jurusan',50);
@@ -28,6 +29,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('kategori_id')->references('id')->on('kategori')->onDelete('cascade');
+            $table->foreign('venue_id')->references('id')->on('venue')->onDelete('set null');
         });
     }
 

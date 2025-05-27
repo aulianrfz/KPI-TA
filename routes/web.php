@@ -34,10 +34,10 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
 });
 
- //profile
- Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show')->middleware('auth');
- Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
- Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+//profile
+Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show')->middleware('auth');
+Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
 
 // Pengaturan akses route
@@ -72,13 +72,13 @@ Route::middleware('auth')->group(function () {
     // ADMIN ROUTES
     Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
         Route::resource('listevent', EventController::class);
-        Route::resource( 'kategori', KategoriController::class);
+        Route::resource('kategori', KategoriController::class);
         Route::resource('mataLomba', MataLombaController::class);
         Route::resource('juri', JuriController::class);
         Route::resource('provinsi', ProvinsiController::class);
         Route::resource('institusi', InstitusiController::class);
 
-        
+
         Route::get('/listcrud', [DashboardAdminController::class, 'listCrud'])->name('admin.list.crud');
         Route::get('/dashboardadmin', [DashboardAdminController::class, 'index'])->name('admin.dashboard');
         Route::post('/admin/mark-present', [DashboardAdminController::class, 'markAsPresent'])->name('admin.markPresent');
@@ -90,8 +90,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/kehadiran/{id}/qr', [KehadiranController::class, 'showQR'])->name('admin.qr.show');
         Route::get('/kehadiran/{id}/edit', [KehadiranController::class, 'edit'])->name('kehadiran.edit');
         Route::put('/kehadiran/{id}', [KehadiranController::class, 'update'])->name('kehadiran.update');
-    
-    //transaksi
+
+        //transaksi
         Route::get('/admin/transaksi', [PembayaranController::class, 'show'])->name('transaksi.index');
         Route::post('/admin/transaksi/bulk-action', [PembayaranController::class, 'bulkAction'])->name('admin.transaksi.bulkAction');
         Route::get('/verifikasi/qr/{id}', [PembayaranController::class, 'showQr'])->name('verifikasi.qr');
@@ -107,3 +107,24 @@ Route::post('/generate-schedule', [PenjadwalanController::class, 'generateSchedu
 
 // nyoba halaman sukses
 // Route::get('/sukses', [PendaftaranController::class, 'sukses']);
+
+//jadwal, nitip dulu disini
+Route::get('/jadwal', [PenjadwalanController::class, 'index'])->name('jadwal.index');
+Route::get('/jadwal/create', [PenjadwalanController::class, 'create'])->name('jadwal.create');
+Route::post('/jadwal/create/step2', [PenjadwalanController::class, 'createStep2'])->name('jadwal.create.step2');
+Route::post('/jadwal/store', [PenjadwalanController::class, 'store'])->name('jadwal.store');
+Route::post('/jadwal/create-step3', [PenjadwalanController::class, 'createStep3'])->name('jadwal.create.step3');
+// Route::get('/jadwal/{id}/detail', [PenjadwalanController::class, 'detail'])->name('jadwal.detail');
+Route::get('/jadwal/{id}/detail', [PenjadwalanController::class, 'detail'])->name('jadwal.detail');
+
+
+Route::get('/jadwal/{nama_jadwal}/{tahun}/{version}/switch', [PenjadwalanController::class, 'switchJadwal'])->name('jadwal.switch');
+Route::post('/jadwal/switch/proses', [PenjadwalanController::class, 'prosesSwitch'])->name('jadwal.switch.proses');
+Route::resource('jadwal', PenjadwalanController::class);
+Route::get('/jadwal/{id}/edit', [PenjadwalanController::class, 'edit'])->name('jadwal.edit');
+Route::put('/jadwal/{id}', [PenjadwalanController::class, 'update'])->name('jadwal.update');
+Route::get('/jadwal/{nama_jadwal}/{tahun}/{version}/create', [PenjadwalanController::class, 'createWithDetail'])->name('jadwal.create.withDetail');
+Route::post('/jadwal/add', [PenjadwalanController::class, 'add'])->name('jadwal.add');
+Route::delete('/jadwal/{id}', [PenjadwalanController::class, 'destroy'])->name('jadwal.destroy');
+
+Route::get('/generate-variabel-x', [PenjadwalanController::class, 'generateVariabelX']);
