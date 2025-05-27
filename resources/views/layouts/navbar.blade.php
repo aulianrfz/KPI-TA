@@ -4,12 +4,14 @@
 
         @auth
             @if(Auth::user()->role === 'user')
-                <div class="d-flex flex-grow-1 justify-content-center">
-                    <div class="input-group w-75 w-md-50">
-                        <input type="text" class="form-control border" placeholder="Cari apa yang kamu mau di sini..." style="border-color: #0367A6;">
-                        <span class="input-group-text" style="background-color: #0367A6; color: white;"><i class="bi bi-search"></i></span>
+                <form method="GET" action="{{ url()->current() }}" class="d-flex" style="max-width: 600px; width: 100%;">
+                    <div class="input-group w-100">
+                        <input type="text" name="search" class="form-control border" placeholder="Cari event..." value="{{ request('search') }}">
+                        <button type="submit" class="input-group-text" style="background-color: #0367A6; color: white;">
+                            <i class="bi bi-search"></i>
+                        </button>
                     </div>
-                </div>
+                </form>
             @endif
             @if(Auth::user()->role === 'admin')
                 <div class="d-flex flex-grow-1 justify-content-center"">

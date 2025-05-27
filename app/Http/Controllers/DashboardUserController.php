@@ -12,9 +12,17 @@ use App\Models\Event;
 
 class DashboardUserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $events = Event::all();
+        $query = Event::query();
+
+        if ($request->has('search') && $request->search != '') {
+            $query->where('nama_event', 'like', '%' . $request->search . '%')
+                ->orWhere('penyelenggara', 'like', '%' . $request->search . '%');
+        }
+
+        $events = $query->get();
+
         return view('landing', compact('events'));
     }
 
@@ -24,17 +32,31 @@ class DashboardUserController extends Controller
         return view('user.event.show', compact('events'));
     }
 
-    public function showEvent($eventId)
+    public function showEvent($eventId, Request $request)
     {
         $event = Event::with('kategori')->findOrFail($eventId);
+
         $categories = $event->kategori;
+
+        if ($request->filled('search')) {
+            $categories = $categories->filter(function ($kategori) use ($request) {
+                return str_contains(strtolower($kategori->nama_kategori), strtolower($request->search));
+            });
+        }
 
         return view('user.event.list', compact('event', 'categories'));
     }
 
-    public function showCategory($kategori_id) 
+    public function showCategory($kategori_id, Request $request)
     {
-        $events = MataLomba::where('kategori_id', $kategori_id)->get();
+        $query = MataLomba::where('kategori_id', $kategori_id);
+
+        if ($request->filled('search')) {
+            $query->where('nama_lomba', 'like', '%' . $request->search . '%');
+        }
+
+        $events = $query->get();
+
         return view('user.event.general', compact('events'));
     }
 
