@@ -34,6 +34,33 @@
             position: fixed;
         }
 
+         .custom-card {
+        border: none;
+        border-radius: 1rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    }
+
+        .custom-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .bg-gradient-kategori {
+            background: linear-gradient(135deg, #a2c5f5, #5a8dee);
+        }
+
+        .bg-gradient-provinsi {
+            background: linear-gradient(135deg, #a8e6cf, #56cc9d);
+        }
+
+        .bg-gradient-institusi {
+            background: linear-gradient(135deg, #ffe0b2, #f5a623);
+        }
+
+        .bg-gradient-event {
+            background: linear-gradient(135deg, #ffcccc, #ff6f61);
+        }
         .nav-link {
             display: flex;
             align-items: center;
@@ -104,13 +131,13 @@
                     <li class="mb-2"><a href="/admin/transaksi" class="nav-link {{ request()->is('admin/transaksi') ? 'active' : 'text-dark' }}"><i class="bi bi-receipt"></i> Transaksi</a></li>
                     <li class="mb-2"><a href="/kehadiran" class="nav-link {{ request()->is('kehadiran') ? 'active' : 'text-dark' }}"><i class="bi bi-clipboard-check"></i> Daftar Hadir</a></li>
                     <li class="mb-2"><a href="#" class="nav-link text-dark"><i class="bi bi-bar-chart-line"></i> Laporan Penjualan</a></li>
-                    <li class="mb-2"><a href="{{ url('/kategori') }}" class="nav-link {{ request()->is('kategori') ? 'active' : 'text-dark' }}"><i class="bi bi-tags"></i> Kategori</a></li>
+                    <li class="mb-2"><a href="{{ url('/listcrud') }}" class="nav-link {{ request()->is('listcrud') ? 'active' : 'text-dark' }}"><i class="bi bi-tags"></i> LIst CRUD</a></li>
                     <li class="mb-2"><a href="#" class="nav-link text-dark"><i class="bi bi-calendar-event"></i> Penjadwalan</a></li>
                     <li class="mb-2"><a href="#" class="nav-link text-dark"><i class="bi bi-ui-checks"></i> Kuisioner</a></li>
-                    <li class="mb-2"><a href="{{ url('/provinsi') }}" class="nav-link text-dark"><i class="bi bi-people"></i> Juri</a></li>
+                    <li class="mb-2"><a href="#" class="nav-link text-dark"><i class="bi bi-people"></i> Juri</a></li>
                     <li class="mb-2"><a href="#" class="nav-link text-dark"><i class="bi bi-geo-alt"></i> Venue</a></li>
-                    <li class="mb-2"><a href="{{ url('/institusi') }}" class="nav-link text-dark"><i class="bi bi-award"></i> Sertifikat</a></li>
-                    <li class="mb-2"><a href="{{ url('/listevent') }}" class="nav-link text-dark"><i class="bi bi-upload"></i> Pengajuan</a></li>
+                    <li class="mb-2"><a href="#" class="nav-link text-dark"><i class="bi bi-award"></i> Sertifikat</a></li>
+                    <li class="mb-2"><a href="#" class="nav-link text-dark"><i class="bi bi-upload"></i> Pengajuan</a></li>
                 </ul>
         </div>
         @yield('content')

@@ -79,6 +79,8 @@ Route::middleware('auth')->group(function () {
         Route::resource('institusi', InstitusiController::class);
 
 
+        
+        Route::get('/listcrud', [DashboardAdminController::class, 'listCrud'])->name('admin.list.crud');
         Route::get('/dashboardadmin', [DashboardAdminController::class, 'index'])->name('admin.dashboard');
         Route::post('/admin/mark-present', [DashboardAdminController::class, 'markAsPresent'])->name('admin.markPresent');
         Route::get('/admin/peserta/{id}/identitas', [DashboardAdminController::class, 'showIdentitas'])->name('admin.peserta.identitas');

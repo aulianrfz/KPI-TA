@@ -123,4 +123,9 @@ class DashboardAdminController extends Controller
         return view('admin.dashboard.identitas', compact('pendaftar'));
     }
 
+    public function listCrud()
+    {
+        return view('admin.crud.list');
+    }
+
 }
