@@ -13,11 +13,15 @@ class PesertaSeeder extends Seeder
      */
     public function run(): void
     {
-        Peserta::insert([
+        $peserta = [
             ['name' => 'Peserta 1'],
             ['name' => 'Peserta 2'],
             ['name' => 'Peserta 3'],
             ['name' => 'Peserta 4'],
-        ]);
+        ];
+
+        foreach ($peserta as $data) {
+            Peserta::create($data);
+        }
     }
 }

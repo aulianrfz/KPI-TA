@@ -11,16 +11,20 @@ class KategoriLombaSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run()
+    public function run(): void
     {
-        KategoriLomba::insert([
-            ['name' => 'Creative Dance', 'duration' => 5],
-            ['name' => 'Bidding Event Proposal', 'duration' => 30],
-            ['name' => 'Tourism Ideathon', 'duration' => 5],
-            ['name' => 'Tourism Speech Competition', 'duration' => 7],
-            ['name' => 'Black Box Cooking Battle', 'duration' => 15],
-            ['name' => 'Making Bed', 'duration' => 15],
-            ['name' => 'Manual Brew', 'duration' => 20],
-        ]);
+        $kategoriLomba = [
+            ['name' => 'Creative Dance', 'durasi' => 60],
+            ['name' => 'Tourism Ideathon', 'durasi' => 90],
+            ['name' => 'Bidding Event Proposal', 'durasi' => 45],
+            ['name' => 'Making Bed', 'durasi' => 30],
+            ['name' => 'Tourism Speech Competition', 'durasi' => 60],
+            ['name' => 'Manual Brew', 'durasi' => 40],
+            ['name' => 'Black Box Cooking Battle', 'durasi' => 120],
+        ];
+
+        foreach ($kategoriLomba as $data) {
+            KategoriLomba::create($data);
+        }
     }
 }

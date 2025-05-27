@@ -11,10 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('venue', function (Blueprint $table) {
+        Schema::create('juri', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('nama');
+            $table->string('jabatan');
+            $table->unsignedBigInteger('mata_lomba_id');
             $table->timestamps();
+
+            $table->foreign('mata_lomba_id')->references('id')->on('mata_lomba')->onDelete('cascade');
+        
+        
         });
     }
 
@@ -23,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('venue');
+        Schema::dropIfExists('juri');
     }
 };

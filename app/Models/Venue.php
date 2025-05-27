@@ -9,4 +9,5 @@ class Venue extends Model
 {
     use HasFactory;
     protected $table = 'venue';
+    protected $fillable = ['name'];
 }

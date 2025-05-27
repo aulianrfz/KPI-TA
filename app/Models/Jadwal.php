@@ -12,11 +12,13 @@ class Jadwal extends Model
     protected $fillable = [
         'nama_jadwal',
         'tahun',
-        'kategori_lomba',
-        'waktu_mulai',
-        'waktu_selesai',
-        'venue',
-        'peserta',
-        'version'
+        'version',
+        'status'
     ];
+
+    public function agendas()
+    {
+        return $this->hasMany(Agenda::class, 'jadwal_id');
+    }
+
 }
