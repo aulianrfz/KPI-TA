@@ -1,7 +1,7 @@
 @extends('layouts.app')
-@include('layouts.navbar')
 
 @section('content')
+
 <div class="container-fluid py-4">
     <div class="row">
         <div class="col-md-2 d-none d-md-block bg-light border-end p-3">

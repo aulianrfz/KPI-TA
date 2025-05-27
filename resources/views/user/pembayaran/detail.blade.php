@@ -1,7 +1,7 @@
 @extends('layouts.app')
-@include('layouts.navbar')
 
 @section('content')
+
 <div class="container py-4">
     <h4 class="fw-bold mb-3">CREATIVE DANCE</h4>
 

@@ -2,8 +2,6 @@
 
 @section('content')
 
-@include('layouts.navbar')
-
 <div class="container py-5 text-center">
     <div class="my-5">
         <img src="https://img.icons8.com/color/96/000000/checked--v1.png" alt="Success Icon" class="mb-4" />

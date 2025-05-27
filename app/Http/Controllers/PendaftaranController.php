@@ -30,7 +30,6 @@ class PendaftaranController extends Controller
     }
 
 
-    //belom handle gak boleh lebih dari 3 kali daftar dan ketua wajib dip[ilih sekali dan gak boleh lebih
     public function store(Request $request)
     {
         $request->validate([
@@ -45,6 +44,46 @@ class PendaftaranController extends Controller
         $mataLomba = MataLomba::findOrFail($request->id_mataLomba);
         $jenisPeserta = $mataLomba->maks_peserta == 1 ? 'Individu' : 'Kelompok';
 
+        if ($jenisPeserta === 'Kelompok') {
+            $jumlahKetua = collect($request->peserta)
+                ->pluck('posisi')
+                ->filter(fn($posisi) => strtolower($posisi) === 'ketua')
+                ->count();
+
+            if ($jumlahKetua !== 1) {
+                return back()->withInput()->with('error', 'Harus ada tepat satu Ketua dalam tim.');
+            }
+        }
+
+        $institusi = $request->peserta[0]['institusi'] ?? null;
+
+        if (!$institusi) {
+            return back()->withInput()->with('error', 'Institusi wajib diisi.');
+        }
+
+        if ($jenisPeserta === 'Kelompok') {
+            $timSudahAda = Tim::whereHas('peserta', function ($q) use ($institusi, $request) {
+                $q->where('institusi', $institusi)
+                ->whereHas('pendaftar', function ($p) use ($request) {
+                    $p->where('mata_lomba_id', $request->id_mataLomba);
+                });
+            })->distinct()->count();
+
+            if ($timSudahAda >= 3) {
+                return back()->withInput()->with('error', 'Institusi ini sudah mendaftarkan maksimal 3 tim untuk mata lomba ini.');
+            }
+        } else {
+            $individuTerdaftar = Peserta::where('institusi', $institusi)
+                ->where('jenis_peserta', 'Individu')
+                ->whereHas('pendaftar', function ($q) use ($request) {
+                    $q->where('mata_lomba_id', $request->id_mataLomba);
+                })->count();
+
+            if ($individuTerdaftar >= 3) {
+                return back()->withInput()->with('error', 'Institusi ini sudah mendaftarkan maksimal 3 individu untuk mata lomba ini.');
+            }
+        }
+
         $tim = null;
         $invoice = null;
 
@@ -55,7 +94,7 @@ class PendaftaranController extends Controller
 
             $invoice = Invoice::create([
                 'total_tagihan' => $mataLomba->biaya_pendaftaran,
-                'jabatan' => 'Ketua / Tim'
+                'jabatan' => 'Ketua / Tim',
             ]);
         }
 
@@ -99,10 +138,6 @@ class PendaftaranController extends Controller
                 'url_ttd' => $ttdPath,
             ]);
 
-            if (!$peserta instanceof Peserta) {
-                throw new \Exception('Peserta creation failed.');
-            }
-
             Pendaftar::create([
                 'mata_lomba_id' => $request->id_mataLomba,
                 'peserta_id' => $peserta->id,
@@ -116,7 +151,7 @@ class PendaftaranController extends Controller
             if ($jenisPeserta === 'Individu') {
                 $invoice = Invoice::create([
                     'total_tagihan' => 50000,
-                    'jabatan' => 'Individu'
+                    'jabatan' => 'Individu',
                 ]);
             }
 
@@ -129,6 +164,7 @@ class PendaftaranController extends Controller
 
         return view('user.pendaftaran.berhasil')->with('success', 'Pendaftaran berhasil!');
     }
+
 
 
     // public function sukses()

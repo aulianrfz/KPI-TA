@@ -2,8 +2,6 @@
 
 @section('content')
 
-@include('layouts.navbar')
-
 <div class="container mt-4">
     <h2 class="text-bold">Registration</h2>
     <hr style="width: 230px; border-top: 2px solid #000;">

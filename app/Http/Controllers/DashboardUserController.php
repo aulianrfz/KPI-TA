@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\MataLomba;
+use App\Models\Pendaftar;
 use App\Models\KategoriLomba;
 use App\Models\Event;
 
@@ -40,6 +41,7 @@ class DashboardUserController extends Controller
     public function showDetail($id)
     {
         $events = MataLomba::findOrFail($id);
-        return view('user.event.showdetail', compact('events'));
+        $total_pendaftar = Pendaftar::where('mata_lomba_id', $id)->count();
+        return view('user.event.showdetail', compact('events', 'total_pendaftar'));
     }
 }

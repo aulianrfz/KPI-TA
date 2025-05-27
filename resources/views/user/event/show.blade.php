@@ -2,8 +2,6 @@
 
 @section('content')
 
-@include('layouts.navbar')
-
 <div class="container mt-5">
     <div class="row gx-4 align-items-center">
         <div class="col-md-6 mb-4 mb-md-0">

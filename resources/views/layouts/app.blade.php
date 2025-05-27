@@ -171,33 +171,44 @@
     AOS.init();
 </script>
 
-<script>
-    @if (session('success'))
-        Swal.fire({
-            icon: 'success',
-            title: 'Berhasil!',
-            text: '{{ session('success') }}',
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'OK'
-        });
-    @endif
-
-    @if (session('error'))
-        Swal.fire({
-            icon: 'error',
-            title: 'Oops!',
-            text: '{{ session('error') }}',
-            confirmButtonColor: '#d33',
-            confirmButtonText: 'Coba Lagi'
-        });
-    @endif
-</script>
 
 <body>
 
+    @include('layouts.navbar')
+
     @yield('content')
 
+    @yield('scripts')
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        AOS.init();
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            @if(session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: @json(session('success')),
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                });
+            @endif
+
+            @if(session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Kesalahan!',
+                    text: @json(session('error')),
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'Coba Lagi'
+                });
+            @endif
+        });
+    </script>
 
 </body>
 </html>

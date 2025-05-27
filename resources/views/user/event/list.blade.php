@@ -2,7 +2,6 @@
 
 @section('content')
 
-@include('layouts.navbar')
 
 <div class="container mt-4">
     <div class="d-flex align-items-center mb-3">

@@ -2,8 +2,6 @@
 
 @section('content')
 
-@include('layouts.navbar')
-
 <div class="container mt-4">
     <div class="card shadow-sm rounded-4 overflow-hidden">
         <div id="bannerCarousel" class="carousel slide" data-aos="fade-up" data-bs-ride="carousel" data-bs-interval="2000">

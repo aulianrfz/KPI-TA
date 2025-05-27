@@ -2,8 +2,6 @@
 
 @section('content')
 
-@include('layouts.navbar')
-
 <div class="container my-5">
     <!-- <div class="d-flex align-items-center mb-4">
     <a href="{{ url()->previous() }}" class="me-3 text-dark fs-4"><i class="bi bi-arrow-left"></i></a>
@@ -29,7 +27,21 @@
             </p>
         </div>
     </div>
-    <a href="{{ route('pendaftaran.form', ['id_mataLomba' => $events->id]) }}" class="btn mt-3 w-100" style="background-color: #2CC384; color: white; height: 50px; border-radius: 10px; font-weight: bold; text-transform: uppercase; border: none; transition: background-color 0.3s ease;">Daftar Sekarang</a>
+    @php
+        $kuotaPenuh = $total_pendaftar >= $events->maks_total_peserta;
+    @endphp
+
+    @if ($kuotaPenuh)
+        <button class="btn mt-3 w-100" style="background-color: #ccc; color: #666; height: 50px; border-radius: 10px; font-weight: bold;" disabled>
+            Kuota Pendaftaran Sudah Penuh
+        </button>
+    @else
+        <a href="{{ route('pendaftaran.form', ['id_mataLomba' => $events->id]) }}" 
+           class="btn mt-3 w-100" 
+           style="background-color: #2CC384; color: white; height: 50px; border-radius: 10px; font-weight: bold; text-transform: uppercase; border: none; transition: background-color 0.3s ease;">
+            Daftar Sekarang
+        </a>
+    @endif
 </div>
 
 

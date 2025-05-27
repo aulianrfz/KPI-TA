@@ -78,7 +78,6 @@ Route::middleware('auth')->group(function () {
         Route::resource('provinsi', ProvinsiController::class);
         Route::resource('institusi', InstitusiController::class);
 
-
         
         Route::get('/listcrud', [DashboardAdminController::class, 'listCrud'])->name('admin.list.crud');
         Route::get('/dashboardadmin', [DashboardAdminController::class, 'index'])->name('admin.dashboard');

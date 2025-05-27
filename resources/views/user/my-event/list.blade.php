@@ -1,7 +1,7 @@
 @extends('layouts.app')
-@include('layouts.navbar')
 
 @section('content')
+
 <div class="container-fluid py-4">
     <div class="row">
         <!-- Sidebar -->
