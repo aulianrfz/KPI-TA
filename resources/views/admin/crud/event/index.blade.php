@@ -36,6 +36,7 @@
                     <th>Nama Event</th>
                     <th>Penyelenggara</th>
                     <th>Mulai Dilaksanakan Pada Tanggal</th>
+                    <th>Selesai Dilaksanakan Pada Tanggal</th>
                     <th>Foto</th>
                     <th>Aksi</th>
                 </tr>
@@ -47,6 +48,7 @@
                     <td>{{ $event->nama_event }}</td>
                     <td>{{ $event->penyelenggara }}</td>
                     <td>{{ $event->tanggal }}</td>
+                    <td>{{ $event->tanggal_akhir }}</td>
                     <td>
                         @if($event->foto)
                             <img src="{{ asset('storage/' . $event->foto) }}" width="80">

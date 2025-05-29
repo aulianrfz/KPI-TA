@@ -16,6 +16,7 @@ class Event extends Model
         'penyelenggara',
         'deskripsi',
         'tanggal',
+        'tanggal_akhir',
         'foto',
     ];
 
