@@ -28,7 +28,7 @@
 
     <div class="text-center mt-5" data-aos="fade-up">
         <h3 class="fw-bold">CATEGORIES</h3>
-        <hr class="mx-auto" style="width: 100px; border-top: 2px solid #000;">
+        <hr class="mx-auto" style="width: 700px; border-top: 2px solid #000;">
     </div>
 
     <div class="row justify-content-center mt-4">
