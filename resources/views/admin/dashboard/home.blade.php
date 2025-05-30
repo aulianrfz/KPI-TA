@@ -80,14 +80,31 @@
         </button>
     </div>
 
-    <div class="d-flex flex-column flex-md-row justify-content-between mb-3">
-        <form method="GET" action="{{ route('admin.dashboard') }}" class="d-flex">
-            <div class="input-group w-400 w-md-50">
-                <input type="text" name="search" class="form-control border" placeholder="Cari peserta" style="border-color: #0367A6;" value="{{ request('search') }}">
-                <span class="input-group-text" style="background-color: #0367A6; color: white;"><i class="bi bi-search"></i></span>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start mb-3 gap-3">
+        <form method="GET" action="{{ route('admin.dashboard') }}" class="w-100 w-md-50">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control border" placeholder="Cari peserta"
+                    style="border-color: #0367A6;" value="{{ request('search') }}">
+                <span class="input-group-text" style="background-color: #0367A6; color: white;">
+                    <i class="bi bi-search"></i>
+                </span>
             </div>
         </form>
-        <button class="btn btn-outline-secondary mt-3 mt-md-0">Filter by</button>
+
+        <div class="d-flex flex-column flex-md-row align-items-start gap-2 w-100 w-md-50 justify-content-md-end">
+            <form method="GET" action="{{ route('admin.dashboard') }}">
+                <input type="hidden" name="search" value="{{ request('search') }}">
+                <select name="sort" class="form-select" onchange="this.form.submit()">
+                    <option value="asc" {{ request('sort') === 'asc' ? 'selected' : '' }}>A-Z</option>
+                    <option value="desc" {{ request('sort') === 'desc' ? 'selected' : '' }}>Z-A</option>
+                </select>
+            </form>
+
+            <a href="{{ route('admin.export', ['search' => request('search'), 'sort' => request('sort')]) }}"
+                class="btn btn-success">
+                <i class="bi bi-file-earmark-excel me-1"></i> Export Excel
+            </a>
+        </div>
     </div>
 
     <div class="card shadow-sm border-0 rounded-4">
@@ -123,7 +140,7 @@
 
                             </td>
                             <td>
-                                @if ($pendaftar->status === 'Hadir')
+                                @if ($pendaftar->kehadiran?->status === 'Hadir')
                                     <span class="badge bg-success">Hadir</span>
                                 @else
                                     <span class="badge bg-danger">Belum Hadir</span>

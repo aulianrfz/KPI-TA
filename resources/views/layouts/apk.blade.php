@@ -270,7 +270,7 @@
                             class="bi bi-bar-chart-line-fill"></i><span>Laporan Penjualan</span></a></li>
                 <li class="nav-item mb-2"><a href="{{ url('/listcrud') }}"
                         class="nav-link {{ request()->is('listcrud') ? 'active' : '' }}"><i
-                            class="bi bi-tags-fill"></i><span>Kategori</span></a></li>
+                            class="bi bi-tags-fill"></i><span>CRUD</span></a></li>
                 <li class="nav-item mb-2"><a href="#" class="nav-link"><i
                             class="bi bi-calendar-event-fill"></i><span>Penjadwalan</span></a></li>
                 <li class="nav-item mb-2"><a href="#" class="nav-link"><i

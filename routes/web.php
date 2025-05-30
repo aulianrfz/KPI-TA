@@ -84,12 +84,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/admin/mark-present', [DashboardAdminController::class, 'markAsPresent'])->name('admin.markPresent');
         Route::get('/admin/peserta/{id}/identitas', [DashboardAdminController::class, 'showIdentitas'])->name('admin.peserta.identitas');
         Route::get('/verifikasi/qr/{id}', [DashboardAdminController::class, 'verifikasiQR'])->name('verifikasi.qr');
+        Route::get('/admin/export', [DashboardAdminController::class, 'exportExcel'])->name('admin.export');
 
         //kehairan
         Route::get('/kehadiran', [KehadiranController::class, 'index'])->name('kehadiran.index');
         Route::get('/kehadiran/{id}/qr', [KehadiranController::class, 'showQR'])->name('admin.qr.show');
         Route::get('/kehadiran/{id}/edit', [KehadiranController::class, 'edit'])->name('kehadiran.edit');
         Route::put('/kehadiran/{id}', [KehadiranController::class, 'update'])->name('kehadiran.update');
+        Route::get('/kehadiran-export', [KehadiranController::class, 'exportExcel'])->name('kehadiran.export');
 
         //transaksi
         Route::get('/admin/transaksi', [PembayaranController::class, 'show'])->name('transaksi.index');

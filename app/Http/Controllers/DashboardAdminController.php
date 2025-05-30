@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Crypt;
+use App\Exports\PendaftarExport;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
 use App\Models\Pendaftar;
@@ -14,12 +15,15 @@ use App\Models\Kehadiran;
 use App\Models\Bergabung;
 use App\Models\Tim;
 use Carbon\Carbon;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DashboardAdminController extends Controller
 {
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $sort = $request->input('sort', 'asc');
+
         $query = Pendaftar::with('peserta')
             ->whereNotNull('url_qrCode')
             ->where('url_qrCode', '!=', '');
@@ -31,6 +35,10 @@ class DashboardAdminController extends Controller
                     ->orWhere('institusi', 'like', "%$search%");
             });
         }
+
+        $query->join('peserta', 'pendaftar.peserta_id', '=', 'peserta.id')
+              ->orderBy('peserta.nama_peserta', $sort)
+              ->select('pendaftar.*');
 
         $pendaftarList = $query->orderByDesc('created_at')->paginate(10)->withQueryString();
 
@@ -128,4 +136,11 @@ class DashboardAdminController extends Controller
         return view('admin.crud.list');
     }
 
+    public function exportExcel(Request $request)
+    {
+        $search = $request->input('search');
+        $sort = $request->input('sort', 'asc');
+
+        return Excel::download(new PendaftarExport($search, $sort), 'daftar_peserta.xlsx');
+    }
 }

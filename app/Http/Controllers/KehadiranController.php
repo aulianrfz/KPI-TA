@@ -9,24 +9,33 @@ use App\Models\Pendaftar;
 use App\Models\Peserta;
 use App\Models\Kehadiran;
 use App\Models\Bergabung;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\KehadiranExport;
 use App\Models\KategoriLomba;
 use App\Models\Tim;
 use Carbon\Carbon;
 
 class KehadiranController extends Controller
 {
- public function index(Request $request)
+    public function index(Request $request)
     {
         $search = $request->input('search');
+        $sort = $request->input('sort', 'desc');
 
         $pendaftar = Pendaftar::with(['peserta', 'mataLomba', 'kehadiran'])
             ->when($search, function ($query) use ($search) {
                 $query->whereHas('peserta', function ($q) use ($search) {
                     $q->where('nama_peserta', 'like', "%$search%")
-                      ->orWhere('institusi', 'like', "%$search%");
+                        ->orWhere('institusi', 'like', "%$search%");
                 });
             })
+            ->orderBy('created_at', $sort === 'asc' ? 'asc' : 'desc')
             ->paginate(10);
+
+        $pendaftar->appends([
+            'search' => $search,
+            'sort' => $sort,
+        ]);
 
         $totalPeserta = Pendaftar::count();
         $pesertaOnsite = Kehadiran::count();
@@ -62,6 +71,11 @@ class KehadiranController extends Controller
         }
 
         return redirect()->route('kehadiran.index')->with('success', 'Data kehadiran berhasil diperbarui.');
+    }
+
+    public function exportExcel(Request $request)
+    {
+        return Excel::download(new KehadiranExport($request->search), 'kehadiran.xlsx');
     }
 
 }

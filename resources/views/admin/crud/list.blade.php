@@ -1,12 +1,11 @@
 @extends('layouts.apk')
 
 @section('content')
-<div class="main-content flex-grow-1">
+
     <div class="container py-5">
         <h2 class="fw-bold mb-4 text-primary">Manajemen Data</h2>
 
         <div class="row g-4">
-            <!-- Kategori -->
             <div class="col-md-4">
                 <a href="{{ url('/kategori') }}" class="text-decoration-none">
                     <div class="card custom-card bg-gradient-kategori text-white h-100">
@@ -19,7 +18,6 @@
                 </a>
             </div>
 
-            <!-- Provinsi -->
             <div class="col-md-4">
                 <a href="{{ url('/provinsi') }}" class="text-decoration-none">
                     <div class="card custom-card bg-gradient-provinsi text-white h-100">
@@ -32,7 +30,6 @@
                 </a>
             </div>
 
-            <!-- Institusi -->
             <div class="col-md-4">
                 <a href="{{ url('/institusi') }}" class="text-decoration-none">
                     <div class="card custom-card bg-gradient-institusi text-white h-100">
@@ -45,7 +42,6 @@
                 </a>
             </div>
 
-            <!-- List Event -->
             <div class="col-md-4">
                 <a href="{{ url('/listevent') }}" class="text-decoration-none">
                     <div class="card custom-card bg-gradient-event text-white h-100">
@@ -59,5 +55,4 @@
             </div>
         </div>
     </div>
-</div>
 @endsection

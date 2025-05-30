@@ -13,6 +13,10 @@ class Kehadiran extends Model
         'status'
     ];
 
+    protected $casts = [
+        'tanggal' => 'datetime',
+    ];
+
     public function pendaftar()
     {
         return $this->belongsTo(Pendaftar::class, 'pendaftar_id');

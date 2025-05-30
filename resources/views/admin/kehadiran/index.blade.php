@@ -41,25 +41,30 @@
     </div>
 
     <div class="container mt-5">
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start mb-3 gap-2">
-            <form method="GET" action="{{ route('kehadiran.index') }}" class="w-100 w-md-auto">
-                <div class="input-group" style="max-width: 400px;">
-                    <input type="text" name="search" class="form-control" placeholder="Search for something"
-                        value="{{ request('search') }}">
-                    <button class="btn btn-primary" type="submit">
-                        <i class="bi bi-search"></i>
-                    </button>
-                </div>
-            </form>
-            <div class="d-flex gap-2">
-                <button class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                    Filter by
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-2">
+        <form method="GET" action="{{ route('kehadiran.index') }}" class="w-100 w-md-auto">
+            <div class="input-group" style="max-width: 400px;">
+                <input type="text" name="search" class="form-control" placeholder="Cari peserta"
+                    value="{{ request('search') }}">
+                <button class="btn btn-primary" type="submit">
+                    <i class="bi bi-search"></i>
                 </button>
-                <a href="#" class="btn btn-success">
-                    <i class="bi bi-file-earmark-excel-fill"></i>
-                </a>
             </div>
+        </form>
+
+        <div class="d-flex gap-2">
+            <form method="GET" action="{{ route('kehadiran.index') }}">
+                <select name="sort" onchange="this.form.submit()" class="px-2 py-1 border rounded">
+                    <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Data Terbaru</option>
+                    <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Data Terlama</option>
+                </select>
+            </form>
+            <a href="{{ route('kehadiran.export', ['search' => request('search'), 'sort' => request('sort')]) }}"
+                class="btn btn-success">
+                <i class="bi bi-file-earmark-excel-fill"></i>
+            </a>
         </div>
+    </div>
 
         <div class="card shadow-sm border-0 rounded-4">
             <div class="card-body p-0">
