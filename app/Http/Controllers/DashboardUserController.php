@@ -55,6 +55,14 @@ class DashboardUserController extends Controller
             $query->where('nama_lomba', 'like', '%' . $request->search . '%');
         }
 
+        if ($request->has('jenis_lomba')) {
+            $query->whereIn('jenis_lomba', $request->jenis_lomba);
+        }
+
+        if ($request->has('biaya_pendaftaran')) {
+            $query->where('biaya_pendaftaran', '<=', $request->biaya_pendaftaran);
+        }
+
         $events = $query->get();
 
         return view('user.event.general', compact('events'));
