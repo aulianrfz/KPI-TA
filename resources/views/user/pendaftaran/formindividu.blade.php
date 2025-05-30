@@ -58,8 +58,13 @@
                 </div>
 
                 <div class="col-md-6">
-                    <label for="hp" class="form-label">Jurusan</label>
-                    <input type="text" class="form-control" id="prodi" name="peserta[0][prodi]" required>
+                    <label for="prodi" class="form-label">Prodi</label>
+                        <select name="peserta[0][prodi]" class="form-select" required>
+                            <option value="">- Pilih Prodi -</option>
+                            @foreach ($prodi as $prods)
+                                <option value="{{ $prods->nama_jurusan }}">{{ $prods->nama_jurusan }}</option>
+                            @endforeach
+                        </select>
                 </div>
 
                 <div class="row mb-3">

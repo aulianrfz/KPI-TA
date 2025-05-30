@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('nama_lomba',100);
             $table->string('jenis_lomba',25);
             $table->string('jurusan',50);
+            $table->integer('min_peserta');
             $table->integer('maks_peserta');
             $table->integer('maks_total_peserta');
             $table->string('jenis_pelaksanaan',50);

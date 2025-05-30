@@ -29,6 +29,11 @@
         </div>
 
         <div class="mb-3">
+            <label for="min_peserta" class="form-label">Minimal Peserta</label>
+            <input type="number" name="min_peserta" id="min_peserta" class="form-control" value="{{ $mataLomba->min_peserta }}" required>
+        </div>
+
+        <div class="mb-3">
             <label for="maks_peserta" class="form-label">Maksimal Peserta</label>
             <input type="number" name="maks_peserta" id="maks_peserta" class="form-control" value="{{ $mataLomba->maks_peserta }}" required>
         </div>

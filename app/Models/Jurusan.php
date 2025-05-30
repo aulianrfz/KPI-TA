@@ -9,6 +9,9 @@ class Jurusan extends Model
 {
     protected $table = 'jurusan';
 
+    protected $fillable = [
+        'nama_jurusan',
+    ];
     public function peserta()
     {
         return $this->hasMany(Peserta::class);

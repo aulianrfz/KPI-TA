@@ -37,6 +37,11 @@
         </div>
 
         <div class="form-group">
+            <label for="min_peserta">Minimal Peserta</label>
+            <input type="number" name="min_peserta" id="min_peserta" class="form-control" required>
+        </div>
+
+        <div class="form-group">
             <label for="maks_peserta">Maksimal Peserta</label>
             <input type="number" name="maks_peserta" id="maks_peserta" class="form-control" required>
         </div>

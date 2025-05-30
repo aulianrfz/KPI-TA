@@ -11,6 +11,7 @@ use App\Models\MataLomba;
 use App\Models\Provinsi;
 use App\Models\Institusi;
 use App\Models\Peserta;
+use App\Models\Jurusan;
 use App\Models\Invoice;
 use App\Models\Membayar;
 use App\Models\Pendaftar;
@@ -23,10 +24,11 @@ class PendaftaranController extends Controller
         $mataLomba = MataLomba::findOrFail($id_mataLomba);
         $provinsi = Provinsi::all();
         $institusi = Institusi::all();
+        $prodi = Jurusan::all();
 
         $maksPeserta = $mataLomba->maks_peserta;
 
-        return view('user.pendaftaran.formpeserta', compact('mataLomba', 'provinsi', 'institusi', 'maksPeserta'));
+        return view('user.pendaftaran.formpeserta', compact('mataLomba', 'provinsi', 'institusi', 'maksPeserta', 'prodi'));
     }
 
 

@@ -52,6 +52,7 @@
                         <td>{{ $mataLomba->kategori->nama_kategori ?? '-' }}</td>
                         <td>{{ $mataLomba->nama_lomba }}</td>
                         <td>{{ $mataLomba->jurusan }}</td>
+                        <td>{{ $mataLomba->min_peserta }}</td>
                         <td>{{ $mataLomba->maks_peserta }}</td>
                         <td>{{ $mataLomba->maks_total_peserta }}</td>
                         <td>Rp {{ number_format($mataLomba->biaya_pendaftaran, 0, ',', '.') }}</td>

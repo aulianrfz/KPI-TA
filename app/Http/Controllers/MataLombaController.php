@@ -43,6 +43,7 @@ class MataLombaController extends Controller
             'kategori_id' => 'required|exists:kategori,id',
             'nama_lomba' => 'required|string|max:255',
             'jurusan' => 'required|string|max:255',
+            'min_peserta' => 'required|integer|min:1',
             'maks_peserta' => 'required|integer|min:1',
             'biaya_pendaftaran' => 'required|numeric|min:0',
             'url_tor' => 'nullable|url',
@@ -55,7 +56,7 @@ class MataLombaController extends Controller
 
         $data = $request->all();
 
-        $data['jenis_lomba'] = $data['maks_peserta'] > 1 ? 'Kelompok' : 'Individu';
+        $data['jenis_lomba'] = $data['min_peserta'] > 1 ? 'Kelompok' : 'Individu';
 
         if ($request->hasFile('foto_kompetisi')) {
             $data['foto_kompetisi'] = $request->file('foto_kompetisi')->store('foto_kompetisi', 'public');
@@ -95,7 +96,7 @@ class MataLombaController extends Controller
         ]);
 
         $data = $request->all();
-        $data['jenis_lomba'] = $data['maks_peserta'] > 1 ? 'Kelompok' : 'Individu';
+        $data['jenis_lomba'] = $data['min_peserta'] > 1 ? 'Kelompok' : 'Individu';
 
         if ($request->hasFile('foto_kompetisi')) {
             $data['foto_kompetisi'] = $request->file('foto_kompetisi')->store('foto_kompetisi', 'public');

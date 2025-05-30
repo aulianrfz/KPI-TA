@@ -46,9 +46,14 @@
         </div>
 
         <div class="row mb-3">
-            <div class="col-md-6">
-                <label for="hp" class="form-label">Prodi</label>
-                <input type="text" class="form-control" id="prodi_{{ $index }}" name="peserta[{{ $index }}][prodi]" required>
+             <div class="col-md-6">
+                <label for="prodi_{{ $index }}" class="form-label">Prodi</label>
+                <select name="peserta[{{ $index }}][prodi]" class="form-select" id="prodi_{{ $index }}" required>
+                    <option value="">- Pilih Prodi -</option>
+                    @foreach ($prodi as $prods)
+                        <option value="{{ $prods->nama_jurusan }}">{{ $prods->nama_jurusan }}</option>
+                    @endforeach
+                </select>
             </div>
             <div class="col-md-6">
                 <label class="form-label">Upload KTP</label>
