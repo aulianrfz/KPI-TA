@@ -63,4 +63,11 @@ class Kernel extends HttpKernel
         // Custom middleware
         'role' => \App\Http\Middleware\RoleMiddleware::class,
     ];
+
+    protected function schedule(Schedule $schedule)
+    {
+        $schedule->command('app:hapus-pendaftaran-kadaluarsa')->daily();
+    }
+
 }
+

@@ -8,7 +8,7 @@ use App\Models\Peserta;
 use App\Models\Membayar;
 use App\Models\Invoice;
 use App\Mail\QrCodeMail;
-
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -46,6 +46,24 @@ class PembayaranController extends Controller
 
         $pembayaranPertama = $peserta->membayar->first();
 
+        $batasWaktu = $peserta->created_at->addDays(3);
+        if (now()->gt($batasWaktu)) {
+            $invoice = $pembayaranPertama?->invoice;
+            if ($invoice) {
+                $pesertaTerkait = Peserta::whereHas('membayar', function ($query) use ($invoice) {
+                    $query->where('invoice_id', $invoice->id);
+                })->get();
+
+                foreach ($pesertaTerkait as $p) {
+                    $p->delete();
+                }
+                $invoice->delete();
+                $pembayaranPertama->delete();
+            }
+
+            return redirect()->route('pembayaran.index')->with('error', 'Batas waktu pembayaran telah berakhir. Pendaftaran Anda telah dihapus.');
+        }
+
         if (!$pembayaranPertama || !$pembayaranPertama->invoice) {
             abort(404, 'Invoice tidak ditemukan untuk peserta ini.');
         }
@@ -57,8 +75,7 @@ class PembayaranController extends Controller
 
         $tim = $peserta->tim->first();
         $jumlah_peserta = $pesertaSatuInvoice->count();
-        $batas_pembayaran = now()->addDays(3)->format('d M Y');
-
+        $batas_pembayaran = $peserta->created_at->addDays(3)->format('d M Y');
         $mataLomba = $peserta->mataLomba;
 
         return view('user.pembayaran.detail', compact(

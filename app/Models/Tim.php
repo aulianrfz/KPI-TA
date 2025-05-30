@@ -15,13 +15,16 @@ class Tim extends Model
         'nama_tim',
     ];
 
-public function peserta()
-{
-    return $this->belongsToMany(Peserta::class, 'bergabung', 'tim_id', 'peserta_id')
-                ->withPivot('posisi');
-}
+    public function peserta()
+    {
+        return $this->belongsToMany(Peserta::class, 'bergabung', 'tim_id', 'peserta_id')
+                    ->withPivot('posisi');
+    }
 
-
-
-
+    protected static function boot()
+    {
+        parent::boot();
+        static::deleting(function ($tim) {            $tim->peserta()->detach();
+        });
+    }
 }
