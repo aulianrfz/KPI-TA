@@ -3,11 +3,11 @@
 @section('content')
 
 <div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center">
-        <div class="d-flex align-items-center mb-3">
-            <a href="{{ route('event.list', 1) }}" class="me-2 text-dark"><i class="bi bi-arrow-left"></i></a>
-            <h5 class="mb-0">PILIHAN KATEGORI </h5>
-        </div>
+    <div class="d-flex align-items-center mb-3">
+        <a href="{{ route('event.list', 1) }}" class="btn btn-outline-primary me-2">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <h5 class="mb-0 fw-bold text-uppercase">Pilihan Events</h5>
     </div>
 
     <div class="row">

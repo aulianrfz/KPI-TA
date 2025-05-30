@@ -5,8 +5,10 @@
 
 <div class="container mt-4">
     <div class="d-flex align-items-center mb-3">
-        <a href="{{ route('event.show', $event->id) }}" class="me-2"><i class="bi bi-arrow-left"></i></a>
-        <h5 class="mb-0">PILIHAN EVENTS</h5>
+        <a href="{{ route('event.show', $event->id) }}" class="btn btn-outline-primary me-2">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <h5 class="mb-0 fw-bold text-uppercase">Pilihan Events</h5>
     </div>
 
     <div class="row align-items-start">
@@ -16,9 +18,26 @@
 
         <div class="col-md-8" data-aos="fade-left" data-aos-delay="100">
             <h5 class="fw-bold">{{ $event->nama_event }}</h5>
+            @php
+                use Carbon\Carbon;
+
+                $start = Carbon::parse($event->tanggal);
+                $end = Carbon::parse($event->tanggal_akhir);
+
+                    if ($start->month === $end->month && $start->year === $end->year) {
+                        $tanggalFormatted = $start->day .  '–'  . $end->day . ' ' . $start->translatedFormat('F Y');
+                    } else {
+                        $tanggalFormatted = $start->translatedFormat('d F Y') . ' – ' . $end->translatedFormat('d F Y');
+                    }
+            @endphp
+
+            <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-calendar-date text-primary me-2"></i>
+                <small>{{ $tanggalFormatted }}</small> 
+            </div>
             <div class="d-flex align-items-center text-muted mb-3">
                 <i class="bi bi-geo-alt-fill me-2 text-primary"></i>
-                <small>{{ $event->lokasi ?? 'Lokasi tidak tersedia' }}</small>
+                <small>{{ $event->penyelenggara ?? 'Lokasi tidak tersedia' }}</small>
             </div>
             <p style="text-align: justify;">
                 {{ $event->deskripsi ?? 'Deskripsi event belum tersedia.' }}

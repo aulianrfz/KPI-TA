@@ -36,7 +36,6 @@
                                 <tr>
                                     <th>Nama Lomba</th>
                                     <th>Jenis Lomba</th>
-                                    <th>Status</th>
                                     <th>Tanggal Daftar</th>
                                     <th>Aksi</th>
                                 </tr>
@@ -46,20 +45,6 @@
                                     <tr>
                                         <td>{{ optional($item->mataLomba)->nama_lomba ?? '-' }}</td>
                                         <td>{{ optional($item->mataLomba)->jenis_lomba ?? '-' }}</td>
-                                        <td>
-                                            @php
-                                                $status = strtolower($item->status);
-                                            @endphp
-                                            @if ($status === 'belum bayar')
-                                                <span class="badge text-dark" style="background-color: #FFDFDF;">Belum Dibayar</span>
-                                            @elseif ($status === 'menunggu verifikasi')
-                                                <span class="badge text-dark" style="background-color: #FFF6D1;">Menunggu Verifikasi</span>
-                                            @elseif ($status === 'sudah bayar')
-                                                <span class="badge text-dark" style="background-color: #D0F4FF;">Sudah Dibayar</span>
-                                            @else
-                                                <span class="badge bg-secondary">Tidak Diketahui</span>
-                                            @endif
-                                        </td>
                                         <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d.m.Y') }}<br>
                                             <small>{{ \Carbon\Carbon::parse($item->created_at)->format('h:i A') }}</small>
                                         </td>
