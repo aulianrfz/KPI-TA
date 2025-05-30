@@ -100,6 +100,18 @@ class PendaftaranController extends Controller
             ]);
         }
 
+        foreach ($request->peserta as $pesertaData) {
+        $jumlahLombaDiikuti = Peserta::where('nama_peserta', $pesertaData['nama_peserta'])
+            ->where('nim', $pesertaData['nim'])
+            ->where('institusi', $pesertaData['institusi'] ?? null)
+            ->whereHas('pendaftar')
+            ->count();
+
+        if ($jumlahLombaDiikuti >= 3) {
+            return back()->withInput()->with('error', "Peserta {$pesertaData['nama_peserta']} sudah terdaftar di 3 mata lomba.");
+        }
+    }
+
         foreach ($request->peserta as $key => $pesertaData) {
             $ktpPath = null;
             if ($request->hasFile('peserta.' . $key . '.ktp')) {
