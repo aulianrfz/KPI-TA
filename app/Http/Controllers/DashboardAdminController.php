@@ -26,7 +26,11 @@ class DashboardAdminController extends Controller
 
         $query = Pendaftar::with('peserta')
             ->whereNotNull('url_qrCode')
-            ->where('url_qrCode', '!=', '');
+            ->where('url_qrCode', '!=', '')
+            ->whereHas('membayar', function ($q) {
+                $q->where('status', 'Disetujui');
+            });
+
         if ($search) {
             $query->whereHas('peserta', function ($q) use ($search) {
                 $q->where('nama_peserta', 'like', "%$search%")
@@ -36,21 +40,30 @@ class DashboardAdminController extends Controller
             });
         }
 
-        $query->join('peserta', 'pendaftar.peserta_id', '=', 'peserta.id')
-              ->orderBy('peserta.nama_peserta', $sort)
-              ->select('pendaftar.*');
+        $query->orderBy(
+            Peserta::select('nama_peserta')
+                ->whereColumn('peserta.id', 'pendaftar.peserta_id'),
+            $sort
+        );
 
         $pendaftarList = $query->orderByDesc('created_at')->paginate(10)->withQueryString();
 
         $totalPeserta = Pendaftar::whereNotNull('url_qrCode')
             ->where('url_qrCode', '!=', '')
+            ->whereHas('membayar', function ($q) {
+                $q->where('status', 'Disetujui');
+            })
             ->count();
 
         $individuCount = Pendaftar::whereNotNull('url_qrCode')
             ->where('url_qrCode', '!=', '')
+            ->whereHas('membayar', function ($q) {
+                $q->where('status', 'Disetujui');
+            })
             ->whereHas('peserta', function ($q) {
                 $q->where('jenis_peserta', 'Individu');
-            })->count();
+            })
+            ->count();
 
         $timCount = Bergabung::select('tim_id')
             ->groupBy('tim_id')
@@ -59,23 +72,32 @@ class DashboardAdminController extends Controller
                 $anggota = Bergabung::where('tim_id', $group->tim_id)->get();
 
                 foreach ($anggota as $anggotaTim) {
-                    $punyaQr = Pendaftar::where('peserta_id', $anggotaTim->peserta_id)
+                    $punyaQrDanBayar = Pendaftar::where('peserta_id', $anggotaTim->peserta_id)
                         ->whereNotNull('url_qrCode')
                         ->where('url_qrCode', '!=', '')
+                        ->whereHas('membayar', function ($q) {
+                            $q->where('status', 'Disetujui');
+                        })
                         ->exists();
-                    if (!$punyaQr) {
+
+                    if (!$punyaQrDanBayar) {
                         return false;
                     }
                 }
+
                 return true;
             })
             ->count();
 
         $pesertaOnSite = Kehadiran::where('status', 'Hadir')->count();
+
         $belumDaftarUlang = Pendaftar::whereNotNull('url_qrCode')
-                ->where('url_qrCode', '!=', '')
-                ->whereDoesntHave('kehadiran')
-                ->count();
+            ->where('url_qrCode', '!=', '')
+            ->whereHas('membayar', function ($q) {
+                $q->where('status', 'Disetujui');
+            })
+            ->whereDoesntHave('kehadiran')
+            ->count();
 
         return view('admin.dashboard.home', [
             'totalPeserta' => $totalPeserta,
@@ -87,6 +109,7 @@ class DashboardAdminController extends Controller
             'search' => $search,
         ]);
     }
+
 
     public function markAsPresent(Request $request)
     {

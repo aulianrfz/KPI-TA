@@ -33,40 +33,61 @@
                 <div class="col-6">
                     <div class="card shadow-sm border-0 rounded-4 text-center py-3 h-100">
                         <div class="card-body">
-                            <h6 class="text-secondary mb-2">Tim</h6>
-                            <h3 class="fw-bold">{{ $timCount }}</h3>
+                            <div class="mb-2">
+                                <i class="bi bi-people-fill fs-2 text-info"></i>
+                            </div>
+                            <h6 class="text-secondary mb-1">Tim</h6>
+                            <h4 class="fw-bold">{{ $timCount }}</h4>
                         </div>
                     </div>
                 </div>
                 <div class="col-6">
                     <div class="card shadow-sm border-0 rounded-4 text-center py-3 h-100">
                         <div class="card-body">
-                            <h6 class="text-secondary mb-2">Individu</h6>
-                            <h3 class="fw-bold">{{ $individuCount }}</h3>
+                            <div class="mb-2">
+                                <i class="bi bi-person-fill fs-2 text-primary"></i>
+                            </div>
+                            <h6 class="text-secondary mb-1">Individu</h6>
+                            <h4 class="fw-bold">{{ $individuCount }}</h4>
                         </div>
                     </div>
                 </div>
                 <div class="col-6">
                     <div class="card shadow-sm border-0 rounded-4 text-center py-3 h-100">
-                        <div class="card-body">
-                            <h6 class="text-secondary mb-2">Peserta On-Site</h6>
-                            <h3 class="fw-bold text-success">{{ $pesertaOnSite }}</h3>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted">Peserta On-site</h6>
+                                <h4 class="fw-bold text-success">{{ $pesertaOnSite }}</h4>
+                            </div>
+                            <div class="bg-success bg-opacity-10 rounded-circle d-flex justify-content-center align-items-center" style="width: 3rem; height: 3rem;">
+                                <i class="bi bi-person-check-fill fs-2 text-success"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-6">
                     <div class="card shadow-sm border-0 rounded-4 text-center py-3 h-100">
-                        <div class="card-body">
-                            <h6 class="text-secondary mb-2">Peserta Belum Hadir</h6>
-                            <h3 class="fw-bold text-danger">{{ $belumDaftarUlang }}</h3>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted">Belum Daftar Ulang</h6>
+                                <h4 class="fw-bold text-danger">{{ $belumDaftarUlang }}</h4>
+                            </div>
+                            <div class="bg-danger bg-opacity-10 rounded-circle d-flex justify-content-center align-items-center" style="width: 3rem; height: 3rem;">
+                                <i class="bi bi-person-dash-fill fs-2 text-danger"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-12">
-                    <div class="card shadow-sm border-0 rounded-4 text-center py-3 h-100">
-                        <div class="card-body">
-                            <h6 class="text-secondary mb-2">Total Peserta</h6>
-                            <h3 class="fw-bold">{{ $totalPeserta }}</h3>
+                    <div class="card shadow-sm border-0 rounded-4 p-3 h-100">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="text-muted">Total Peserta</h6>
+                                <h4 class="fw-bold">{{ $totalPeserta }}</h4>
+                            </div>
+                            <div class="bg-primary bg-opacity-10 rounded-circle d-flex justify-content-center align-items-center" style="width: 3rem; height: 3rem;">
+                                <i class="bi bi-person-circle fs-2 text-primary"></i>
+                            </div>
                         </div>
                     </div>
                 </div>

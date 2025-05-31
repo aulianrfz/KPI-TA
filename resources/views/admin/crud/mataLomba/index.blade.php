@@ -30,16 +30,18 @@
             </div>
         </form>
 
+
         <div class="table-responsive">
             <table class="table table-bordered table-striped align-middle">
-                <thead class="table-dark">
+                <thead class="table-dark text-center">
                     <tr>
                         <th>No</th>
                         <th>Nama Kategori</th>
-                        <th>Nama mataLomba</th>
+                        <th>Nama Lomba</th>
                         <th>Jurusan</th>
+                        <th>Min Peserta</th>
                         <th>Maks Peserta</th>
-                        <th>Maks Total Peserta</th>
+                        <th>Maks Total</th>
                         <th>Biaya</th>
                         <th>Foto</th>
                         <th style="width: 120px;">Aksi</th>
@@ -47,39 +49,39 @@
                 </thead>
                 <tbody>
                     @forelse($mataLombas as $index => $mataLomba)
-                    <tr>
-                        <td>{{ $mataLombas->firstItem() + $index }}</td>
-                        <td>{{ $mataLomba->kategori->nama_kategori ?? '-' }}</td>
-                        <td>{{ $mataLomba->nama_lomba }}</td>
-                        <td>{{ $mataLomba->jurusan }}</td>
-                        <td>{{ $mataLomba->min_peserta }}</td>
-                        <td>{{ $mataLomba->maks_peserta }}</td>
-                        <td>{{ $mataLomba->maks_total_peserta }}</td>
-                        <td>Rp {{ number_format($mataLomba->biaya_pendaftaran, 0, ',', '.') }}</td>
-                        <td>
-                            @if($mataLomba->foto_kompetisi)
-                                <img src="{{ asset('storage/' . $mataLomba->foto_kompetisi) }}" width="70">
-                            @else
-                                -
-                            @endif
-                        </td>
-                        <td>
-                            <a href="{{ route('mataLomba.edit', $mataLomba->id) }}" class="btn btn-sm btn-warning me-1" title="Edit">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <form action="{{ route('mataLomba.destroy', $mataLomba->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin hapus?')">
-                                @csrf
-                                @method('DELETE')
-                                <button class="btn btn-sm btn-danger" title="Hapus">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
+                        <tr class="text-center">
+                            <td>{{ $mataLombas->firstItem() + $index }}</td>
+                            <td>{{ $mataLomba->kategori->nama_kategori ?? '-' }}</td>
+                            <td>{{ $mataLomba->nama_lomba }}</td>
+                            <td>{{ $mataLomba->jurusan }}</td>
+                            <td>{{ $mataLomba->min_peserta }}</td>
+                            <td>{{ $mataLomba->maks_peserta }}</td>
+                            <td>{{ $mataLomba->maks_total_peserta }}</td>
+                            <td>Rp {{ number_format($mataLomba->biaya_pendaftaran, 0, ',', '.') }}</td>
+                            <td>
+                                @if($mataLomba->foto_kompetisi)
+                                    <img src="{{ asset('storage/' . $mataLomba->foto_kompetisi) }}" width="60" height="60" style="object-fit: cover; border-radius: 6px;">
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
+                            </td>
+                            <td>
+                                <a href="{{ route('mataLomba.edit', $mataLomba->id) }}" class="btn btn-sm btn-warning mb-1" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ route('mataLomba.destroy', $mataLomba->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus data ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-sm btn-danger" title="Hapus">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
                     @empty
-                    <tr>
-                        <td colspan="8" class="text-center">Tidak ada data</td>
-                    </tr>
+                        <tr>
+                            <td colspan="10" class="text-center text-muted">Tidak ada data tersedia.</td>
+                        </tr>
                     @endforelse
                 </tbody>
             </table>

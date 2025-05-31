@@ -32,4 +32,9 @@ class Pendaftar extends Model
         return $this->hasOne(Kehadiran::class, 'pendaftar_id');
     }
 
+    public function membayar()
+    {
+        return $this->hasOne(Membayar::class, 'peserta_id', 'peserta_id');
+    }
+
 }

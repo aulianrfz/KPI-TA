@@ -23,6 +23,11 @@ class KehadiranController extends Controller
         $sort = $request->input('sort', 'desc');
 
         $pendaftar = Pendaftar::with(['peserta', 'mataLomba', 'kehadiran'])
+            ->whereNotNull('url_qrCode')
+            ->where('url_qrCode', '!=', '')
+            ->whereHas('membayar', function ($q) {
+                $q->where('status', 'Disetujui');
+            })
             ->when($search, function ($query) use ($search) {
                 $query->whereHas('peserta', function ($q) use ($search) {
                     $q->where('nama_peserta', 'like', "%$search%")
@@ -37,12 +42,24 @@ class KehadiranController extends Controller
             'sort' => $sort,
         ]);
 
-        $totalPeserta = Pendaftar::count();
-        $pesertaOnsite = Kehadiran::count();
+        $totalPeserta = Pendaftar::whereNotNull('url_qrCode')
+            ->where('url_qrCode', '!=', '')
+            ->whereHas('membayar', function ($q) {
+                $q->where('status', 'Disetujui');
+            })->count();
+
+        $pesertaOnsite = Kehadiran::where('status', 'Hadir')->count();
+
         $belumDaftarUlang = $totalPeserta - $pesertaOnsite;
 
-        return view('admin.kehadiran.index', compact('pendaftar', 'totalPeserta', 'pesertaOnsite', 'belumDaftarUlang'));
+        return view('admin.kehadiran.index', compact(
+            'pendaftar',
+            'totalPeserta',
+            'pesertaOnsite',
+            'belumDaftarUlang'
+        ));
     }
+
 
     public function showQR($id)
     {
