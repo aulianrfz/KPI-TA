@@ -60,7 +60,6 @@ class KehadiranController extends Controller
         ));
     }
 
-
     public function showQR($id)
     {
         $pendaftar = Pendaftar::with('peserta', 'mataLomba')->findOrFail($id);
