@@ -91,7 +91,7 @@
                                 </td>
                                 <td class="border-start-0 border-end-0">{{ $p->peserta->nama_peserta ?? '-' }}</td>
                                 <td class="border-start-0 border-end-0">{{ $p->peserta->institusi ?? '-' }}</td>
-                                <td class="border-start-0 border-end-0">{{ $p->kategori ?? '-' }}</td>
+                                <td class="border-start-0 border-end-0">{{ $p->mataLomba->kategori->nama_kategori ?? '-' }}</td>
                                 <td class="border-start-0 border-end-0">{{ $p->mataLomba->nama_lomba ?? '-' }}</td>
                                 <td class="border-start-0 border-end-0">
                                     {{ optional($p->kehadiran)->tanggal ? \Carbon\Carbon::parse($p->kehadiran->tanggal)->format('H:i') : '-' }}

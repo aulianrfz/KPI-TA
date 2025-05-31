@@ -9,6 +9,7 @@ class Kehadiran extends Model
     use HasFactory;
     protected $table = 'kehadiran';
     protected $fillable = [
+        'pendaftar_id',
         'tanggal',
         'status'
     ];

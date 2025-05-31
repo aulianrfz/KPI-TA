@@ -30,7 +30,7 @@ class KehadiranExport implements FromCollection, WithHeadings
             return [
                 'Nama Peserta'   => $p->peserta->nama_peserta ?? '-',
                 'Institusi'      => $p->peserta->institusi ?? '-',
-                'Kategori'       => $p->kategori ?? '-',
+                'Kategori'       => $p->mataLomba->kategori->nama_kategori ?? '-',
                 'Mata Lomba'     => $p->mataLomba->nama_lomba ?? '-',
                 'Status'         => $p->kehadiran ? 'Hadir' : 'Belum Hadir',
                 'Waktu Hadir'    => $p->kehadiran ? $p->kehadiran->tanggal->format('Y-m-d H:i:s') : '-',

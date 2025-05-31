@@ -51,14 +51,14 @@ class DashboardAdminController extends Controller
         $totalPeserta = Pendaftar::whereNotNull('url_qrCode')
             ->where('url_qrCode', '!=', '')
             ->whereHas('membayar', function ($q) {
-                $q->where('status', 'Disetujui');
+                $q->where('status', 'Sudah Membayar');
             })
             ->count();
 
         $individuCount = Pendaftar::whereNotNull('url_qrCode')
             ->where('url_qrCode', '!=', '')
             ->whereHas('membayar', function ($q) {
-                $q->where('status', 'Disetujui');
+                $q->where('status', 'Sudah Membayar');
             })
             ->whereHas('peserta', function ($q) {
                 $q->where('jenis_peserta', 'Individu');
@@ -76,7 +76,7 @@ class DashboardAdminController extends Controller
                         ->whereNotNull('url_qrCode')
                         ->where('url_qrCode', '!=', '')
                         ->whereHas('membayar', function ($q) {
-                            $q->where('status', 'Disetujui');
+                            $q->where('status', 'Sudah Membayar');
                         })
                         ->exists();
 
