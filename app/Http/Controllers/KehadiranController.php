@@ -26,7 +26,7 @@ class KehadiranController extends Controller
             ->whereNotNull('url_qrCode')
             ->where('url_qrCode', '!=', '')
             ->whereHas('membayar', function ($q) {
-                $q->where('status', 'Disetujui');
+                $q->where('status', 'Sudah Membayar');
             })
             ->when($search, function ($query) use ($search) {
                 $query->whereHas('peserta', function ($q) use ($search) {

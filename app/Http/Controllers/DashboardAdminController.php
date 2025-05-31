@@ -28,7 +28,7 @@ class DashboardAdminController extends Controller
             ->whereNotNull('url_qrCode')
             ->where('url_qrCode', '!=', '')
             ->whereHas('membayar', function ($q) {
-                $q->where('status', 'Disetujui');
+                $q->where('status', 'Sudah Membayar');
             });
 
         if ($search) {
