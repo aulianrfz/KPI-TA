@@ -31,10 +31,10 @@
 
                 <div class="mb-3">
                     <label class="form-label">Harga Maksimal</label>
-                    <input type="range" class="form-range" name="biaya_pendaftaran" min="500000" max="1000000" step="10000"
+                    <input type="range" class="form-range" name="biaya_pendaftaran" min="500000" max="1000000" step="100000"
                         value="{{ request()->biaya_pendaftaran ?? 500000 }}">
                     <div class="d-flex justify-content-between">
-                        <small>Rp. 500.000</small>
+                        <small>≤Rp. 500.000</small>
                         <small>Rp. 1.000.000</small>
                     </div>
                 </div>

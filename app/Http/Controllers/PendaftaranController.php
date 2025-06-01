@@ -164,7 +164,7 @@ class PendaftaranController extends Controller
 
             if ($jenisPeserta === 'Individu') {
                 $invoice = Invoice::create([
-                    'total_tagihan' => 50000,
+                    'total_tagihan' => $mataLomba->biaya_pendaftaran,
                     'jabatan' => 'Individu',
                 ]);
             }

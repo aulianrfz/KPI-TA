@@ -7,6 +7,7 @@ use App\Http\Controllers\MyEventController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ProvinsiController;
 use App\Http\Controllers\InstitusiController;
+use App\Http\Controllers\JurusanController;
 use App\Http\Controllers\MataLombaController;
 use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\AuthController;
@@ -77,6 +78,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('juri', JuriController::class);
         Route::resource('provinsi', ProvinsiController::class);
         Route::resource('institusi', InstitusiController::class);
+        Route::resource('jurusan', JurusanController::class)->except(['create', 'edit', 'show']);
 
 
         Route::get('/listcrud', [DashboardAdminController::class, 'listCrud'])->name('admin.list.crud');

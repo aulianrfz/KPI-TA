@@ -237,6 +237,10 @@
             background: linear-gradient(135deg, #ffcccc, #ff6f61);
         }
 
+        .bg-gradient-jurusan {
+            background: linear-gradient(135deg,rgb(177, 189, 255), #5c6bc0);
+        }
+
         .pagination .page-link {
             font-size: 0.75rem;
             padding: 0.3rem 0.6rem;
