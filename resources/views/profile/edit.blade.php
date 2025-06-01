@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.apk')
 
 @section('content')
 <div class="container mt-5">

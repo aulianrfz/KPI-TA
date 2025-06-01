@@ -268,29 +268,6 @@
                     <p class="text-muted mb-0">✘ Data venue belum tersedia. Silakan tambahkan terlebih dahulu.</p>
                 @endif
             </div>
-
-            {{-- Data Juri --}}
-            <div class="data-item-row" data-target-dropdown="juri-dropdown-content">
-                <span class="data-item-label">Data Juri</span>
-                <div class="data-item-status">
-                    <div class="data-item-checkbox {{ $isJuriAvailable ? '' : 'missing' }}">
-                        {!! $isJuriAvailable ? '&#10003;' : '&#10007;' !!}
-                    </div>
-                    <span class="data-item-chevron">&rsaquo;</span>
-                </div>
-            </div>
-            <div id="juri-dropdown-content" class="dropdown-content" style="display: none;">
-                @if($isJuriAvailable)
-                     <label for="juri" class="form-label visually-hidden">Pilih Juri</label>
-                    <select name="juri" id="juri" class="form-control">
-                        @foreach(\App\Models\Juri::all() as $juri)
-                            <option value="{{ $juri->id }}">{{ $juri->nama }}</option>
-                        @endforeach
-                    </select>
-                @else
-                    <p class="text-muted mb-0">✘ Data juri belum tersedia. Silakan tambahkan terlebih dahulu.</p>
-                @endif
-            </div>
             
             <div class="form-actions">
                 <button type="submit" class="btn btn-custom-primary" {{ !$allDataAvailable ? 'disabled' : '' }}>

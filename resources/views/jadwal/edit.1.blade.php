@@ -5,7 +5,7 @@
         <div id="errorModal" class="modal-overlay">
             <div class="modal-content">
                 <p>{{ session('error_force') }}</p>
-                <form method="POST" action="{{ route('jadwal.add') }}">
+                <form method="POST" action="{{ route('jadwal.update', $agenda->id) }}">
                     @csrf
                     @foreach(old() as $key => $value)
                         @if(is_array($value))
@@ -24,55 +24,60 @@
             </div>
         </div>
     @endif
-
     <div class="container">
-        <h2>Tambah Jadwal - {{ $nama_jadwal }} | Tahun {{ $tahun }} | Versi {{ $version }}</h2>
+        <h2>Edit Jadwal - {{ $jadwal->nama_jadwal }} | Tanggal
+            {{ \Carbon\Carbon::parse($agenda->tanggal)->translatedFormat('d F Y') }}
+        </h2>
 
-        <form action="{{ route('jadwal.add') }}" method="POST">
+        <form action="{{ route('jadwal.update', $agenda->id) }}" method="POST">
             @csrf
-            <input type="hidden" name="nama_jadwal" value="{{ $nama_jadwal }}">
-            <input type="hidden" name="tahun" value="{{ $tahun }}">
-            <input type="hidden" name="version" value="{{ $version }}">
+            @method('PUT')
+
+            <input type="hidden" name="agenda_id" value="{{ $agenda->id }}">
 
             <div class="form-group">
                 <label>Sub Kategori</label>
                 <select name="mata_lomba_id" class="form-control">
                     <option value="">- Pilih Sub Kategori -</option>
                     @foreach($mata_lomba as $item)
-                        <option value="{{ $item->id }}" {{ old('mata_lomba_id') == $item->id ? 'selected' : '' }}>
+                        <option value="{{ $item->id }}" {{ $agenda->mata_lomba_id == $item->id ? 'selected' : '' }}>
                             {{ $item->nama_lomba }}
                         </option>
                     @endforeach
                 </select>
             </div>
 
-            {{-- Tambahan: Tanggal --}}
             <div class="form-group">
                 <label>Tanggal</label>
                 <select name="tanggal_dropdown" class="form-control" onchange="toggleCustomDate(this.value)">
                     <option value="">-- Pilih Tanggal --</option>
                     @foreach($tanggal_unik as $tanggal)
-                        <option value="{{ $tanggal }}">{{ \Carbon\Carbon::parse($tanggal)->translatedFormat('d F Y') }}</option>
+                        <option value="{{ $tanggal }}" {{ $agenda->tanggal == $tanggal ? 'selected' : '' }}>
+                            {{ \Carbon\Carbon::parse($tanggal)->translatedFormat('d F Y') }}
+                        </option>
                     @endforeach
-                    <option value="lainnya">Tanggal Lainnya</option>
+                    <option value="lainnya" {{ !in_array($agenda->tanggal, $tanggal_unik->toArray()) ? 'selected' : '' }}>
+                        Tanggal Lainnya</option>
                 </select>
 
-                <input type="date" name="tanggal" id="customDate" class="form-control mt-2" style="display: none;">
+                <input type="date" name="tanggal" id="customDate" class="form-control mt-2"
+                    style="{{ !in_array($agenda->tanggal, $tanggal_unik->toArray()) ? 'display:block;' : 'display:none;' }}"
+                    value="{{ !in_array($agenda->tanggal, $tanggal_unik->toArray()) ? $agenda->tanggal : '' }}">
             </div>
 
             <div class="form-group">
                 <label>Waktu Mulai</label>
-                <input type="time" name="waktu_mulai" class="form-control" required>
+                <input type="time" name="waktu_mulai" class="form-control" required value="{{ $agenda->waktu_mulai }}">
             </div>
 
             <div class="form-group">
                 <label>Waktu Selesai</label>
-                <input type="time" name="waktu_selesai" class="form-control" required>
+                <input type="time" name="waktu_selesai" class="form-control" required value="{{ $agenda->waktu_selesai }}">
             </div>
 
             <div class="form-group">
                 <label>Kegiatan</label>
-                <textarea name="kegiatan" class="form-control" rows="3">{{ old('kegiatan') }}</textarea>
+                <textarea name="kegiatan" class="form-control" rows="3">{{ $agenda->kegiatan }}</textarea>
             </div>
 
             <div class="form-group">
@@ -80,7 +85,7 @@
                 <select name="venue_id" class="form-control">
                     <option value="">- Pilih Venue -</option>
                     @foreach($venue as $item)
-                        <option value="{{ $item->id }}" {{ old('venue_id') == $item->id ? 'selected' : '' }}>
+                        <option value="{{ $item->id }}" {{ $agenda->venue_id == $item->id ? 'selected' : '' }}>
                             {{ $item->name }}
                         </option>
                     @endforeach
@@ -90,24 +95,20 @@
             <div class="form-group">
                 <label>Peserta</label>
                 <div id="peserta-wrapper">
-                    @php
-                        $oldPeserta = old('peserta_id', []);
-                    @endphp
-
-                    @if(count($oldPeserta) > 0)
-                        @foreach($oldPeserta as $index => $pesertaId)
+                    @if(count(old('peserta_id', $peserta_terpilih)) > 0)
+                        @foreach(old('peserta_id', $peserta_terpilih) as $pesertaId)
                             <div class="peserta-group mb-2" style="position: relative; max-width: 300px;">
                                 <select name="peserta_id[]" class="form-control">
                                     <option value="">- Pilih Peserta -</option>
                                     @foreach($peserta as $item)
-                                        <option value="{{ $item->id }}" {{ (isset($pesertaId) && $pesertaId == $item->id) ? 'selected' : '' }}>
+                                        <option value="{{ $item->id }}" {{ $pesertaId == $item->id ? 'selected' : '' }}>
                                             {{ $item->nama_peserta }}
                                         </option>
                                     @endforeach
                                 </select>
                                 <span class="remove-peserta" title="Hapus peserta"
                                     style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-                                           cursor:pointer; color:red; font-weight:bold; font-size:18px; user-select:none;">&times;</span>
+                                                                                        cursor:pointer; color:red; font-weight:bold; font-size:18px; user-select:none;">&times;</span>
                             </div>
                         @endforeach
                     @else
@@ -120,7 +121,6 @@
                             </select>
                             <span class="remove-peserta" title="Hapus peserta"
                                 style="cursor:pointer; color:red; font-weight:bold; font-size:18px; margin-left:5px;">&times;</span>
-
                         </div>
                     @endif
                 </div>
@@ -130,22 +130,20 @@
             <div class="form-group">
                 <label>Tim</label>
                 <div id="tim-wrapper">
-                    @php
-                        $oldTim = old('tim_id', []);
-                    @endphp
-
-                    @if(count($oldTim) > 0)
-                        @foreach($oldTim as $index => $timId)
-                            <div class="tim-group mb-2">
+                    @if(count(old('tim_id', $tim_terpilih)) > 0)
+                        @foreach(old('tim_id', $tim_terpilih) as $timId)
+                            <div class="tim-group mb-2" style="position: relative; max-width: 300px;">
                                 <select name="tim_id[]" class="form-control">
                                     <option value="">- Pilih Tim -</option>
                                     @foreach($tim as $item)
-                                        <option value="{{ $item->id }}" {{ (isset($timId) && $timId == $item->id) ? 'selected' : '' }}>
+                                        <option value="{{ $item->id }}" {{ $timId == $item->id ? 'selected' : '' }}>
                                             {{ $item->nama_tim }}
                                         </option>
                                     @endforeach
                                 </select>
-                                <button type="button" class="btn btn-danger btn-sm mt-1 remove-tim">Hapus</button>
+                                <span class="remove-tim" title="Hapus tim"
+                                    style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+                                                                                        cursor:pointer; color:red; font-weight:bold; font-size:18px; user-select:none;">&times;</span>
                             </div>
                         @endforeach
                     @else
@@ -153,14 +151,12 @@
                             <select name="tim_id[]" class="form-control" style="padding-right: 30px;">
                                 <option value="" selected disabled>Pilih Tim</option>
                                 @foreach($tim as $item)
-                                    <option value="{{ $item->id }}" {{ (isset($timId) && $timId == $item->id) ? 'selected' : '' }}>
-                                        {{ $item->nama_tim }}
-                                    </option>
+                                    <option value="{{ $item->id }}">{{ $item->nama_tim }}</option>
                                 @endforeach
                             </select>
                             <span class="remove-tim" title="Hapus tim"
                                 style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-                                            cursor:pointer; color:red; font-weight:bold; font-size:18px; user-select:none;">&times;</span>
+                                                                    cursor:pointer; color:red; font-weight:bold; font-size:18px; user-select:none;">&times;</span>
                         </div>
                     @endif
                 </div>
@@ -172,110 +168,96 @@
                 <select name="juri_id" class="form-control">
                     <option value="">- Pilih Juri -</option>
                     @foreach($juri as $item)
-                        <option value="{{ $item->id }}" {{ old('juri_id') == $item->id ? 'selected' : '' }}>
-                            {{ $item->nama }}
+                        <option value="{{ $item->id }}" {{ $agenda->juri_id == $item->id ? 'selected' : '' }}>
+                            {{ $item->nama_juri }}
                         </option>
                     @endforeach
                 </select>
             </div>
 
-            <button type="submit" class="btn btn-primary">Simpan Jadwal</button>
+            <button type="submit" class="btn btn-primary">Update Jadwal</button>
         </form>
-
     </div>
 
     <script>
+        window.addEventListener('DOMContentLoaded', (event) => {
+            const modal = document.getElementById('errorModal');
+            if (modal) {
+                modal.style.display = 'block'; // pastikan modal terlihat
+            }
+        });
+
         function closeModal() {
             document.getElementById('errorModal').style.display = 'none';
         }
-    </script>
 
-
-    <script>
-        function closeModal() {
-            document.getElementById('errorModal').style.display = 'none';
+        function toggleCustomDate(value) {
+            const customDate = document.getElementById('customDate');
+            if (value === 'lainnya') {
+                customDate.style.display = 'block';
+                customDate.required = true;
+            } else {
+                customDate.style.display = 'none';
+                customDate.required = false;
+                customDate.value = '';
+            }
         }
 
-        // Peserta dynamic add/remove
         document.getElementById('add-peserta').addEventListener('click', function () {
             let wrapper = document.getElementById('peserta-wrapper');
-            let newGroup = document.createElement('div');
-            newGroup.classList.add('peserta-group', 'mb-2');
-            newGroup.innerHTML = `
-                <select name="peserta_id[]" class="form-control">
-                    <option value="">- Pilih Peserta -</option>
-                    @foreach($peserta as $item)
-                        <option value="{{ $item->id }}">{{ $item->nama_peserta }}</option>
-                    @endforeach
-                </select>
-                <span class="remove-peserta" title="Hapus peserta" style="cursor:pointer; color:red; font-weight:bold; font-size:18px; margin-left:5px;">&times;</span>
-            `;
-            wrapper.appendChild(newGroup);
-            toggleRemoveButtons('peserta');
+            let div = document.createElement('div');
+            div.classList.add('peserta-group', 'mb-2');
+            div.style.position = 'relative';
+            div.style.maxWidth = '300px';
+
+            div.innerHTML = `
+                            <select name="peserta_id[]" class="form-control">
+                                <option value="" selected disabled>Pilih Peserta</option>
+                                @foreach($peserta as $item)
+                                    <option value="{{ $item->id }}">{{ $item->nama_peserta }}</option>
+                                @endforeach
+                            </select>
+                            <span class="remove-peserta" title="Hapus peserta"
+                                style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+                                       cursor:pointer; color:red; font-weight:bold; font-size:18px; user-select:none;">&times;</span>
+                        `;
+
+            wrapper.appendChild(div);
         });
 
         document.getElementById('peserta-wrapper').addEventListener('click', function (e) {
-            if (e.target && e.target.classList.contains('remove-peserta')) {
-                e.target.parentNode.remove();
-                toggleRemoveButtons('peserta');
+            if (e.target.classList.contains('remove-peserta')) {
+                e.target.parentElement.remove();
             }
         });
 
-
-        // Tim dynamic add/remove
         document.getElementById('add-tim').addEventListener('click', function () {
             let wrapper = document.getElementById('tim-wrapper');
-            let newGroup = document.createElement('div');
-            newGroup.classList.add('tim-group', 'mb-2');
-            newGroup.innerHTML = `
-                <select name="tim_id[]" class="form-control">
-                    <option value="">- Pilih Tim -</option>
-                    @foreach($tim as $item)
-                        <option value="{{ $item->id }}">{{ $item->nama_tim }}</option>
-                    @endforeach
-                </select>
-                <button type="button" class="btn btn-danger btn-sm mt-1 remove-tim">Hapus</button>
-            `;
-            wrapper.appendChild(newGroup);
-            toggleRemoveButtons('tim');
+            let div = document.createElement('div');
+            div.classList.add('tim-group', 'mb-2');
+            div.style.position = 'relative';
+            div.style.maxWidth = '300px';
+
+            div.innerHTML = `
+                            <select name="tim_id[]" class="form-control">
+                                <option value="" selected disabled>Pilih Tim</option>
+                                @foreach($tim as $item)
+                                    <option value="{{ $item->id }}">{{ $item->nama_tim }}</option>
+                                @endforeach
+                            </select>
+                            <span class="remove-tim" title="Hapus tim"
+                                style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+                                       cursor:pointer; color:red; font-weight:bold; font-size:18px; user-select:none;">&times;</span>
+                        `;
+
+            wrapper.appendChild(div);
         });
 
         document.getElementById('tim-wrapper').addEventListener('click', function (e) {
-            if (e.target && e.target.classList.contains('remove-tim')) {
-                e.target.parentNode.remove();
-                toggleRemoveButtons('tim');
+            if (e.target.classList.contains('remove-tim')) {
+                e.target.parentElement.remove();
             }
         });
-
-        function toggleRemoveButtons(type) {
-            let groups = document.querySelectorAll(`.${type}-group`);
-            groups.forEach((group) => {
-                let btn = group.querySelector(`.remove-${type}`);
-                if (groups.length > 1) {
-                    btn.style.display = 'inline'; // span muncul
-                } else {
-                    btn.style.display = 'none';   // sembunyikan kalau hanya 1
-                }
-            });
-        }
-
-
-        // Initialize remove buttons visibility on page load
-        window.onload = function () {
-            toggleRemoveButtons('peserta');
-            toggleRemoveButtons('tim');
-        }
-
-        // Tanggal custom date toggle
-        function toggleCustomDate(val) {
-            const customDateInput = document.getElementById('customDate');
-            if (val === 'lainnya' || val === '') {
-                customDateInput.style.display = 'block';
-            } else {
-                customDateInput.style.display = 'none';
-                customDateInput.value = val; // set value jika dari dropdown
-            }
-        }
     </script>
 
     <style>
@@ -362,6 +344,4 @@
             user-select: none;
         }
     </style>
-
-
 @endsection

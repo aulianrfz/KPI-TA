@@ -37,7 +37,20 @@
                             <td>{{ $jadwal->waktu_mulai }}</td>
                             <td>{{ $jadwal->waktu_selesai }}</td>
                             <td>{{ $jadwal->venue->name ?? '-' }}</td>
-                            <td>{{ $jadwal->peserta->nama ?? $jadwal->tim->nama_tim }}</td>
+                            <td>
+                                @if($jadwal->peserta && $jadwal->peserta->count())
+                                    @foreach($jadwal->peserta as $peserta)
+                                        {{ $peserta->nama_peserta }}<br>
+                                    @endforeach
+                                @elseif($jadwal->tim && $jadwal->tim->count())
+                                    @foreach($jadwal->tim as $tim)
+                                        {{ $tim->nama_tim }}<br>
+                                    @endforeach
+                                @else
+                                    -
+                                @endif
+                            </td>
+
                             <td>{{ $jadwal->juri->nama ?? '-' }}</td>
                             <td>
                                 <a href="{{ route('jadwal.edit', $jadwal->id) }}" class="btn btn-sm btn-primary">Edit</a>
