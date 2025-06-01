@@ -122,7 +122,7 @@
                             <label for="nama_jadwal" class="form-label fw-bold">Nama Jadwal</label>
                             <input type="text" name="nama_jadwal" id="nama_jadwal"
                                 class="form-control @error('nama_jadwal') is-invalid @enderror" required
-                                value="{{ old('nama_jadwal') }}" placeholder="Contoh: Jadwal lomba Tourism Speech Competition">
+                                value="{{ old('nama_jadwal') }}" placeholder="Contoh: Draft-01">
                             @error('nama_jadwal')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror

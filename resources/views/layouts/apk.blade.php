@@ -271,14 +271,29 @@
                 <li class="nav-item mb-2"><a href="{{ url('/listcrud') }}"
                         class="nav-link {{ request()->is('listcrud') ? 'active' : '' }}"><i
                             class="bi bi-tags-fill"></i><span>CRUD</span></a></li>
-                <li class="nav-item mb-2"><a href="#" class="nav-link"><i
-                            class="bi bi-calendar-event-fill"></i><span>Penjadwalan</span></a></li>
+                <li class="nav-item mb-2">
+                    <a href="{{ route('jadwal.index') }}"
+                        class="nav-link {{ request()->routeIs('jadwal.index') ? 'active' : '' }}">
+                        <i class="bi bi-calendar-event-fill"></i>
+                        <span>Penjadwalan</span>
+                    </a>
+                </li>
                 <li class="nav-item mb-2"><a href="#" class="nav-link"><i
                             class="bi bi-ui-checks-grid"></i><span>Kuisioner</span></a></li>
-                <li class="nav-item mb-2"><a href="#" class="nav-link"><i
-                            class="bi bi-people-fill"></i><span>Juri</span></a></li>
-                <li class="nav-item mb-2"><a href="#" class="nav-link"><i
-                            class="bi bi-geo-alt-fill"></i><span>Venue</span></a></li>
+                <li class="nav-item mb-2">
+                    <a href="{{ route('juri.index') }}"
+                        class="nav-link {{ request()->routeIs('juri.index') ? 'active' : '' }}">
+                        <i class="bi bi-calendar-event-fill"></i>
+                        <span>Juri</span>
+                    </a>
+                </li>
+                <li class="nav-item mb-2">
+                    <a href="{{ route('venue.index') }}"
+                        class="nav-link {{ request()->routeIs('venue.index') ? 'active' : '' }}">
+                        <i class="bi bi-calendar-event-fill"></i>
+                        <span>Venue</span>
+                    </a>
+                </li>
                 <li class="nav-item mb-2"><a href="#" class="nav-link"><i
                             class="bi bi-award-fill"></i><span>Sertifikat</span></a></li>
                 <li class="nav-item mb-2"><a href="#" class="nav-link"><i
@@ -300,8 +315,8 @@
                         </button>
                     </form>
                     <a href="/profile" class="d-flex align-items-center">
-                    <img src="https://ui-avatars.com/api/?name={{ Auth::user()->first_name }}+{{ Auth::user()->last_name }}&background=0367A6&color=fff" 
-                        alt="Profile" class="rounded-circle" width="35" height="35">
+                        <img src="https://ui-avatars.com/api/?name={{ Auth::user()->first_name }}+{{ Auth::user()->last_name }}&background=0367A6&color=fff"
+                            alt="Profile" class="rounded-circle" width="35" height="35">
                     </a>
                 </div>
             </nav>

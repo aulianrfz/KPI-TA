@@ -16,9 +16,8 @@ class Agenda extends Model
         'waktu_mulai',
         'waktu_selesai',
         'venue_id',
-        'peserta_id',
         'juri_id',
-        'tim_id',
+        'kegiatan'
     ];
 
     public function mataLomba()
@@ -31,9 +30,14 @@ class Agenda extends Model
         return $this->belongsTo(Venue::class, 'venue_id');
     }
 
+    // public function peserta()
+    // {
+    //     return $this->belongsTo(Peserta::class, 'peserta_id');
+    // }
+
     public function peserta()
     {
-        return $this->belongsTo(Peserta::class, 'peserta_id');
+        return $this->belongsToMany(Peserta::class, 'agenda_peserta');
     }
 
     public function juri()
@@ -41,14 +45,21 @@ class Agenda extends Model
         return $this->belongsTo(Juri::class, 'juri_id');
     }
 
+    // public function tim()
+    // {
+    //     return $this->belongsTo(Tim::class, 'tim_id');
+    // }
+
     public function tim()
     {
-        return $this->belongsTo(Tim::class, 'tim_id');
+        return $this->belongsToMany(Tim::class, 'agenda_tim');
     }
 
     public function jadwal()
     {
         return $this->belongsTo(Jadwal::class, 'jadwal_id');
     }
+
+
 
 }
