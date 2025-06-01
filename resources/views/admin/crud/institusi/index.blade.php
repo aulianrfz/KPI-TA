@@ -5,7 +5,7 @@
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="mb-0">Institusi</h4>
-            <a href="{{ route('institusi.create') }}" class="btn btn-primary">+ Tambah Data</a>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahInstitusi">+ Tambah Data</button>
         </div>
 
         <form method="GET" action="{{ route('institusi.index') }}" class="mb-3">
@@ -47,7 +47,9 @@
                             <td>{{ $institusi->nama_institusi }}</td>
                             <td>{{ $institusi->alamat }}</td>
                             <td>
-                                <a href="{{ route('institusi.edit', $institusi->id) }}" class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></a>
+                                <button type="button" class="btn btn-sm btn-warning me-1" data-bs-toggle="modal" data-bs-target="#modalEditInstitusi{{ $institusi->id }}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
                                 <form action="{{ route('institusi.destroy', $institusi->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin hapus?')">
                                     @csrf
                                     @method('DELETE')
@@ -83,4 +85,60 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="modalTambahInstitusi" tabindex="-1" aria-labelledby="modalTambahInstitusiLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form action="{{ route('institusi.store') }}" method="POST" class="modal-content">
+      @csrf
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTambahInstitusiLabel">Tambah Institusi</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="nama_institusi" class="form-label">Nama Institusi</label>
+          <input type="text" class="form-control" name="nama_institusi" required>
+        </div>
+        <div class="mb-3">
+          <label for="alamat" class="form-label">Alamat</label>
+          <textarea name="alamat" class="form-control" rows="3" required></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button type="submit" class="btn btn-primary">Simpan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+@foreach($institusis as $institusi)
+<div class="modal fade" id="modalEditInstitusi{{ $institusi->id }}" tabindex="-1" aria-labelledby="modalEditInstitusiLabel{{ $institusi->id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <form action="{{ route('institusi.update', $institusi->id) }}" method="POST" class="modal-content">
+      @csrf
+      @method('PUT')
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalEditInstitusiLabel{{ $institusi->id }}">Edit Institusi</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="nama_institusi" class="form-label">Nama Institusi</label>
+          <input type="text" class="form-control" name="nama_institusi" value="{{ $institusi->nama_institusi }}" required>
+        </div>
+        <div class="mb-3">
+          <label for="alamat" class="form-label">Alamat</label>
+          <textarea name="alamat" class="form-control" rows="3" required>{{ $institusi->alamat }}</textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+        <button type="submit" class="btn btn-success">Update</button>
+      </div>
+    </form>
+  </div>
+</div>
+@endforeach
+
 @endsection

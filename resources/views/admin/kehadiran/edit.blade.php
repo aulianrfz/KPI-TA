@@ -44,17 +44,30 @@
                 <input type="text" class="form-control" value="{{ $pendaftar->peserta->no_hp ?? '-' }}" readonly>
             </div>
 
-            <div class="col-span-2 mb-3">
+             <div class="col-span-2 mb-3">
                 <label class="form-label font-semibold">Status Kehadiran</label>
+
+                @php
+                    $status = optional($pendaftar->kehadiran)->status;
+                @endphp
+
                 <select name="status"
                     class="form-control rounded-lg border-gray-300 shadow-sm focus:ring focus:ring-blue-200"
-                    {{ optional($pendaftar->kehadiran)->status == 'Hadir' ? 'disabled' : '' }}>
-                    <option value="Hadir" {{ optional($pendaftar->kehadiran)->status == 'Hadir' ? 'selected' : '' }}>Hadir</option>
-                    <option value="Tidak Hadir" {{ optional($pendaftar->kehadiran)->status == 'Tidak Hadir' ? 'selected' : '' }}>Tidak Hadir</option>
+                    {{ $status === 'Hadir' ? 'disabled' : '' }}>
+                    
+                    @if ($status === 'Hadir')
+                        <option value="Hadir" selected>Hadir</option>
+                        <option value="Tidak Hadir">Tidak Hadir</option>
+                    @else
+                        <option value="Tidak Hadir" selected>Tidak Hadir</option>
+                        <option value="Hadir">Hadir</option>
+                    @endif
                 </select>
 
-                @if(optional($pendaftar->kehadiran)->status == 'Hadir')
+                @if ($status === 'Hadir')
                     <p class="text-sm text-red-600 mt-1">Peserta ini sudah melakukan kehadiran. Status tidak dapat diubah.</p>
+                @else
+                    <p class="text-sm text-gray-600 mt-1">Peserta belum hadir. Status saat ini: <strong>Tidak Hadir</strong>.</p>
                 @endif
             </div>
         </div>

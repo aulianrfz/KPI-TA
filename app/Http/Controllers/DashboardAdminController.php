@@ -91,13 +91,7 @@ class DashboardAdminController extends Controller
 
         $pesertaOnSite = Kehadiran::where('status', 'Hadir')->count();
 
-        $belumDaftarUlang = Pendaftar::whereNotNull('url_qrCode')
-            ->where('url_qrCode', '!=', '')
-            ->whereHas('membayar', function ($q) {
-                $q->where('status', 'Disetujui');
-            })
-            ->whereDoesntHave('kehadiran')
-            ->count();
+        $belumDaftarUlang = $totalPeserta - $pesertaOnSite ;
 
         return view('admin.dashboard.home', [
             'totalPeserta' => $totalPeserta,

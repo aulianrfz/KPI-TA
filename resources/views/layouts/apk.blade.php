@@ -263,8 +263,8 @@
                 <li class="nav-item mb-2"><a href="/admin/transaksi"
                         class="nav-link {{ request()->is('admin/transaksi') ? 'active' : '' }}"><i
                             class="bi bi-receipt"></i><span>Transaksi</span></a></li>
-                <li class="nav-item mb-2"><a href="/kehadiran"
-                        class="nav-link {{ request()->is('kehadiran') ? 'active' : '' }}"><i
+                <li class="nav-item mb-2"><a href="/kehadiran/event"
+                        class="nav-link {{ request()->is('kehadiran/event') ? 'active' : '' }}"><i
                             class="bi bi-clipboard-check-fill"></i><span>Daftar Hadir</span></a></li>
                 <li class="nav-item mb-2"><a href="#" class="nav-link"><i
                             class="bi bi-bar-chart-line-fill"></i><span>Laporan Penjualan</span></a></li>
@@ -299,9 +299,9 @@
                             <i class="bi bi-power power-icon"></i>
                         </button>
                     </form>
-
-                    <a href="/profile" title="Profil Pengguna">
-                        <img src="https://i.pravatar.cc/40" alt="Profile Picture" class="profile-pic">
+                    <a href="/profile" class="d-flex align-items-center">
+                    <img src="https://ui-avatars.com/api/?name={{ Auth::user()->first_name }}+{{ Auth::user()->last_name }}&background=0367A6&color=fff" 
+                        alt="Profile" class="rounded-circle" width="35" height="35">
                     </a>
                 </div>
             </nav>

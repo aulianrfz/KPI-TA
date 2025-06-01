@@ -4,7 +4,9 @@
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4>Data Kategori</h4>
-        <a href="{{ route('kategori.create') }}" class="btn btn-primary">+ Tambah Kategori</a>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahKategori">
+            + Tambah Kategori
+        </button>
     </div>
 
 
@@ -44,11 +46,11 @@
                         <tr>
                             <td class="align-middle text-center">{{ $kategori->nama_kategori }}</td>
                             <td class="align-middle text-center">
-                                <a href="{{ route('kategori.edit', $kategori->id) }}" class="btn btn-warning btn-sm">
+                                <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modalEditKategori{{ $kategori->id }}">
                                     <i class="fa fa-edit"></i>
-                                </a>
+                                </button>
                                 <form action="{{ route('kategori.destroy', $kategori->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin mau hapus?')">
-                                    @csrf
+                                   @csrf
                                     @method('DELETE')
                                     <button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> </button>
                                 </form>
@@ -82,4 +84,72 @@
         @endif
     </div>
 </div>
+<div class="modal fade" id="modalTambahKategori" tabindex="-1" aria-labelledby="modalTambahKategoriLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="{{ route('kategori.store') }}" method="POST">
+        @csrf
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalTambahKategoriLabel">Tambah Kategori</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+              <label for="event_id" class="form-label">Pilih Event</label>
+              <select name="event_id" id="event_id" class="form-select" required>
+                  <option value="">-- Pilih Event --</option>
+                  @foreach($events as $event)
+                      <option value="{{ $event->id }}">{{ $event->nama_event }}</option>
+                  @endforeach
+              </select>
+          </div>
+          <div class="mb-3">
+              <label for="nama_kategori" class="form-label">Nama Kategori</label>
+              <input type="text" name="nama_kategori" class="form-control" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
+          <button type="submit" class="btn btn-success">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="modalEditKategori{{ $kategori->id }}" tabindex="-1" aria-labelledby="modalEditKategoriLabel{{ $kategori->id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="{{ route('kategori.update', $kategori->id) }}" method="POST">
+        @csrf
+        @method('PUT')
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalEditKategoriLabel{{ $kategori->id }}">Edit Kategori</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+              <label for="event_id" class="form-label">Pilih Event</label>
+              <select name="event_id" class="form-select" required>
+                  <option value="">-- Pilih Event --</option>
+                  @foreach($events as $event)
+                      <option value="{{ $event->id }}" {{ $event->id == $kategori->event_id ? 'selected' : '' }}>
+                          {{ $event->nama_event }}
+                      </option>
+                  @endforeach
+              </select>
+          </div>
+          <div class="mb-3">
+              <label for="nama_kategori" class="form-label">Nama Kategori</label>
+              <input type="text" name="nama_kategori" value="{{ $kategori->nama_kategori }}" class="form-control" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
+          <button type="submit" class="btn btn-success">Update</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 @endsection

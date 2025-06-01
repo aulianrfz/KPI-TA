@@ -87,6 +87,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/export', [DashboardAdminController::class, 'exportExcel'])->name('admin.export');
 
         //kehairan
+        Route::get('/kehadiran/event', [KehadiranController::class, 'event'])->name('kehadiran.event');
+        Route::get('/kehadiran/kategori/{kategori_id}', [KehadiranController::class, 'kategori'])->name('kehadiran.kategori');
+        Route::get('/kehadiran/mataLomba/{id}', [KehadiranController::class, 'mataLomba'])->name('kehadiran.mataLomba');
+        Route::get('/admin/kehadiran/mata-lomba/{mataLombaId}', [KehadiranController::class, 'index'])->name('kehadiran.mata-lomba');
+
+
         Route::get('/kehadiran', [KehadiranController::class, 'index'])->name('kehadiran.index');
         Route::get('/kehadiran/{id}/qr', [KehadiranController::class, 'showQR'])->name('admin.qr.show');
         Route::get('/kehadiran/{id}/edit', [KehadiranController::class, 'edit'])->name('kehadiran.edit');

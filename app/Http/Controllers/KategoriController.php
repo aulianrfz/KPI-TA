@@ -19,8 +19,8 @@ class KategoriController extends Controller
         }
 
         $kategorislomba = $query->paginate(10)->appends(['search' => $search]);
-
-        return view('admin.crud.kategori.index', compact('kategorislomba'));
+        $events = Event::all(); 
+        return view('admin.crud.kategori.index', compact('kategorislomba', 'events'));
     }
 
 

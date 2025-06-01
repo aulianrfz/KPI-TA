@@ -5,7 +5,7 @@
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="mb-0">Provinsi</h4>
-            <a href="{{ route('provinsi.create') }}" class="btn btn-primary">+ Tambah Data</a>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambahProvinsi">+ Tambah Provinsi</button>
         </div>
 
         <form method="GET" action="{{ route('provinsi.index') }}" class="mb-3">
@@ -36,7 +36,6 @@
                         <tr>
                             <th>No</th>
                             <th>Nama Provinsi</th>
-                            <th>Alamat</th>
                             <th style="width: 120px;">Aksi</th>
                         </tr>
                     </thead>
@@ -45,10 +44,9 @@
                         <tr>
                             <td>{{ $provinsis->firstItem() + $index }}</td>
                             <td>{{ $provinsi->nama_provinsi }}</td>
-                            <td>{{ $provinsi->alamat }}</td>
                             <td>
-                                <a href="{{ route('provinsi.edit', $provinsi->id) }}" class="btn btn-sm btn-warning me-1"><i class="fas fa-edit"></i></a>
-                                <form action="{{ route('provinsi.destroy', $provinsi->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin hapus?')">
+                                    <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#modalEditProvinsi{{ $provinsi->id }}">Edit</button>
+                                    <form action="{{ route('provinsi.destroy', $provinsi->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin hapus?')">
                                     @csrf
                                     @method('DELETE')
                                     <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
@@ -83,4 +81,54 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="modalTambahProvinsi" tabindex="-1" aria-labelledby="modalTambahProvinsiLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="{{ route('provinsi.store') }}" method="POST">
+        @csrf
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalTambahProvinsiLabel">Tambah Provinsi</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+              <label for="nama_provinsi" class="form-label">Nama Provinsi</label>
+              <input type="text" name="nama_provinsi" class="form-control" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
+          <button type="submit" class="btn btn-success">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+@foreach ($provinsis as $provinsi)
+<div class="modal fade" id="modalEditProvinsi{{ $provinsi->id }}" tabindex="-1" aria-labelledby="modalEditProvinsiLabel{{ $provinsi->id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="{{ route('provinsi.update', $provinsi->id) }}" method="POST">
+        @csrf
+        @method('PUT')
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalEditProvinsiLabel{{ $provinsi->id }}">Edit Provinsi</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+              <label for="nama_provinsi" class="form-label">Nama Provinsi</label>
+              <input type="text" name="nama_provinsi" value="{{ $provinsi->nama_provinsi }}" class="form-control" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
+          <button type="submit" class="btn btn-success">Update</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+@endforeach
+
 @endsection
