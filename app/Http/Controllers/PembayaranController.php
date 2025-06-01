@@ -31,10 +31,11 @@ class PembayaranController extends Controller
                         $q->where('posisi', 'Ketua'); 
                     });
             })
-            ->get();
+            ->paginate(10);
 
         return view('user.pembayaran.index', compact('peserta'));
     }
+
 
     public function bayar($id)
     {

@@ -45,7 +45,7 @@
                 </div>
 
                 <div class="d-flex justify-content-end gap-2">
-                    <a href="{{ route('kehadiran.index') }}" class="btn btn-danger">Batal</a>
+                    <a href="{{ route('kehadiran.mata-lomba', ['mataLombaId' => $pendaftar->mata_lomba_id]) }}" class="btn btn-primary">Kembali</a>
                     <button type="submit" class="btn btn-success">Simpan</button>
                 </div>
 

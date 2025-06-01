@@ -116,7 +116,8 @@ public function index(Request $request, $mataLombaId)
         $pendaftar = Pendaftar::findOrFail($id);
 
         if ($pendaftar->kehadiran && $pendaftar->kehadiran->status === 'Hadir') {
-            return redirect()->route('kehadiran.index')->with('warning', 'Peserta sudah melakukan kehadiran. Data tidak dapat diubah.');
+            return redirect()->route('kehadiran.mata-lomba', ['mataLombaId' => $pendaftar->mata_lomba_id])
+                ->with('warning', 'Peserta sudah melakukan kehadiran. Data tidak dapat diubah.');
         }
 
         $kehadiran = $pendaftar->kehadiran ?? new Kehadiran();
@@ -125,7 +126,8 @@ public function index(Request $request, $mataLombaId)
         $kehadiran->status = $request->input('status');
         $kehadiran->save();
 
-        return redirect()->route('kehadiran.index')->with('success', 'Data kehadiran berhasil diperbarui.');
+        return redirect()->route('kehadiran.mata-lomba', ['mataLombaId' => $pendaftar->mata_lomba_id])
+            ->with('success', 'Data kehadiran berhasil diperbarui.');
     }
 
 

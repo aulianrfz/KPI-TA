@@ -73,7 +73,7 @@
         </div>
 
         <div class="flex justify-end gap-2 mt-6">
-            <a href="{{ route('kehadiran.index') }}" class="btn btn-primary">Kembali</a>
+            <a href="{{ route('kehadiran.mata-lomba', ['mataLombaId' => $pendaftar->mata_lomba_id]) }}" class="btn btn-primary">Kembali</a>
 
             @if(optional($pendaftar->kehadiran)->status != 'Hadir')
                 <button type="submit" class="btn btn-success">Simpan</button>

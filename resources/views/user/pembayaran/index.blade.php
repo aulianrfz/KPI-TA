@@ -89,7 +89,21 @@
 
                         </table>
                     </div>
-
+                    <div class="d-flex justify-content-end align-items-center mt-3 gap-2">
+                        <span class="small text-muted mb-0">
+                            Page {{ $peserta->currentPage() }} of {{ $peserta->lastPage() }}
+                        </span>
+                        @if ($peserta->onFirstPage())
+                            <span class="btn btn-sm btn-light disabled" style="pointer-events: none;">‹</span>
+                        @else
+                            <a href="{{ $peserta->previousPageUrl() }}" class="btn btn-sm btn-outline-secondary">‹</a>
+                        @endif
+                        @if ($peserta->hasMorePages())
+                            <a href="{{ $peserta->nextPageUrl() }}" class="btn btn-sm btn-outline-secondary">›</a>
+                        @else
+                            <span class="btn btn-sm btn-light disabled" style="pointer-events: none;">›</span>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
