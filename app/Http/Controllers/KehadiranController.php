@@ -75,10 +75,8 @@ public function index(Request $request, $mataLombaId)
 
     $totalPeserta = Pendaftar::where('mata_lomba_id', $mataLombaId)
         ->whereNotNull('url_qrCode')
-        ->where('url_qrCode', '!=', '')
-        ->whereHas('membayar', function ($q) {
-            $q->where('status', 'Sudah Membayar');
-        })->count();
+        ->where('url_qrCode', '!=', '0')
+        ->count();
 
     $pesertaOnsite = Kehadiran::whereHas('pendaftar', function ($q) use ($mataLombaId) {
         $q->where('mata_lomba_id', $mataLombaId);
