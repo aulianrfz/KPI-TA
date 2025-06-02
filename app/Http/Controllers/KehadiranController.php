@@ -58,10 +58,7 @@ public function index(Request $request, $mataLombaId)
     $pendaftar = Pendaftar::with(['peserta', 'mataLomba', 'kehadiran'])
         ->where('mata_lomba_id', $mataLombaId)
         ->whereNotNull('url_qrCode')
-        ->where('url_qrCode', '!=', '')
-        ->whereHas('membayar', function ($q) {
-            $q->where('status', 'Sudah Membayar');
-        })
+        ->where('url_qrCode', '!=', '0')
         ->when($search, function ($query) use ($search) {
             $query->whereHas('peserta', function ($q) use ($search) {
                 $q->where('nama_peserta', 'like', "%$search%")

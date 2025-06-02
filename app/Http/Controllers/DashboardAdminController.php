@@ -25,11 +25,8 @@ class DashboardAdminController extends Controller
         $sort = $request->input('sort', 'asc');
 
         $query = Pendaftar::with('peserta')
-            ->whereNotNull('url_qrCode')
-            ->where('url_qrCode', '!=', '')
-            ->whereHas('membayar', function ($q) {
-                $q->where('status', 'Sudah Membayar');
-            });
+        ->whereNotNull('url_qrCode')
+        ->whereRaw("TRIM(COALESCE(url_qrCode, '')) NOT IN ('', '0', 'null')");
 
         if ($search) {
             $query->whereHas('peserta', function ($q) use ($search) {
@@ -74,10 +71,7 @@ class DashboardAdminController extends Controller
                 foreach ($anggota as $anggotaTim) {
                     $punyaQrDanBayar = Pendaftar::where('peserta_id', $anggotaTim->peserta_id)
                         ->whereNotNull('url_qrCode')
-                        ->where('url_qrCode', '!=', '')
-                        ->whereHas('membayar', function ($q) {
-                            $q->where('status', 'Sudah Membayar');
-                        })
+                        ->whereRaw("TRIM(COALESCE(url_qrCode, '')) NOT IN ('', '0', 'null')")
                         ->exists();
 
                     if (!$punyaQrDanBayar) {
