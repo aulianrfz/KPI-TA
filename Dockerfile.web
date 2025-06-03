@@ -1,46 +1,19 @@
-FROM php:8.2-fpm
+FROM php:8.1-fpm
 
-# Install dependencies + GD extension
 RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    libonig-dev \
-    libxml2-dev \
-    zip \
-    unzip \
-    git \
-    curl \
-    libzip-dev \
-    libpq-dev \
-    libsqlite3-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_mysql pdo_pgsql zip mbstring exif pcntl bcmath
+    git unzip libzip-dev libonig-dev libpng-dev libjpeg-dev libfreetype6-dev libxml2-dev curl zip \
+    && docker-php-ext-install pdo_mysql mbstring zip exif pcntl bcmath gd
 
-# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Set working directory
-WORKDIR /var/www
+WORKDIR /var/www/html
 
-# Copy app source
-COPY . /var/www
+COPY . .
 
-# Fix ownership issue for git
-RUN git config --global --add safe.directory /var/www
-
-# Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Run artisan commands
-RUN php artisan config:cache
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www
+EXPOSE 9000
 
-# Expose port for Cloud Run
-EXPOSE 8080
-
-# Command to run the app
-CMD ["php", "-S", "0.0.0.0:8080", "-t", "public"]
+CMD ["php-fpm"]
