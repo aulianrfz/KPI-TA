@@ -16,10 +16,9 @@
                 <input
                     type="text"
                     name="search"
-                    class="form-control rounded-pill ps-4"
+                    class="form-control ps-4"
                     placeholder="Cari berdasarkan nama kategori"
-                    value="{{ request('search') }}"
-                >
+                    value="{{ request('search') }}">
             </div>
             <button type="submit" class="btn btn-success">
             <i class="fa fa-search"></i>

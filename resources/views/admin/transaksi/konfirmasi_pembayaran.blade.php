@@ -1,6 +1,6 @@
 @extends('layouts.apk')
 
-@section('title', 'Transaksi') {{-- Mengatur judul halaman di layout --}}
+@section('title', 'Transaksi')
 
 @section('content')
 <div class="card shadow-sm">
@@ -15,7 +15,6 @@
             </div>
         @endif
 
-        {{-- Form untuk Pencarian dan Pengurutan --}}
         <form method="GET" action="{{ route('transaksi.index') }}" class="mb-4" id="filterForm">
             <div class="row g-2 align-items-center">
                 <div class="col-md-5 col-lg-4">
@@ -36,20 +35,18 @@
                     <select
                         name="sort"
                         onchange="document.getElementById('filterForm').submit()"
-                        class="form-select rounded-pill"
+                        class="form-select"
                     >
-                        <option value="">Urutkan</option>
+                        <option value="">Filter by</option>
                         <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Terbaru</option>
                         <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Terlama</option>
                     </select>
                 </div>
                 <div class="col-md-4 col-lg-6 text-md-end">
-                    {{-- Tombol aksi akan ditempatkan di sini, di luar form filter --}}
                 </div>
             </div>
         </form>
 
-        {{-- Form untuk Aksi Massal (Setujui/Tolak) --}}
         <form method="POST" action="{{ route('admin.transaksi.bulkAction') }}" id="bulk-action-form">
             @csrf
             <div class="d-flex justify-content-end mb-3 gap-2">

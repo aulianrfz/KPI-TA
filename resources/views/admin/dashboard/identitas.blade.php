@@ -3,9 +3,12 @@
 @section('content')
 <div class="container py-4">
 
-    <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-primary mb-3">
-        <i class="bi bi-arrow-left"></i> QR Attendance
-    </a>
+    <div class="d-flex align-items-center mb-3">
+        <a href="{{ route('admin.dashboard')}}" class="btn btn-outline-primary me-2">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <h5 class="mb-0 fw-bold text-uppercase">QR Attendance</h5>
+    </div>
 
     <div class="text-center mb-5">
         <div class="bg-dark text-white p-4 rounded mx-auto" style="max-width: 100%; width: 100%; max-width: 600px;">
@@ -43,18 +46,18 @@
                 </div>
             </div>
 
-            <div class="col-12 col-md-8 fw-semibold">
+            <div class="col-12 col-md-8 fw-semibold";>
                 <h5 class="fw-bold text-uppercase mb-1">{{ $pendaftar->peserta->nama_peserta ?? '-' }}</h5>
                 <p class="mb-2 text-muted" style="letter-spacing: 0.3px;">
                     PESERTA LOMBA - {{ $pendaftar->mataLomba->nama_lomba ?? '-' }}
                 </p>
-                <hr class="my-2">
+                <hr class="my-2" >
 
-                <p class="mb-1"><strong>NIM:</strong> {{ $pendaftar->peserta->nim ?? '-' }}</p>
-                <p class="mb-1"><strong>Nama Tim:</strong> {{ $pendaftar->tim->nama_tim ?? '-' }}</p>
-                <p class="mb-1"><strong>Email:</strong> {{ $pendaftar->peserta->email ?? '-' }}</p>
-                <p class="mb-1"><strong>No TLP:</strong> {{ $pendaftar->peserta->no_hp ?? '-' }}</p>
-                <p class="mb-1"><strong>Institusi:</strong> {{ $pendaftar->peserta->institusi ?? '-' }}</p>
+                <p class="mb-1" style="color: #252C58"><strong>NIM:</strong> {{ $pendaftar->peserta->nim ?? '-' }}</p>
+                <p class="mb-1" style="color: #252C58"><strong>Nama Tim:</strong> {{ $pendaftar->tim->nama_tim ?? '-' }}</p>
+                <p class="mb-1" style="color: #252C58"><strong>Email:</strong> {{ $pendaftar->peserta->email ?? '-' }}</p>
+                <p class="mb-1" style="color: #252C58"><strong>No TLP:</strong> {{ $pendaftar->peserta->no_hp ?? '-' }}</p>
+                <p class="mb-1" style="color: #252C58"><strong>Institusi:</strong> {{ $pendaftar->peserta->institusi ?? '-' }}</p>
             </div>
         </div>
     </div>

@@ -103,16 +103,27 @@
 
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start mb-3 gap-3">
         <form method="GET" action="{{ route('admin.dashboard') }}" class="w-100 w-md-50">
-            <div class="input-group">
-                <input type="text" name="search" class="form-control border" placeholder="Cari peserta"
-                    style="border-color: #0367A6;" value="{{ request('search') }}">
-                <span class="input-group-text" style="background-color: #0367A6; color: white;">
-                    <i class="bi bi-search"></i>
-                </span>
+            <div class="col-md-5 col-lg-10">
+                <div class="position-relative">
+                    <input
+                        type="text"
+                        name="search"
+                        class="form-control rounded-pill ps-5"
+                        placeholder="Cari peserta atau institusi..."
+                        value="{{ request('search') }}"
+                    >
+                    <span class="position-absolute top-50 start-0 translate-middle-y ps-3 text-muted">
+                        <i class="bi bi-search"></i>
+                    </span>
+                </div>
             </div>
         </form>
 
         <div class="d-flex flex-column flex-md-row align-items-start gap-2 w-100 w-md-50 justify-content-md-end">
+            <a href="{{ route('admin.export', ['search' => request('search'), 'sort' => request('sort')]) }}"
+                class="btn btn-success">
+                <i class="bi bi-file-earmark-excel me-1"></i> Export Excel
+            </a>
             <form method="GET" action="{{ route('admin.dashboard') }}">
                 <input type="hidden" name="search" value="{{ request('search') }}">
                 <select name="sort" class="form-select" onchange="this.form.submit()">
@@ -120,11 +131,6 @@
                     <option value="desc" {{ request('sort') === 'desc' ? 'selected' : '' }}>Z-A</option>
                 </select>
             </form>
-
-            <a href="{{ route('admin.export', ['search' => request('search'), 'sort' => request('sort')]) }}"
-                class="btn btn-success">
-                <i class="bi bi-file-earmark-excel me-1"></i> Export Excel
-            </a>
         </div>
     </div>
 
