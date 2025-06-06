@@ -215,6 +215,23 @@
   </div>
 </div>
 
+<div class="modal fade" id="scanResultModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4">
+      <div class="modal-header">
+        <h5 class="modal-title">Status Kehadiran</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+      </div>
+      <div class="modal-body text-center">
+        <p id="statusKehadiranText" class="fw-bold mb-3 text-success"></p>
+        <p>Nama Peserta:</p>
+        <h5 id="namaPesertaText" class="text-primary"></h5>
+        <img id="fotoKtmPreview" src="" alt="Foto KTM" class="rounded shadow w-50 mt-3">
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
     function updateClock() {
         const now = new Date();
@@ -233,50 +250,84 @@
 </script>
 
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
 <script>
     let html5QrcodeScanner = null;
+    let scanInProgress = false;
 
     function onScanSuccess(decodedText, decodedResult) {
-    let pendaftarId = null;
+        if (scanInProgress) return;
+        scanInProgress = true;
 
-    try {
-        const url = new URL(decodedText);
-        const segments = url.pathname.split('/');
+        let pendaftarId = null;
 
-        pendaftarId = segments.pop() || segments.pop();
-    } catch (e) {
-        alert("QR code tidak valid (bukan URL).");
-        console.error("Error parsing QR code:", e);
-        return;
-    }
-
-    if (!pendaftarId) {
-        alert("QR code tidak valid: tidak ada parameter 'id'.");
-        return;
-    }
-
-    fetch('{{ route("admin.markPresent") }}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({ id: pendaftarId })
-    })
-    .then(res => res.json())
-    .then(data => {
-        alert(data.message || "Berhasil ditandai hadir.");
-        location.reload();
-    })
-    .catch(err => {
-        alert("Gagal update status kehadiran.");
-        console.error(err);
-        if (html5QrcodeScanner) {
-            html5QrcodeScanner.resume();
+        try {
+            const url = new URL(decodedText);
+            const segments = url.pathname.split('/').filter(Boolean);
+            pendaftarId = segments.pop();
+        } catch (e) {
+            alert("QR code tidak valid (bukan URL).");
+            scanInProgress = false;
+            return;
         }
-    });
-}
 
+        if (!pendaftarId) {
+            alert("QR code tidak valid: tidak ada parameter 'id'.");
+            scanInProgress = false;
+            return;
+        }
+
+        fetch('{{ route("admin.markPresent") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ id: pendaftarId })
+        })
+        .then(res => res.json())
+        .then(data => {
+            const statusText = document.getElementById("statusKehadiranText");
+            const namaText = document.getElementById("namaPesertaText");
+            const fotoImg = document.getElementById("fotoKtmPreview");
+
+            namaText.innerText = data.nama_peserta || '-';
+            fotoImg.src = data.foto_ktm || '{{ asset('storage/' . $pendaftar->peserta->url_ktm) }}';
+
+            if (data.message?.includes('sudah')) {
+                statusText.innerText = "Peserta sudah ditandai hadir sebelumnya.";
+                statusText.classList.remove('text-success');
+                statusText.classList.add('text-warning');
+            } else {
+                statusText.innerText = "Kehadiran berhasil dicatat!";
+                statusText.classList.remove('text-warning');
+                statusText.classList.add('text-success');
+            }
+
+            bootstrap.Modal.getInstance(document.getElementById('qrScanModal')).hide();
+
+            const resultModal = new bootstrap.Modal(document.getElementById('scanResultModal'));
+            resultModal.show();
+
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.stop().then(() => {
+                    html5QrcodeScanner.clear();
+                    html5QrcodeScanner = null;
+                    scanInProgress = false;
+                }).catch(err => {
+                    console.error("Gagal stop scanner:", err);
+                    scanInProgress = false;
+                });
+            } else {
+                scanInProgress = false;
+            }
+        })
+        .catch(err => {
+            alert("Gagal memproses kehadiran.");
+            console.error(err);
+            scanInProgress = false;
+        });
+    }
 
     const modal = document.getElementById('qrScanModal');
 
@@ -305,6 +356,8 @@
         if (html5QrcodeScanner) {
             html5QrcodeScanner.stop().then(() => {
                 html5QrcodeScanner.clear();
+                html5QrcodeScanner = null;
+                scanInProgress = false;
             }).catch(console.error);
         }
     });
