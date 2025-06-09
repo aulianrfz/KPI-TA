@@ -103,16 +103,27 @@
 
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start mb-3 gap-3">
         <form method="GET" action="{{ route('admin.dashboard') }}" class="w-100 w-md-50">
-            <div class="input-group">
-                <input type="text" name="search" class="form-control border" placeholder="Cari peserta"
-                    style="border-color: #0367A6;" value="{{ request('search') }}">
-                <span class="input-group-text" style="background-color: #0367A6; color: white;">
-                    <i class="bi bi-search"></i>
-                </span>
+            <div class="col-md-5 col-lg-10">
+                <div class="position-relative">
+                    <input
+                        type="text"
+                        name="search"
+                        class="form-control rounded-pill ps-5"
+                        placeholder="Cari peserta atau institusi..."
+                        value="{{ request('search') }}"
+                    >
+                    <span class="position-absolute top-50 start-0 translate-middle-y ps-3 text-muted">
+                        <i class="bi bi-search"></i>
+                    </span>
+                </div>
             </div>
         </form>
 
         <div class="d-flex flex-column flex-md-row align-items-start gap-2 w-100 w-md-50 justify-content-md-end">
+            <a href="{{ route('admin.export', ['search' => request('search'), 'sort' => request('sort')]) }}"
+                class="btn btn-success">
+                <i class="bi bi-file-earmark-excel me-1"></i> Export Excel
+            </a>
             <form method="GET" action="{{ route('admin.dashboard') }}">
                 <input type="hidden" name="search" value="{{ request('search') }}">
                 <select name="sort" class="form-select" onchange="this.form.submit()">
@@ -120,11 +131,6 @@
                     <option value="desc" {{ request('sort') === 'desc' ? 'selected' : '' }}>Z-A</option>
                 </select>
             </form>
-
-            <a href="{{ route('admin.export', ['search' => request('search'), 'sort' => request('sort')]) }}"
-                class="btn btn-success">
-                <i class="bi bi-file-earmark-excel me-1"></i> Export Excel
-            </a>
         </div>
     </div>
 
@@ -209,6 +215,23 @@
   </div>
 </div>
 
+<div class="modal fade" id="scanResultModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4">
+      <div class="modal-header">
+        <h5 class="modal-title">Status Kehadiran</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+      </div>
+      <div class="modal-body text-center">
+        <p id="statusKehadiranText" class="fw-bold mb-3 text-success"></p>
+        <p>Nama Peserta:</p>
+        <h5 id="namaPesertaText" class="text-primary"></h5>
+        <img id="fotoKtmPreview" src="/images/default-ktm.png" alt="Foto KTM" class="img-fluid rounded" style="max-height: 250px;">
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
     function updateClock() {
         const now = new Date();
@@ -227,54 +250,91 @@
 </script>
 
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
 <script>
     let html5QrcodeScanner = null;
+    let scanInProgress = false;
 
     function onScanSuccess(decodedText, decodedResult) {
-    let pendaftarId = null;
+        if (scanInProgress) return;
+        scanInProgress = true;
 
-    try {
-        const url = new URL(decodedText);
-        const segments = url.pathname.split('/');
+        let pendaftarId = null;
 
-        pendaftarId = segments.pop() || segments.pop();
-    } catch (e) {
-        alert("QR code tidak valid (bukan URL).");
-        console.error("Error parsing QR code:", e);
-        return;
-    }
-
-    if (!pendaftarId) {
-        alert("QR code tidak valid: tidak ada parameter 'id'.");
-        return;
-    }
-
-    fetch('{{ route("admin.markPresent") }}', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        },
-        body: JSON.stringify({ id: pendaftarId })
-    })
-    .then(res => res.json())
-    .then(data => {
-        alert(data.message || "Berhasil ditandai hadir.");
-        location.reload();
-    })
-    .catch(err => {
-        alert("Gagal update status kehadiran.");
-        console.error(err);
-        if (html5QrcodeScanner) {
-            html5QrcodeScanner.resume();
+        try {
+            const url = new URL(decodedText);
+            const segments = url.pathname.split('/').filter(Boolean);
+            pendaftarId = segments.pop();
+        } catch (e) {
+            alert("QR code tidak valid (bukan URL).");
+            scanInProgress = false;
+            return;
         }
-    });
-}
 
+        if (!pendaftarId) {
+            alert("QR code tidak valid: tidak ada ID.");
+            scanInProgress = false;
+            return;
+        }
+
+        fetch('{{ route("admin.markPresent") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ id: pendaftarId })
+        })
+        .then(res => res.json())
+        .then(data => {
+            const statusText = document.getElementById("statusKehadiranText");
+            const namaText = document.getElementById("namaPesertaText");
+            const fotoImg = document.getElementById("fotoKtmPreview");
+
+            namaText.innerText = data.nama_peserta || '-';
+            fotoImg.src = data.foto_ktm || '/images/default-ktm.png';
+
+            if (data.message?.includes('sudah')) {
+                statusText.innerText = "Peserta sudah ditandai hadir sebelumnya.";
+                statusText.classList.remove('text-success');
+                statusText.classList.add('text-warning');
+            } else {
+                statusText.innerText = "Kehadiran berhasil dicatat!";
+                statusText.classList.remove('text-warning');
+                statusText.classList.add('text-success');
+            }
+
+            bootstrap.Modal.getInstance(document.getElementById('qrScanModal')).hide();
+
+            const resultModal = new bootstrap.Modal(document.getElementById('scanResultModal'));
+            resultModal.show();
+
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.stop().then(() => {
+                    html5QrcodeScanner.clear();
+                    html5QrcodeScanner = null;
+                    scanInProgress = false;
+                }).catch(err => {
+                    console.error("Gagal stop scanner:", err);
+                    scanInProgress = false;
+                });
+            } else {
+                scanInProgress = false;
+            }
+        })
+        .catch(err => {
+            alert("Gagal memproses kehadiran.");
+            console.error(err);
+            scanInProgress = false;
+        });
+    }
 
     const modal = document.getElementById('qrScanModal');
 
     modal.addEventListener('shown.bs.modal', () => {
+        const fotoImg = document.getElementById("fotoKtmPreview");
+        fotoImg.src = '/images/default-ktm.png';
+
         if (!html5QrcodeScanner) {
             html5QrcodeScanner = new Html5Qrcode("qr-reader");
         }
@@ -299,10 +359,17 @@
         if (html5QrcodeScanner) {
             html5QrcodeScanner.stop().then(() => {
                 html5QrcodeScanner.clear();
+                html5QrcodeScanner = null;
+                scanInProgress = false;
             }).catch(console.error);
         }
     });
+
+    document.addEventListener('submit', function(e) {
+        e.preventDefault();
+    }, true);
 </script>
+
 
 
 @endsection

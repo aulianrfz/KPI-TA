@@ -9,9 +9,18 @@
         </div>
 
         <form method="GET" action="{{ route('jurusan.index') }}" class="mb-3">
-            <div class="d-flex gap-2">
-                <input type="text" name="search" class="form-control" placeholder="Cari jurusan..." value="{{ request('search') }}">
-                <button class="btn btn-success"><i class="fa fa-search"></i></button>
+            <div class="d-flex justify-content-start align-items-center gap-2 flex-wrap">
+                <div class="position-relative" style="width: 300px;">
+                    <input
+                        type="text"
+                        name="search"
+                        class="form-control ps-4"
+                        placeholder="Cari berdasarkan nama kategori"
+                        value="{{ request('search') }}">
+                </div>
+                <button type="submit" class="btn btn-success">
+                <i class="fa fa-search"></i>
+                </button>
             </div>
         </form>
 

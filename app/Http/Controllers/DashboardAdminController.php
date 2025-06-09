@@ -98,7 +98,6 @@ class DashboardAdminController extends Controller
         ]);
     }
 
-
     public function markAsPresent(Request $request)
     {
         Log::info('markAsPresent dipanggil dengan data:', $request->all());
@@ -110,6 +109,7 @@ class DashboardAdminController extends Controller
         try {
             $decryptedId = Crypt::decrypt($request->input('id'));
         } catch (\Exception $e) {
+            Log::error('Gagal dekripsi ID QR code: ' . $e->getMessage());
             return response()->json(['error' => 'QR code tidak valid: gagal mendekripsi ID.'], 400);
         }
 
@@ -119,8 +119,14 @@ class DashboardAdminController extends Controller
             return response()->json(['error' => 'QR code tidak valid: peserta tidak ditemukan.'], 404);
         }
 
+        $urlFotoKtm = $pendaftar->peserta->url_ktm ? asset('storage/' . $pendaftar->peserta->url_ktm) : null;
         if ($pendaftar->kehadiran) {
-            return response()->json(['message' => 'Peserta sudah ditandai hadir sebelumnya.']);
+            return response()->json([
+                'message' => 'Peserta sudah ditandai hadir sebelumnya.',
+                'nama_peserta' => $pendaftar->peserta->nama_peserta,
+                'foto_ktm' => $pendaftar->peserta->url_ktm ? asset('storage/' . $pendaftar->peserta->url_ktm) : null,
+                'url_qrCode' => $urlFotoKtm,
+            ]);
         }
 
         $kehadiran = new Kehadiran();
@@ -131,7 +137,12 @@ class DashboardAdminController extends Controller
 
         Log::info("Peserta ID {$decryptedId} berhasil ditandai hadir.");
 
-        return response()->json(['message' => 'Peserta berhasil ditandai hadir.']);
+        return response()->json([
+            'message' => 'Peserta berhasil ditandai hadir.',
+            'nama_peserta' => $pendaftar->peserta->nama_peserta,
+            'foto_ktm' => $pendaftar->peserta->url_ktm ? asset('storage/' . $pendaftar->peserta->url_ktm) : null,
+            'url_qrCode' => $urlFotoKtm,
+        ]);
     }
 
     public function showIdentitas($id)

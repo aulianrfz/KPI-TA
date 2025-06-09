@@ -1,21 +1,147 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Edit Venue</title>
-</head>
-<body>
-    <h1>Edit Venue</h1>
+@extends('layouts.apk')
 
-    <form action="{{ route('venue.update', $venue) }}" method="POST">
-        @csrf
-        @method('PUT')
+@section('content')
+{{-- Menambahkan link CDN Bootstrap secara eksplisit di dalam blade ini --}}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+{{-- Pastikan Font Awesome dimuat oleh layouts.apk atau tambahkan CDN di sini jika ikon tidak muncul --}}
+{{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> --}}
 
-        <label>Nama Venue:</label><br>
-        <input type="text" name="name" value="{{ $venue->name }}" required><br><br>
+<style>
+    /* General Page Styles */
+    .form-page-title-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+    .form-page-title {
+        color: #3A3B7B; /* Warna biru tua/ungu */
+        font-weight: 600;
+        font-size: 1.75rem;
+        margin-bottom: 0;
+    }
+    .btn-back-icon {
+        font-size: 1.25rem;
+        color: #6c757d;
+    }
+    .btn-back-icon:hover {
+        color: #3A3B7B;
+    }
 
-        <button type="submit">Update</button>
-    </form>
+    /* Card Styling */
+    .form-card {
+        background-color: #ffffff;
+        border-radius: 0.75rem;
+        padding: 2rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        margin-bottom: 2rem;
+    }
 
-    <a href="{{ route('venue.index') }}">Kembali</a>
-</body>
-</html>
+    /* Form Element Styling */
+    .form-label-styled {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: #495057;
+    }
+    .form-control-custom-bg {
+        background-color: #f8f9fa; /* Latar abu-abu muda */
+        border: 1px solid #e9ecef; /* Border tipis */
+        border-radius: 0.375rem;
+    }
+    .form-control-custom-bg:focus {
+        background-color: #ffffff;
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+
+    /* Button Styling */
+    .btn-custom-cancel {
+        background-color: #dc3545; /* Merah */
+        color: white;
+        border-color: #dc3545;
+        padding: 0.5rem 1rem;
+    }
+    .btn-custom-cancel:hover {
+        background-color: #bb2d3b;
+        border-color: #b02a37;
+    }
+    .btn-custom-save { /* Digunakan untuk tombol Update/Simpan */
+        background-color: #198754; /* Hijau */
+        color: white;
+        border-color: #198754;
+        padding: 0.5rem 1rem;
+    }
+    .btn-custom-save:hover {
+        background-color: #157347;
+        border-color: #146c43;
+    }
+    .form-actions {
+        margin-top: 2rem;
+        text-align: right;
+    }
+</style>
+
+<div class="container">
+    {{-- Judul Halaman dan Tombol Kembali --}}
+    <div class="form-page-title-container">
+        <a href="{{ route('venue.index') }}" class="btn btn-link p-0 me-3" title="Kembali ke Daftar Venue">
+            <i class="fas fa-arrow-left btn-back-icon"></i> {{-- Pastikan Font Awesome dimuat --}}
+        </a>
+        <h2 class="form-page-title">Edit Venue</h2>
+    </div>
+
+    <div class="form-card">
+        <form action="{{ route('venue.update', $venue->id) }}" method="POST">
+            @csrf
+            @method('PUT')
+
+            <div class="mb-3">
+                <label for="name" class="form-label form-label-styled">Nama Venue</label>
+                <input type="text" name="name" id="name" class="form-control form-control-custom-bg @error('name') is-invalid @enderror" value="{{ old('name', $venue->name) }}" placeholder="Masukkan nama venue" required>
+                @error('name')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            {{-- Jika ada field lain yang perlu diedit dan ada di gambar 'edit juri.png' (seperti Alamat, Kapasitas, Jadwal Tersedia), tambahkan di sini --}}
+            {{-- Contoh:
+            <div class="mb-3">
+                <label for="alamat" class="form-label form-label-styled">Alamat Venue</label>
+                <textarea name="alamat" id="alamat" class="form-control form-control-custom-bg @error('alamat') is-invalid @enderror" rows="3" placeholder="Masukkan alamat venue">{{ old('alamat', $venue->alamat ?? '') }}</textarea>
+                @error('alamat')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="kapasitas" class="form-label form-label-styled">Maks Venue (Kapasitas)</label>
+                        <input type="number" name="kapasitas" id="kapasitas" class="form-control form-control-custom-bg @error('kapasitas') is-invalid @enderror" value="{{ old('kapasitas', $venue->kapasitas ?? '') }}" placeholder="Jumlah kapasitas">
+                        @error('kapasitas')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="jadwal_tersedia" class="form-label form-label-styled">Jadwal Tersedia</label>
+                        <input type="text" name="jadwal_tersedia" id="jadwal_tersedia" class="form-control form-control-custom-bg @error('jadwal_tersedia') is-invalid @enderror" value="{{ old('jadwal_tersedia', $venue->jadwal_tersedia ?? '') }}" placeholder="Contoh: Senin-Jumat, 08:00-17:00">
+                        @error('jadwal_tersedia')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+            </div>
+            --}}
+
+
+            <div class="form-actions">
+                <a href="{{ route('venue.index') }}" class="btn btn-custom-cancel me-2">Batal</a>
+                <button type="submit" class="btn btn-custom-save">Update</button>
+            </div>
+        </form>
+    </div>
+</div>
+{{-- Bootstrap JS Bundle (jika ada komponen Bootstrap yang memerlukan JS) --}}
+{{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script> --}}
+@endsection

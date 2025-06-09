@@ -14,7 +14,7 @@
                     <input
                         type="text"
                         name="search"
-                        class="form-control rounded-pill ps-4"
+                        class="form-control ps-4"
                         placeholder="Cari berdasarkan nama kategori"
                         value="{{ request('search') }}"
                     >
@@ -35,8 +35,8 @@
                     <th>No</th>
                     <th>Nama Event</th>
                     <th>Penyelenggara</th>
-                    <th>Mulai Dilaksanakan Pada Tanggal</th>
-                    <th>Selesai Dilaksanakan Pada Tanggal</th>
+                    <th>Mulai Pendaftran Pada Tanggal</th>
+                    <th>Selesai Pendaftran Pada Tanggal</th>
                     <th>Foto</th>
                     <th>Aksi</th>
                 </tr>

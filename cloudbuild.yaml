@@ -1,0 +1,39 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-f',
+      'Dockerfile.web',
+      '-t',
+      'us-central1-docker.pkg.dev/deploy-app-upw/laravel-repo/laravel-web:latest',
+      '.'
+    ]
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'push',
+      'us-central1-docker.pkg.dev/deploy-app-upw/laravel-repo/laravel-web:latest'
+    ]
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: [
+      'run',
+      'deploy',
+      'laravel-web',
+      '--image',
+      'us-central1-docker.pkg.dev/deploy-app-upw/laravel-repo/laravel-web:latest',
+      '--region',
+      'us-central1',
+      '--platform',
+      'managed',
+      '--allow-unauthenticated',
+      '--port',
+      '9000'
+    ]
+
+images:
+  - 'us-central1-docker.pkg.dev/deploy-app-upw/laravel-repo/laravel-web:latest'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
