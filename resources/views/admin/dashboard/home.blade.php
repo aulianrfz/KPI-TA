@@ -292,7 +292,7 @@
             const fotoImg = document.getElementById("fotoKtmPreview");
 
             namaText.innerText = data.nama_peserta || '-';
-            fotoImg.src = data.foto_ktm || '{{ asset('storage/' . $pendaftar->peserta->url_ktm) }}';
+            fotoImg.src = data.foto_ktm ? data.foto_ktm : '';
 
             if (data.message?.includes('sudah')) {
                 statusText.innerText = "Peserta sudah ditandai hadir sebelumnya.";
