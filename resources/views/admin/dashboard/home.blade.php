@@ -226,7 +226,7 @@
         <p id="statusKehadiranText" class="fw-bold mb-3 text-success"></p>
         <p>Nama Peserta:</p>
         <h5 id="namaPesertaText" class="text-primary"></h5>
-        <img id="fotoKtmPreview" src="" alt="Foto KTM" class="rounded shadow w-50 mt-3">
+        <img id="fotoKtmPreview" src="/images/default-ktm.png" alt="Foto KTM" class="img-fluid rounded" style="max-height: 250px;">
       </div>
     </div>
   </div>
@@ -272,7 +272,7 @@
         }
 
         if (!pendaftarId) {
-            alert("QR code tidak valid: tidak ada parameter 'id'.");
+            alert("QR code tidak valid: tidak ada ID.");
             scanInProgress = false;
             return;
         }
@@ -292,7 +292,7 @@
             const fotoImg = document.getElementById("fotoKtmPreview");
 
             namaText.innerText = data.nama_peserta || '-';
-            fotoImg.src = data.foto_ktm ? data.foto_ktm : '';
+            fotoImg.src = data.foto_ktm || '/images/default-ktm.png';
 
             if (data.message?.includes('sudah')) {
                 statusText.innerText = "Peserta sudah ditandai hadir sebelumnya.";
@@ -332,6 +332,9 @@
     const modal = document.getElementById('qrScanModal');
 
     modal.addEventListener('shown.bs.modal', () => {
+        const fotoImg = document.getElementById("fotoKtmPreview");
+        fotoImg.src = '/images/default-ktm.png';
+
         if (!html5QrcodeScanner) {
             html5QrcodeScanner = new Html5Qrcode("qr-reader");
         }
@@ -361,7 +364,12 @@
             }).catch(console.error);
         }
     });
+
+    document.addEventListener('submit', function(e) {
+        e.preventDefault();
+    }, true);
 </script>
+
 
 
 @endsection

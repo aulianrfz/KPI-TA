@@ -124,6 +124,7 @@ class DashboardAdminController extends Controller
             return response()->json([
                 'message' => 'Peserta sudah ditandai hadir sebelumnya.',
                 'nama_peserta' => $pendaftar->peserta->nama_peserta,
+                'foto_ktm' => $pendaftar->peserta->url_ktm ? asset('storage/' . $pendaftar->peserta->url_ktm) : null,
                 'url_qrCode' => $urlFotoKtm,
             ]);
         }
@@ -139,6 +140,7 @@ class DashboardAdminController extends Controller
         return response()->json([
             'message' => 'Peserta berhasil ditandai hadir.',
             'nama_peserta' => $pendaftar->peserta->nama_peserta,
+            'foto_ktm' => $pendaftar->peserta->url_ktm ? asset('storage/' . $pendaftar->peserta->url_ktm) : null,
             'url_qrCode' => $urlFotoKtm,
         ]);
     }
