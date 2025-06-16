@@ -26,7 +26,7 @@
 
         <div class="row mb-3">
             <div class="col-md-6">
-                <label for="provinsi_{{ $index }}" class="form-label">Provinsi</label>
+                <label for="provinsi_{{ $index }}" class="form-label">Provinsi Institusi</label>
                 <select name="peserta[{{ $index }}][provinsi]" class="form-select" id="provinsi_{{ $index }}" required>
                     <option value="">- Pilih Provinsi -</option>
                     @foreach ($provinsi as $prov)

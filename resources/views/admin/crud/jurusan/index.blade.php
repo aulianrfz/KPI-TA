@@ -80,8 +80,20 @@
             </div>
         </div>
 
-        <div class="d-flex justify-content-end mt-3">
-            {{ $jurusans->links() }}
+         <div class="d-flex justify-content-end align-items-center mt-3 gap-2">
+            <span class="small text-muted mb-0">
+                Page {{ $jurusans->currentPage() }} of {{ $jurusans->lastPage() }}
+            </span>
+            @if ($jurusans->onFirstPage())
+                <span class="btn btn-sm btn-light disabled" style="pointer-events: none;">‹</span>
+            @else
+                <a href="{{ $jurusans->previousPageUrl() }}" class="btn btn-sm btn-outline-secondary">‹</a>
+            @endif
+            @if ($jurusans->hasMorePages())
+                <a href="{{ $jurusans->nextPageUrl() }}" class="btn btn-sm btn-outline-secondary">›</a>
+            @else
+                <span class="btn btn-sm btn-light disabled" style="pointer-events: none;">›</span>
+            @endif
         </div>
     </div>
 </div>

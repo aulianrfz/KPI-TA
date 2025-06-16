@@ -241,7 +241,7 @@
                 <li class="nav-item mb-2"><a href="/kehadiran/event"
                         class="nav-link {{ request()->is('kehadiran/event*') ? 'active' : '' }}"><i
                             class="bi bi-clipboard-check-fill"></i><span>Daftar Hadir</span></a></li>
-                <li class="nav-item mb-2"><a href="#" class="nav-link {{ request()->is('laporan/penjualan*') ? 'active' : '' }}"><i class="bi bi-bar-chart-line-fill"></i><span>Laporan Penjualan</span></a></li>
+                <li class="nav-item mb-2"><a href="/laporanpenjualan" class="nav-link {{ request()->is('laporanpenjualan*') ? 'active' : '' }}"><i class="bi bi-bar-chart-line-fill"></i><span>Laporan Penjualan</span></a></li>
                 <li class="nav-item mb-2"><a href="{{ url('/listcrud') }}"
                         class="nav-link {{ request()->is('listcrud*') ? 'active' : '' }}"><i
                             class="bi bi-tags-fill"></i><span>CRUD</span></a></li>

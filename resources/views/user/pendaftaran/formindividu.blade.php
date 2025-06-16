@@ -37,7 +37,7 @@
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="provinsi" class="form-label">Provinsi</label>
+                        <label for="provinsi" class="form-label">Provinsi Institusi</label>
                         <select name="peserta[0][provinsi]" class="form-select" required>
                             <option value="">- Pilih Provinsi -</option>
                             @foreach ($provinsi as $prov)

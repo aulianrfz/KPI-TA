@@ -27,6 +27,16 @@
         </div>
 
         <div class="form-group">
+            <label for="venue_id">Venue</label>
+            <select name="venue_id" id="venue_id" class="form-control">
+                <option value="">-- Pilih Venue --</option>
+                @foreach($venues as $venue)
+                    <option value="{{ $venue->id }}">{{ $venue->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="form-group">
             <label for="nama_lomba">Nama mataLomba</label>
             <input type="text" name="nama_lomba" id="nama_lomba" class="form-control" required>
         </div>
@@ -63,7 +73,7 @@
 
         <div class="form-group">
             <label for="url_tor">URL TOR (opsional)</label>
-            <input type="text" name="url_tor" id="url_tor" class="form-control">
+            <input type="file" name="url_tor" id="url_tor" class="form-control-file" accept=".pdf,.doc,.docx">
         </div>
 
         <div class="form-group">
@@ -77,12 +87,12 @@
 
         <div class="form-group">
             <label for="deskripsi">Deskripsi</label>
-            <textarea name="deskripsi" id="deskripsi" class="form-control" rows="4"></textarea>
+            <textarea name="deskripsi" id="deskripsi" class="form-control" rows="4" required></textarea>
         </div>
 
         <div class="form-group">
             <label for="foto_kompetisi">Foto Kompetisi (opsional)</label>
-            <input type="file" name="foto_kompetisi" id="foto_kompetisi" class="form-control-file">
+            <input type="file" name="foto_kompetisi" id="foto_kompetisi" class="form-control-file" required>
         </div>
 
         <button type="submit" class="btn btn-success mt-3">Simpan</button>

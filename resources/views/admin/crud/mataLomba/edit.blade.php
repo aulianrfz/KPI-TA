@@ -19,6 +19,18 @@
         </div>
 
         <div class="mb-3">
+            <label for="venue_id" class="form-label">Venue</label>
+            <select name="venue_id" id="venue_id" class="form-select">
+                <option value="">-- Pilih Venue --</option>
+                @foreach($venues as $venue)
+                    <option value="{{ $venue->id }}" {{ $mataLomba->venue_id == $venue->id ? 'selected' : '' }}>
+                        {{ $venue->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="mb-3">
             <label for="nama_lomba" class="form-label">Nama Sub Kategori</label>
             <input type="text" name="nama_lomba" id="nama_lomba" class="form-control" value="{{ $mataLomba->nama_lomba }}" required>
         </div>
@@ -39,6 +51,11 @@
         </div>
 
         <div class="mb-3">
+            <label for="maks_total_peserta" class="form-label">Maksimal Total Peserta</label>
+            <input type="number" name="maks_total_peserta" id="maks_total_peserta" class="form-control" value="{{ $mataLomba->maks_total_peserta }}" required>
+        </div>
+
+        <div class="mb-3">
             <label for="biaya_pendaftaran" class="form-label">Biaya Pendaftaran</label>
             <input type="number" name="biaya_pendaftaran" id="biaya_pendaftaran" class="form-control" value="{{ $mataLomba->biaya_pendaftaran }}" required>
         </div>
@@ -50,7 +67,11 @@
 
         <div class="mb-3">
             <label for="url_tor" class="form-label">URL TOR (Opsional)</label>
-            <input type="text" name="url_tor" id="url_tor" class="form-control" value="{{ $mataLomba->url_tor }}">
+            @if ($mataLomba->url_tor)
+                <p class="mt-2">
+                    File TOR: <a href="{{ asset('storage/' . $mataLomba->url_tor) }}" target="_blank">Lihat Dokumen</a>
+                </p>
+            @endif
         </div>
 
         <div class="mb-3">
@@ -63,7 +84,7 @@
 
         <div class="mb-3">
             <label for="deskripsi" class="form-label">Deskripsi</label>
-            <textarea name="deskripsi" id="deskripsi" class="form-control" rows="4">{{ $mataLomba->deskripsi }}</textarea>
+            <textarea name="deskripsi" id="deskripsi" class="form-control" rows="4" required>{{ $mataLomba->deskripsi }}</textarea>
         </div>
 
         <div class="mb-3">

@@ -13,6 +13,7 @@ class MataLomba extends Model
 
     protected $fillable = [
         'kategori_id',
+        'venue_id',
         'nama_lomba',
         'jenis_lomba',
         'jurusan',
@@ -30,5 +31,10 @@ class MataLomba extends Model
     public function kategori()
     {
         return $this->belongsTo(KategoriLomba::class, 'kategori_id');
+    }
+
+     public function venue()
+    {
+        return $this->belongsTo(Venue::class, 'venue_id');
     }
 }

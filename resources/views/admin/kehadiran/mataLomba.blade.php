@@ -20,7 +20,6 @@
                                 style="height: 180px; object-fit: cover;" alt="{{ $event->nama_mataLomba }}">
                             <div class="card-body text-center">
                                 <h6 class="fw-bold">{{ $event->nama_lomba }}</h6>
-                                <small class="text-muted">Rp. {{ number_format($event->biaya_pendaftaran, 2) }} / {{ $event->jurusan }}</small>
                                 <a href="{{ route('kehadiran.mata-lomba', $event->id) }}" class="btn btn-primary btn-sm w-100 mt-2">Pilih</a>
                             </div>
                         </div>

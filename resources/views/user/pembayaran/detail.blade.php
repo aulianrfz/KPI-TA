@@ -69,7 +69,7 @@
                             <hr>
                             <div class="d-flex justify-content-between fw-bold">
                                 <span>Total</span>
-                                <span>Rp{{ number_format($mataLomba->biaya_pendaftaran ?? 0, 0, ',', '.') }}</span>
+                                <span>Rp{{ number_format($peserta->pendaftar->mataLomba->biaya_pendaftaran ?? 0, 0, ',', '.') }}</span>
                             </div>
                         </div>
                         <div class="text-end mt-2">

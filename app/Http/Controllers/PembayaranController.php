@@ -46,25 +46,39 @@ class PembayaranController extends Controller
         ])->findOrFail($id);
 
         $pembayaranPertama = $peserta->membayar->first();
-
         $batasWaktu = $peserta->created_at->addDays(3);
+
         if (now()->gt($batasWaktu)) {
             $invoice = $pembayaranPertama?->invoice;
+
             if ($invoice) {
                 $pesertaTerkait = Peserta::whereHas('membayar', function ($query) use ($invoice) {
-                    $query->where('invoice_id', $invoice->id);
+                    $query->where('invoice_id', $invoice->id)
+                        ->where('status', '!=', 'Sudah Membayar')
+                        ->orWhereNull('status');
                 })->get();
 
                 foreach ($pesertaTerkait as $p) {
+                    foreach ($p->membayar as $membayar) {
+                        if ($membayar->status != 'Sudah Membayar') {
+                            $membayar->delete();
+                        }
+                    }
                     $p->delete();
                 }
-                $invoice->delete();
-                $pembayaranPertama->delete();
+                $sisaPeserta = Peserta::whereHas('membayar', function ($query) use ($invoice) {
+                    $query->where('invoice_id', $invoice->id);
+                })->count();
+                if ($sisaPeserta === 0) {
+                    $invoice->delete();
+                }
             }
 
-            return redirect()->route('pembayaran.index')->with('error', 'Batas waktu pembayaran telah berakhir. Pendaftaran Anda telah dihapus.');
+            $masihAdaPeserta = Peserta::find($id);
+            if (!$masihAdaPeserta) {
+                return redirect()->route('pembayaran.index')->with('error', 'Batas waktu pembayaran telah berakhir. Pendaftaran yang belum membayar telah dihapus.');
+            }
         }
-
         if (!$pembayaranPertama || !$pembayaranPertama->invoice) {
             abort(404, 'Invoice tidak ditemukan untuk peserta ini.');
         }
@@ -89,6 +103,7 @@ class PembayaranController extends Controller
             'pesertaSatuInvoice'
         ));
     }
+
 
     public function uploadBuktiPembayaran(Request $request, $id)
     {

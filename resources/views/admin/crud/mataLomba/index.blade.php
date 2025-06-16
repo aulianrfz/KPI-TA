@@ -12,24 +12,22 @@
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
 
-
         <form method="GET" action="{{ route('mataLomba.index') }}" class="mb-3">
             <div class="d-flex justify-content-start align-items-center gap-2 flex-wrap">
                 <div class="position-relative" style="width: 300px;">
                     <input
                         type="text"
                         name="search"
-                        class="form-control rounded-pill ps-4"
+                        class="form-control ps-4"
                         placeholder="Cari berdasarkan nama lomba"
                         value="{{ request('search') }}"
                     >
                 </div>
                 <button type="submit" class="btn btn-success">
-                <i class="fa fa-search"></i>
+                    <i class="fa fa-search"></i>
                 </button>
             </div>
         </form>
-
 
         <div class="table-responsive">
             <table class="table table-bordered table-striped align-middle">
@@ -43,6 +41,7 @@
                         <th>Maks Peserta</th>
                         <th>Maks Total</th>
                         <th>Biaya</th>
+                        <th>Venue</th>
                         <th>Foto</th>
                         <th style="width: 120px;">Aksi</th>
                     </tr>
@@ -58,6 +57,7 @@
                             <td>{{ $mataLomba->maks_peserta }}</td>
                             <td>{{ $mataLomba->maks_total_peserta }}</td>
                             <td>Rp {{ number_format($mataLomba->biaya_pendaftaran, 0, ',', '.') }}</td>
+                            <td>{{ $mataLomba->venue->name ?? '-' }}</td>
                             <td>
                                 @if($mataLomba->foto_kompetisi)
                                     <img src="{{ asset('storage/' . $mataLomba->foto_kompetisi) }}" width="60" height="60" style="object-fit: cover; border-radius: 6px;">
@@ -80,12 +80,13 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="10" class="text-center text-muted">Tidak ada data tersedia.</td>
+                            <td colspan="11" class="text-center text-muted">Tidak ada data tersedia.</td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
+
         <div class="d-flex justify-content-end align-items-center mt-3 gap-2">
             <span class="small text-muted mb-0">
                 Page {{ $mataLombas->currentPage() }} of {{ $mataLombas->lastPage() }}
@@ -103,5 +104,4 @@
         </div>
     </div>
 </div>
-
 @endsection

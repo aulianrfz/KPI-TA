@@ -23,9 +23,16 @@
             <p class="text-muted mb-2"><strong>Biaya Pendaftaran:</strong> {{ number_format($events->biaya_pendaftaran, 0, ',', '.') }}</p>
         </div>
          <div class="col-12 mt-4 text-center">
-            <p class="text-muted mb-2" style="font-size: 1.1rem;"><strong>URL TOR:</strong> 
-                <a href="{{ $events->url_tor }}" target="_blank" style="color: #0367A6; text-decoration: underline;">Klik Disini</a>
-            </p>
+            <div class="col-12 mt-4 text-center">
+                <p class="text-muted mb-2" style="font-size: 1.1rem;">
+                    <strong>URL TOR:</strong> 
+                    @if ($events->url_tor)
+                        <a href="{{ asset('storage/' . $events->url_tor) }}" target="_blank" style="color: #0367A6; text-decoration: underline;">Klik Disini</a>
+                    @else
+                        <span class="text-muted">Tidak Ada File TOR</span>
+                    @endif
+                </p>
+            </div>
         </div>
     </div>
     @php

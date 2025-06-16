@@ -12,6 +12,7 @@ use App\Http\Controllers\MataLombaController;
 use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardUserController;
+use App\Http\Controllers\LaporanPenjualanController;
 use App\Http\Controllers\DashboardAdminController;
 use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\KategoriController;
@@ -90,6 +91,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/peserta/{id}/identitas', [DashboardAdminController::class, 'showIdentitas'])->name('admin.peserta.identitas');
         Route::get('/verifikasi/qr/{id}', [DashboardAdminController::class, 'verifikasiQR'])->name('verifikasi.qr');
         Route::get('/admin/export', [DashboardAdminController::class, 'exportExcel'])->name('admin.export');
+
+        //laporan penjualan
+        Route::get('/laporanpenjualan', [LaporanPenjualanController::class, 'index'])->name('admin.laporan.penjualan');
+        Route::get('/laporan-penjualan', [LaporanPenjualanController::class, 'index'])->name('laporan.penjualan');
+        Route::get('/laporan-penjualan/{institusi?}', [LaporanPenjualanController::class, 'detail'])->name('laporan.penjualan.detail');
 
         //kehairan
         Route::get('/kehadiran/event', [KehadiranController::class, 'event'])->name('kehadiran.event');
