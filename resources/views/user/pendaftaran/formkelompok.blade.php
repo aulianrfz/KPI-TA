@@ -2,25 +2,34 @@
     <div class="card-body">
         <input type="hidden" name="id_mataLomba" value="{{ $mataLomba->id }}">
 
+        <div class="mb-3">
+            <label>Posisi</label>
+            <select name="peserta[{{ $index }}][posisi]" class="form-control" required>
+                <option value="">-- Pilih Posisi --</option>
+                <option value="Ketua" {{ old("peserta.$index.posisi") == 'Ketua' ? 'selected' : '' }}>Ketua</option>
+                <option value="Anggota" {{ old("peserta.$index.posisi") == 'Anggota' ? 'selected' : '' }}>Anggota</option>
+            </select>
+        </div>
+
         <div class="row mb-3">
             <div class="col-md-6">
                 <label for="nama_peserta_{{ $index }}" class="form-label">Nama</label>
-                <input type="text" class="form-control" id="nama_peserta_{{ $index }}" name="peserta[{{ $index }}][nama_peserta]" required>
+                <input type="text" class="form-control" id="nama_peserta_{{ $index }}" name="peserta[{{ $index }}][nama_peserta]" value="{{ old("peserta.$index.nama_peserta") }}" required>
             </div>
             <div class="col-md-6">
                 <label for="nim_{{ $index }}" class="form-label">NIM</label>
-                <input type="text" class="form-control" id="nim_{{ $index }}" name="peserta[{{ $index }}][nim]" required>
+                <input type="text" class="form-control" id="nim_{{ $index }}" name="peserta[{{ $index }}][nim]" value="{{ old("peserta.$index.nim") }}" required>
             </div>
         </div>
 
         <div class="row mb-3">
             <div class="col-md-6">
                 <label for="email_{{ $index }}" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email_{{ $index }}" name="peserta[{{ $index }}][email]" required>
+                <input type="email" class="form-control" id="email_{{ $index }}" name="peserta[{{ $index }}][email]" value="{{ old("peserta.$index.email") }}" required>
             </div>
             <div class="col-md-6">
                 <label for="hp_{{ $index }}" class="form-label">No. HP</label>
-                <input type="text" class="form-control" id="no_hp_{{ $index }}" name="peserta[{{ $index }}][no_hp]" required>
+                <input type="text" class="form-control" id="no_hp_{{ $index }}" name="peserta[{{ $index }}][no_hp]" value="{{ old("peserta.$index.no_hp") }}" required>
             </div>
         </div>
 
@@ -30,7 +39,9 @@
                 <select name="peserta[{{ $index }}][provinsi]" class="form-select" id="provinsi_{{ $index }}" required>
                     <option value="">- Pilih Provinsi -</option>
                     @foreach ($provinsi as $prov)
-                        <option value="{{ $prov->nama_provinsi }}">{{ $prov->nama_provinsi }}</option>
+                        <option value="{{ $prov->nama_provinsi }}" {{ old("peserta.$index.provinsi") == $prov->nama_provinsi ? 'selected' : '' }}>
+                            {{ $prov->nama_provinsi }}
+                        </option>
                     @endforeach
                 </select>
             </div>
@@ -39,7 +50,9 @@
                 <select name="peserta[{{ $index }}][institusi]" class="form-select" id="institusi_{{ $index }}" required>
                     <option value="">- Pilih Institusi -</option>
                     @foreach ($institusi as $inst)
-                        <option value="{{ $inst->nama_institusi }}">{{ $inst->nama_institusi }}</option>
+                        <option value="{{ $inst->nama_institusi }}" {{ old("peserta.$index.institusi") == $inst->nama_institusi ? 'selected' : '' }}>
+                            {{ $inst->nama_institusi }}
+                        </option>
                     @endforeach
                 </select>
             </div>
@@ -51,13 +64,15 @@
                 <select name="peserta[{{ $index }}][prodi]" class="form-select" id="prodi_{{ $index }}" required>
                     <option value="">- Pilih Prodi -</option>
                     @foreach ($prodi as $prods)
-                        <option value="{{ $prods->nama_jurusan }}">{{ $prods->nama_jurusan }}</option>
+                        <option value="{{ $prods->nama_jurusan }}" {{ old("peserta.$index.prodi") == $prods->nama_jurusan ? 'selected' : '' }}>
+                            {{ $prods->nama_jurusan }}
+                        </option>
                     @endforeach
                 </select>
             </div>
             <div class="col-md-6">
                 <label class="form-label">Upload KTP</label>
-                <input type="file" name="peserta[{{ $index }}][ktp]" class="form-control" accept="image/*" required>
+                <input type="file" name="peserta[{{ $index }}][ktp]" class="form-control" accept="image/*" {{ isset($editMode) ? '' : 'required' }}>
             </div>
         </div>
 
