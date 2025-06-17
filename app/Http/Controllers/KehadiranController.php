@@ -3,23 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use App\Models\Pendaftar;
 use App\Models\Peserta;
-use App\Models\Kehadiran;
 use App\Models\Event;
-use App\Models\Bergabung;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\KehadiranExport;
 use App\Models\KategoriLomba;
 use App\Models\MataLomba;
-use App\Models\Tim;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\KehadiranExport;
 use Carbon\Carbon;
 
 class KehadiranController extends Controller
 {
-
     public function event()
     {
         $events = Event::all();
@@ -29,7 +24,6 @@ class KehadiranController extends Controller
     public function kategori($eventId, Request $request)
     {
         $event = Event::with('kategori')->findOrFail($eventId);
-
         $categories = $event->kategori;
 
         if ($request->filled('search')) {
@@ -43,55 +37,51 @@ class KehadiranController extends Controller
 
     public function mataLomba($kategori_id, Request $request)
     {
-        $query = MataLomba::where('kategori_id', $kategori_id);
-
-        $events = $query->get();
+        $events = MataLomba::where('kategori_id', $kategori_id)->get();
         return view('admin.kehadiran.mataLomba', compact('events'));
     }
 
+    public function index(Request $request, $mataLombaId)
+    {
+        $search = $request->input('search');
+        $sort = $request->input('sort', 'desc');
 
-public function index(Request $request, $mataLombaId)
-{
-    $search = $request->input('search');
-    $sort = $request->input('sort', 'desc');
+        $pendaftar = Pendaftar::with(['peserta', 'mataLomba'])
+            ->where('mata_lomba_id', $mataLombaId)
+            ->whereNotNull('url_qrCode')
+            ->where('url_qrCode', '!=', '0')
+            ->when($search, function ($query) use ($search) {
+                $query->whereHas('peserta', function ($q) use ($search) {
+                    $q->where('nama_peserta', 'like', "%$search%")
+                        ->orWhere('institusi', 'like', "%$search%");
+                });
+            })
+            ->orderBy('created_at', $sort === 'asc' ? 'asc' : 'desc')
+            ->paginate(10);
 
-    $pendaftar = Pendaftar::with(['peserta', 'mataLomba', 'kehadiran'])
-        ->where('mata_lomba_id', $mataLombaId)
-        ->whereNotNull('url_qrCode')
-        ->where('url_qrCode', '!=', '0')
-        ->when($search, function ($query) use ($search) {
-            $query->whereHas('peserta', function ($q) use ($search) {
-                $q->where('nama_peserta', 'like', "%$search%")
-                    ->orWhere('institusi', 'like', "%$search%");
-            });
-        })
-        ->orderBy('created_at', $sort === 'asc' ? 'asc' : 'desc')
-        ->paginate(10);
+        $pendaftar->appends([
+            'search' => $search,
+            'sort' => $sort,
+        ]);
 
-    $pendaftar->appends([
-        'search' => $search,
-        'sort' => $sort,
-    ]);
+        $totalPeserta = Pendaftar::where('mata_lomba_id', $mataLombaId)
+            ->whereNotNull('url_qrCode')
+            ->where('url_qrCode', '!=', '0')
+            ->count();
 
-    $totalPeserta = Pendaftar::where('mata_lomba_id', $mataLombaId)
-        ->whereNotNull('url_qrCode')
-        ->where('url_qrCode', '!=', '0')
-        ->count();
+        $pesertaOnsite = Pendaftar::where('mata_lomba_id', $mataLombaId)
+            ->where('status_kehadiran', 'Hadir')
+            ->count();
 
-    $pesertaOnsite = Kehadiran::whereHas('pendaftar', function ($q) use ($mataLombaId) {
-        $q->where('mata_lomba_id', $mataLombaId);
-    })->where('status', 'Hadir')->count();
+        $belumDaftarUlang = $totalPeserta - $pesertaOnsite;
 
-    $belumDaftarUlang = $totalPeserta - $pesertaOnsite;
-
-    return view('admin.kehadiran.index', compact(
-        'pendaftar',
-        'totalPeserta',
-        'pesertaOnsite',
-        'belumDaftarUlang'
-    ));
-}
-
+        return view('admin.kehadiran.index', compact(
+            'pendaftar',
+            'totalPeserta',
+            'pesertaOnsite',
+            'belumDaftarUlang'
+        ));
+    }
 
     public function showQR($id)
     {
@@ -101,34 +91,29 @@ public function index(Request $request, $mataLombaId)
 
     public function edit($id)
     {
-        $pendaftar = Pendaftar::with('peserta', 'mataLomba', 'kehadiran')->findOrFail($id);
-        $kehadiran = Kehadiran::all();
-        return view('admin.kehadiran.edit', compact('pendaftar', 'kehadiran'));
+        $pendaftar = Pendaftar::with('peserta', 'mataLomba')->findOrFail($id);
+        return view('admin.kehadiran.edit', compact('pendaftar'));
     }
 
     public function update(Request $request, $id)
     {
         $pendaftar = Pendaftar::findOrFail($id);
 
-        if ($pendaftar->kehadiran && $pendaftar->kehadiran->status === 'Hadir') {
+        if ($pendaftar->status_kehadiran === 'Hadir') {
             return redirect()->route('kehadiran.mata-lomba', ['mataLombaId' => $pendaftar->mata_lomba_id])
                 ->with('warning', 'Peserta sudah melakukan kehadiran. Data tidak dapat diubah.');
         }
 
-        $kehadiran = $pendaftar->kehadiran ?? new Kehadiran();
-        $kehadiran->pendaftar_id = $pendaftar->id;
-        $kehadiran->tanggal = now();
-        $kehadiran->status = $request->input('status');
-        $kehadiran->save();
+        $pendaftar->status_kehadiran = $request->input('status');
+        $pendaftar->tanggal_kehadiran = now();
+        $pendaftar->save();
 
         return redirect()->route('kehadiran.mata-lomba', ['mataLombaId' => $pendaftar->mata_lomba_id])
             ->with('success', 'Data kehadiran berhasil diperbarui.');
     }
 
-
     public function exportExcel(Request $request)
     {
         return Excel::download(new KehadiranExport($request->search), 'kehadiran.xlsx');
     }
-
 }

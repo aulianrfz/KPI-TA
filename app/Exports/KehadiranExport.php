@@ -17,7 +17,7 @@ class KehadiranExport implements FromCollection, WithHeadings
 
     public function collection()
     {
-        $query = Pendaftar::with(['peserta', 'mataLomba', 'kehadiran']);
+        $query = Pendaftar::with(['peserta', 'mataLomba']);
 
         if ($this->search) {
             $query->whereHas('peserta', function ($q) {
@@ -32,8 +32,8 @@ class KehadiranExport implements FromCollection, WithHeadings
                 'Institusi'      => $p->peserta->institusi ?? '-',
                 'Kategori'       => $p->mataLomba->kategori->nama_kategori ?? '-',
                 'Mata Lomba'     => $p->mataLomba->nama_lomba ?? '-',
-                'Status'         => $p->kehadiran ? 'Hadir' : 'Belum Hadir',
-                'Waktu Hadir'    => $p->kehadiran ? $p->kehadiran->tanggal->format('Y-m-d H:i:s') : '-',
+                'Status'         => $p->status_kehadiran ? 'Hadir' : 'Belum Hadir',
+                'Waktu Hadir'    => $p->tanggal_kehadiran? \Carbon\Carbon::parse($p->tanggal_kehadiran)->format('Y-m-d H:i:s'): '-',
             ];
         });
     }

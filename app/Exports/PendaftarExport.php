@@ -43,7 +43,7 @@ class PendaftarExport implements FromCollection, WithHeadings
                 $item->peserta->no_hp ?? '-',
                 $item->peserta->nim ?? '-',
                 $item->created_at->format('d-m-Y H:i'),
-                $item->kehadiran->status ?? 'Belum Hadir'
+                $item->status_kehadiran ?? 'Belum Hadir'
             ];
         });
     }

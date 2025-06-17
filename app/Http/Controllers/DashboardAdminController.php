@@ -11,7 +11,6 @@ use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
 use App\Models\Pendaftar;
 use App\Models\Peserta;
-use App\Models\Kehadiran;
 use App\Models\Bergabung;
 use App\Models\Tim;
 use Carbon\Carbon;
@@ -25,8 +24,8 @@ class DashboardAdminController extends Controller
         $sort = $request->input('sort', 'asc');
 
         $query = Pendaftar::with('peserta')
-        ->whereNotNull('url_qrCode')
-        ->whereRaw("TRIM(COALESCE(url_qrCode, '')) NOT IN ('', '0', 'null')");
+            ->whereNotNull('url_qrCode')
+            ->whereRaw("TRIM(COALESCE(url_qrCode, '')) NOT IN ('', '0', 'null')");
 
         if ($search) {
             $query->whereHas('peserta', function ($q) use ($search) {
@@ -83,9 +82,8 @@ class DashboardAdminController extends Controller
             })
             ->count();
 
-        $pesertaOnSite = Kehadiran::where('status', 'Hadir')->count();
-
-        $belumDaftarUlang = $totalPeserta - $pesertaOnSite ;
+        $pesertaOnSite = Pendaftar::where('status_kehadiran', 'Hadir')->count();
+        $belumDaftarUlang = $totalPeserta - $pesertaOnSite;
 
         return view('admin.dashboard.home', [
             'totalPeserta' => $totalPeserta,
@@ -113,43 +111,38 @@ class DashboardAdminController extends Controller
             return response()->json(['error' => 'QR code tidak valid: gagal mendekripsi ID.'], 400);
         }
 
-        $pendaftar = Pendaftar::find($decryptedId);
+        $pendaftar = Pendaftar::with('peserta')->find($decryptedId);
 
         if (!$pendaftar) {
             return response()->json(['error' => 'QR code tidak valid: peserta tidak ditemukan.'], 404);
         }
 
         $urlFotoKtm = $pendaftar->peserta->url_ktm ? asset('storage/' . $pendaftar->peserta->url_ktm) : null;
-        if ($pendaftar->kehadiran) {
+
+        if ($pendaftar->status_kehadiran === 'Hadir') {
             return response()->json([
                 'message' => 'Peserta sudah ditandai hadir sebelumnya.',
                 'nama_peserta' => $pendaftar->peserta->nama_peserta,
-                'foto_ktm' => $pendaftar->peserta->url_ktm ? asset('storage/' . $pendaftar->peserta->url_ktm) : null,
-                'url_qrCode' => $urlFotoKtm,
+                'foto_ktm' => $urlFotoKtm,
             ]);
         }
 
-        $kehadiran = new Kehadiran();
-        $kehadiran->pendaftar_id = $pendaftar->id;
-        $kehadiran->tanggal = now();
-        $kehadiran->status = 'Hadir';
-        $kehadiran->save();
+        $pendaftar->status_kehadiran = 'Hadir';
+        $pendaftar->tanggal_kehadiran = now();
+        $pendaftar->save();
 
         Log::info("Peserta ID {$decryptedId} berhasil ditandai hadir.");
 
         return response()->json([
             'message' => 'Peserta berhasil ditandai hadir.',
             'nama_peserta' => $pendaftar->peserta->nama_peserta,
-            'foto_ktm' => $pendaftar->peserta->url_ktm ? asset('storage/' . $pendaftar->peserta->url_ktm) : null,
-            'url_qrCode' => $urlFotoKtm,
+            'foto_ktm' => $urlFotoKtm,
         ]);
     }
 
     public function showIdentitas($id)
     {
-        $pendaftar = Pendaftar::with(['peserta'])
-            ->findOrFail($id);
-
+        $pendaftar = Pendaftar::with(['peserta'])->findOrFail($id);
         return view('admin.dashboard.identitas', compact('pendaftar'));
     }
 

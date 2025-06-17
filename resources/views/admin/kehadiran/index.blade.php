@@ -94,7 +94,7 @@
                                 <td class="border-start-0 border-end-0">{{ $p->mataLomba->kategori->nama_kategori ?? '-' }}</td>
                                 <td class="border-start-0 border-end-0">{{ $p->mataLomba->nama_lomba ?? '-' }}</td>
                                 <td class="border-start-0 border-end-0">
-                                    {{ optional($p->kehadiran)->tanggal ? \Carbon\Carbon::parse($p->kehadiran->tanggal)->format('H:i') : '-' }}
+                                    {{ $p->tanggal_kehadiran ? \Carbon\Carbon::parse($p->tanggal_kehadiran)->format('H:i') : '-' }}
                                 </td>
                                 <td class="border-start-0 border-end-0">
                                     <a href="{{ route('admin.qr.show', $p->id) }}"
@@ -104,7 +104,7 @@
                                     </a>
                                 </td>
                                 <td class="border-start-0 border-end-0">
-                                    @if($p->kehadiran?->status === 'Hadir')
+                                    @if($p->status_kehadiran === 'Hadir')
                                     <span class="badge fw-semibold px-3 py-2 rounded text-center" style="background-color: #A3E4DB; color:rgb(2, 129, 110); min-width: 100px;">
                                         Hadir
                                     </span>

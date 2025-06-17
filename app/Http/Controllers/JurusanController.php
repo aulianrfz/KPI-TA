@@ -25,7 +25,7 @@ class JurusanController extends Controller
 
         Jurusan::create($request->all());
 
-        return redirect()->route('admin.crud.jurusan.index')->with('success', 'Jurusan berhasil ditambahkan.');
+        return redirect()->route('jurusan.index')->with('success', 'Jurusan berhasil ditambahkan.');
     }
 
     public function update(Request $request, Jurusan $jurusan)
@@ -36,13 +36,13 @@ class JurusanController extends Controller
 
         $jurusan->update($request->all());
 
-        return redirect()->route('admin.crud.jurusan.index')->with('success', 'Jurusan berhasil diperbarui.');
+        return redirect()->route('jurusan.index')->with('success', 'Jurusan berhasil diperbarui.');
     }
 
     public function destroy(Jurusan $jurusan)
     {
         $jurusan->delete();
 
-        return redirect()->route('admin.crud.jurusan.index')->with('success', 'Jurusan berhasil dihapus.');
+        return redirect()->route('jurusan.index')->with('success', 'Jurusan berhasil dihapus.');
     }
 }

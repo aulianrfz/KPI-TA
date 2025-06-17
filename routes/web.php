@@ -82,7 +82,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('venue', VenueController::class);
         Route::resource('provinsi', ProvinsiController::class);
         Route::resource('institusi', InstitusiController::class);
-        Route::resource('jurusan', JurusanController::class)->except(['create', 'edit', 'show']);
+        Route::resource('jurusan', JurusanController::class);
 
 
         Route::get('/listcrud', [DashboardAdminController::class, 'listCrud'])->name('admin.list.crud');

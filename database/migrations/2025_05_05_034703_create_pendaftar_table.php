@@ -15,6 +15,8 @@ return new class extends Migration {
             $table->unsignedBigInteger('mata_lomba_id');
             $table->unsignedBigInteger('peserta_id');
             $table->string('url_qrCode',255)->nullable();
+            $table->string('status_kehadiran')->nullable();
+            $table->timestamp('tanggal_kehadiran')->nullable();
             $table->timestamps();
 
             $table->foreign('mata_lomba_id')->references('id')->on('mata_lomba')->onDelete('cascade');

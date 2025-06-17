@@ -53,23 +53,26 @@
                             </td>
                         </tr>
 
+                        <!-- Modal Edit -->
                         <div class="modal fade" id="modalEdit{{ $jurusan->id }}" tabindex="-1">
                             <div class="modal-dialog">
-                                <form action="{{ route('jurusan.update', $jurusan->id) }}" method="POST" class="modal-content">
-                                    @csrf
-                                    @method('PUT')
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Edit Jurusan</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <input type="text" name="nama_jurusan" class="form-control" value="{{ $jurusan->nama_jurusan }}" required>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="submit" class="btn btn-success">Simpan</button>
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                    </div>
-                                </form>
+                                <div class="modal-content">
+                                    <form action="{{ route('jurusan.update', $jurusan->id) }}" method="POST">
+                                        @csrf
+                                        @method('PUT')
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Edit Jurusan</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <input type="text" name="nama_jurusan" class="form-control" value="{{ $jurusan->nama_jurusan }}" required>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-success">Simpan</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                         @empty
@@ -80,7 +83,7 @@
             </div>
         </div>
 
-         <div class="d-flex justify-content-end align-items-center mt-3 gap-2">
+        <div class="d-flex justify-content-end align-items-center mt-3 gap-2">
             <span class="small text-muted mb-0">
                 Page {{ $jurusans->currentPage() }} of {{ $jurusans->lastPage() }}
             </span>
@@ -100,20 +103,22 @@
 
 <div class="modal fade" id="modalTambah" tabindex="-1">
     <div class="modal-dialog">
-        <form action="{{ route('jurusan.store') }}" method="POST" class="modal-content">
-            @csrf
-            <div class="modal-header">
-                <h5 class="modal-title">Tambah Jurusan</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <input type="text" name="nama_jurusan" class="form-control" placeholder="Nama Jurusan" required>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">Simpan</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-            </div>
-        </form>
+        <div class="modal-content">
+            <form action="{{ route('jurusan.store') }}" method="POST">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambah Jurusan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" name="nama_jurusan" class="form-control" placeholder="Nama Jurusan" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 @endsection

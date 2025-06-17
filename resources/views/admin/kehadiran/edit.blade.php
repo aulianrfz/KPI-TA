@@ -48,7 +48,7 @@
                 <label class="form-label font-semibold">Status Kehadiran</label>
 
                 @php
-                    $status = optional($pendaftar->kehadiran)->status;
+                    $status = optional($pendaftar)->status_kehadiran;
                 @endphp
 
                 <select name="status"

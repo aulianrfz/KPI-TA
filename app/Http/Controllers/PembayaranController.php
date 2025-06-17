@@ -135,14 +135,25 @@ class PembayaranController extends Controller
 
         $file = $request->file('bukti');
         $filePath = $file->store('bukti_pembayaran', 'public');
+        $membayar = Membayar::where('peserta_id', $peserta->id)
+            ->where('invoice_id', $invoice->id)
+            ->first();
 
-        Membayar::create([
-            'peserta_id' => $peserta->id,
-            'invoice_id' => $invoice->id,
-            'bukti_pembayaran' => $filePath,
-            'status' => 'Menunggu Verifikasi',
-            'waktu' => now(),
-        ]);
+        if ($membayar) {
+            $membayar->update([
+                'bukti_pembayaran' => $filePath,
+                'status' => 'Menunggu Verifikasi',
+                'waktu' => now(),
+            ]);
+        } else {
+            Membayar::create([
+                'peserta_id' => $peserta->id,
+                'invoice_id' => $invoice->id,
+                'bukti_pembayaran' => $filePath,
+                'status' => 'Menunggu Verifikasi',
+                'waktu' => now(),
+            ]);
+        }
 
         return redirect()->route('pembayaran.index')->with('success', 'Bukti pembayaran berhasil diunggah.');
     }

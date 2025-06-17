@@ -167,7 +167,7 @@
 
                             </td>
                             <td>
-                                @if ($pendaftar->kehadiran?->status === 'Hadir')
+                                @if ($pendaftar->status_kehadiran === 'Hadir')
                                     <span class="badge bg-success">Hadir</span>
                                 @else
                                     <span class="badge bg-danger">Belum Hadir</span>
@@ -366,8 +366,15 @@
     });
 
     document.addEventListener('submit', function(e) {
-        e.preventDefault();
+        if (e.target.id === 'qr-scan-form') {
+            e.preventDefault();
+        }
     }, true);
+
+    document.getElementById('scanResultModal').addEventListener('hidden.bs.modal', function () {
+        location.reload();
+    });
+
 </script>
 
 
