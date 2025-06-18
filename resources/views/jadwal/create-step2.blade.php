@@ -174,10 +174,10 @@
                 @php
                     $stepTitle = "";
                     switch ($i) {
-                        case 1: $stepTitle = "Pendaftaran"; break;
-                        case 2: $stepTitle = "Verifikasi Data"; break;
-                        case 3: $stepTitle = "Penjadwalan"; break;
-                        case 4: $stepTitle = "Selesai"; break;
+                        case 1: $stepTitle = ""; break;
+                        case 2: $stepTitle = ""; break;
+                        case 3: $stepTitle = ""; break;
+                        case 4: $stepTitle = ""; break;
                     }
                 @endphp
                 <div class="stepper-item {{ $currentStep >= $i ? 'completed' : '' }} {{ $currentStep === $i ? 'active' : '' }}">

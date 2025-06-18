@@ -55,16 +55,22 @@ class ProsesPenjadwalanJob implements ShouldQueue
         $domain = $penjadwal->constraintPropagation($this->variabelX, $this->constraintTambahan, $this->jadwalHarian);
         Log::info('Generated domain: ' . json_encode($domain));
 
-        $jadwalValidSolutions = $penjadwal->backtrack($domain);
+        $jadwalValidSolutions = $penjadwal->backtrack($domain, 3);
 
         Log::info("Selesai backtrack pada job");
 
-        if (!$jadwalValidSolutions) {
-            Log::warning("Gagal melakukan penjadwalan. Tidak ada jadwal valid ditemukan.");
+        if (!$jadwalValidSolutions || isset($jadwalValidSolutions['error'])) {
+            $alasan = $jadwalValidSolutions['error'] ?? 'Tidak ada solusi valid ditemukan.';
+
+            Log::warning("Gagal penjadwalan: $alasan");
+
             if ($this->version == 1) {
                 $jadwalMaster = Jadwal::find($this->jadwalId);
                 if ($jadwalMaster) {
-                    $jadwalMaster->update(['status' => 'Gagal']);
+                    $jadwalMaster->update([
+                        'status' => 'Gagal',
+                        'alasan_gagal' => $alasan,
+                    ]);
                 }
             }
             return;
@@ -89,6 +95,8 @@ class ProsesPenjadwalanJob implements ShouldQueue
                     'tahun' => now()->year,
                     'version' => $version,
                     'status' => 'Menunggu',
+                    // 'event_id' => '1',
+                    
                 ]);
                 $this->saveAgenda($jadwalBaru, $jadwalValidSolutions[$i]);
                 $jadwalBaru->update(['status' => 'Selesai']);
@@ -100,6 +108,7 @@ class ProsesPenjadwalanJob implements ShouldQueue
                 'tahun' => now()->year,
                 'version' => $this->version,
                 'status' => 'Menunggu',
+                // 'event_id' => '1',
             ]);
             $this->saveAgenda($jadwalMaster, $jadwalValidSolutions[0]);
             $jadwalMaster->update(['status' => 'Selesai']);

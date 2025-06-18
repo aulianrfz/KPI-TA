@@ -48,7 +48,8 @@
         const start = new Date(startDate);
         const end = new Date(endDate);
 
-        for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+        for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 
+    )) {
             const tanggalStr = d.toISOString().split('T')[0];
 
             container.innerHTML += `

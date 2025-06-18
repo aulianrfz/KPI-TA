@@ -1,6 +1,7 @@
 @extends('layouts.apk')
 
 @section('content')
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     {{-- Blok CSS dipindahkan ke sini dari @push('styles') --}}
     <style>
         .title-rundown {
@@ -95,29 +96,6 @@
             color: white;
         }
 
-        /* Custom styles for pagination */
-        .pagination {
-            justify-content: center;
-            /* Center pagination links */
-            margin-top: 1.5rem;
-            /* Add some margin above pagination */
-        }
-
-        .pagination .page-item.active .page-link {
-            background-color: #3A3B7B;
-            /* Warna pagination aktif sesuai title-rundown */
-            border-color: #3A3B7B;
-        }
-
-        .pagination .page-link {
-            color: #3A3B7B;
-            /* Warna link pagination */
-        }
-
-        .pagination .page-link:hover {
-            color: #2c2d5c;
-            /* Warna hover link pagination */
-        }
 
         /* Rata tengah untuk konten tabel di tbody */
         .table-hover tbody td {
@@ -133,14 +111,17 @@
         <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
             {{-- Kelompokkan tombol kembali dan judul --}}
             <div class="d-flex align-items-center">
-                <a href="{{ url()->previous() }}" class="btn btn-sm btn-outline-secondary me-2" title="Kembali">
+                <a href="{{ request('back') ?? route('jadwal.detail', ['id' => $jadwalMaster->id]) }}"
+                    class="btn btn-sm btn-outline-secondary me-2" title="Kembali">
                     <i class="fas fa-arrow-left"></i>
                 </a>
+
                 <h1 class="h2 mb-0">Penjadwalan</h1> {{-- mb-0 untuk alignment vertikal dengan tombol --}}
             </div>
             <div class="d-flex align-items-center">
                 {{-- Formulir Pencarian --}}
-                <form class="d-flex me-2" role="search" method="GET" action="{{-- URL untuk aksi pencarian --}}">
+                <form class="d-flex me-2" role="search" method="GET"
+                    action="{{ route('jadwal.change', $jadwalMaster->id) }}">
                     <div class="input-group input-group-sm">
                         <input type="text" name="search_query" class="form-control" placeholder="Cari Sesuatu Disini..."
                             aria-label="Cari sub kategori" style="width: 200px;" value="{{ request('search_query') }}">
@@ -156,14 +137,29 @@
                         Filter by
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="filterDropdown">
-                        <li><a class="dropdown-item" href="{{-- URL filter by Kategori --}}">Kategori</a></li>
-                        <li><a class="dropdown-item" href="{{-- URL filter by Venue --}}">Venue</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="{{-- URL clear filter --}}">Clear Filter</a></li>
+                        <li><a class="dropdown-item"
+                                href="{{ request()->fullUrlWithQuery(['sort_by' => 'kategori']) }}">Kategori</a></li>
+                        <li><a class="dropdown-item"
+                                href="{{ request()->fullUrlWithQuery(['sort_by' => 'venue']) }}">Venue</a></li>
+
                     </ul>
+
+
                 </div>
+                <form method="GET" class="d-flex me-2 align-items-center">
+                    <select name="tanggal" class="form-select form-select-sm me-2" onchange="this.form.submit()">
+                        <option value="">Tanggal</option>
+                        @foreach($availableDates as $tanggal)
+                            <option value="{{ $tanggal }}" {{ request('tanggal') == $tanggal ? 'selected' : '' }}>
+                                {{ \Carbon\Carbon::parse($tanggal)->format('d M Y') }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
+                @if(request()->has('tanggal') || request()->has('sort_by') || request()->has('search_query'))
+                    <a href="{{ route('jadwal.change', $jadwalMaster->id) }}"
+                        class="btn btn-sm btn-outline-secondary me-2">Clear</a>
+                @endif
 
                 {{-- Tombol Change menjadi Dropdown --}}
                 <div class="dropdown">
@@ -233,13 +229,14 @@
                                         @else
                                             <td>{{ $loop->iteration }}</td>
                                         @endif
+
                                         <!-- <td>
-                                                    @if(isset($jadwal->durasi))
-                                                        '{{ $jadwal->durasi }}
-                                                    @else
-                                                        -
-                                                    @endif
-                                                </td> -->
+                                                                                                                                                                                                                @if(isset($jadwal->durasi))
+                                                                                                                                                                                                                    '{{ $jadwal->durasi }}
+                                                                                                                                                                                                                @else
+                                                                                                                                                                                                                    -
+                                                                                                                                                                                                                @endif
+                                                                                                                                                                                                            </td> -->
                                         <td>{{ $jadwal->tanggal ?? '-' }}</td>
                                         <td>
                                             {{ \Carbon\Carbon::parse($jadwal->waktu_mulai)->format('H.i') }} -
@@ -250,31 +247,29 @@
                                         <td>{{ $jadwal->venue->name ?? '-' }}</td>
                                         <td>{{ $jadwal->kegiatan ?? '-' }}</td>
                                         <td>
+                                            @php
+                                                $adaPeserta = $jadwal->peserta && $jadwal->peserta->count();
+                                                $adaTim = $jadwal->tim && $jadwal->tim->count();
+                                            @endphp
 
-                                            @if($jadwal->peserta && $jadwal->peserta->count())
-
-                                                @foreach($jadwal->peserta as $peserta)
-
+                                            @if ($adaPeserta)
+                                                @foreach ($jadwal->peserta as $peserta)
                                                     {{ $peserta->nama_peserta }}<br>
-
                                                 @endforeach
-
-                                            @elseif($jadwal->tim && $jadwal->tim->count())
-
-                                                @foreach($jadwal->tim as $tim)
-
-                                                    {{ $tim->nama_tim }}<br>
-
-                                                @endforeach
-
-                                            @else
-
-                                                -
-
                                             @endif
 
+                                            @if ($adaTim)
+                                                @foreach ($jadwal->tim as $tim)
+                                                    {{ $tim->nama_tim }}<br>
+                                                @endforeach
+                                            @endif
+
+                                            @if (!$adaPeserta && !$adaTim)
+                                                -
+                                            @endif
                                         </td>
-                                        <td>{{ $jadwal->juri->nama_juri ?? '-' }}</td>
+
+                                        <td>{{ $jadwal->juri->nama ?? '-' }}</td>
                                         <td class="text-center pe-3"> {{-- Tombol aksi sudah rata tengah --}}
                                             <a href="{{ route('jadwal.edit', $jadwal->id) }}"
                                                 class="btn btn-sm btn-action-edit-custom me-1" title="Edit">
@@ -291,16 +286,16 @@
                                 @endforeach
                             </tbody>
                         </table>
-                    </div>
-
-                    {{-- Pagination Links dengan Pengecekan Tipe Objek --}}
-                    @if ($jadwals instanceof \Illuminate\Pagination\AbstractPaginator && $jadwals->hasPages())
-                        <div class="card-footer bg-white py-3">
-                            {{ $jadwals->appends(request()->except('page'))->links() }} {{-- appends untuk mempertahankan query
-                            string lain --}}
+                        <div class="d-flex flex-column align-items-center my-3">
+                            <div class="text-muted small mb-2">
+                                Menampilkan {{ $jadwals->firstItem() }} sampai {{ $jadwals->lastItem() }} dari total
+                                {{ $jadwals->total() }} data
+                            </div>
+                            {{ $jadwals->links('pagination::bootstrap-5') }}
                         </div>
-                    @endif
 
+
+                    </div>
                 @endif
             </div>
         </div>

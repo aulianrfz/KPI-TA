@@ -26,6 +26,7 @@ class MataLomba extends Model
         'biaya_pendaftaran',
         'url_tor',
         'foto_kompetisi',
+        'is_serentak'
     ];
 
     public function kategori()

@@ -122,12 +122,12 @@
                             <label for="nama_jadwal" class="form-label fw-bold">Nama Jadwal</label>
                             <input type="text" name="nama_jadwal" id="nama_jadwal"
                                 class="form-control @error('nama_jadwal') is-invalid @enderror" required
-                                value="{{ old('nama_jadwal') }}" placeholder="Contoh: Draft-01">
+                                value="{{ old('nama_jadwal') }}" placeholder="Contoh: KPI 15">
                             @error('nama_jadwal')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        <label class="form-label fw-bold">Pilih Tanggal & Waktu Event</label>
+                        <label class="form-label fw-bold">Pilih Waktu Event</label>
                         <div id="calendar" class="mb-4"></div>
                         <div id="hiddenInputs"></div>
                         <div class="footer-action">

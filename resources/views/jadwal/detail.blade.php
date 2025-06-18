@@ -119,37 +119,65 @@
                 }
                 return $positionedEvents;
             }
-            function calculateFinalPositions($events)
+            function calculateFinalPositions($events, $selectedSubKategori = null)
             {
                 if (empty($events))
                     return [];
-                $eventsByLomba = [];
-                foreach ($events as $event) {
-                    $lombaId = $event['jadwal']->mata_lomba_id;
-                    if (!isset($eventsByLomba[$lombaId])) {
-                        $eventsByLomba[$lombaId] = [];
-                    }
-                    $eventsByLomba[$lombaId][] = $event;
-                }
-                $totalLombaColumns = count($eventsByLomba);
-                if ($totalLombaColumns == 0)
-                    return [];
-                $lombaColumnWidth = 100 / $totalLombaColumns;
+
                 $finalEvents = [];
-                $lombaColumnIndex = 0;
-                foreach ($eventsByLomba as $lombaId => $lombaEvents) {
-                    $lombaColumnLeftOffset = $lombaColumnIndex * $lombaColumnWidth;
-                    $internalPositionedEvents = calculateInternalLayout($lombaEvents);
-                    foreach ($internalPositionedEvents as $event) {
-                        $event['final_width'] = ($event['widthPercent'] / 100) * $lombaColumnWidth;
-                        $event['final_left'] = $lombaColumnLeftOffset + (($event['leftPercent'] / 100) * $lombaColumnWidth);
-                        $finalEvents[] = $event;
+
+                if ($selectedSubKategori) {
+                    // logika horizontal per jam jika filter subkategori aktif
+                    $groupedByHour = [];
+
+                    foreach ($events as $event) {
+                        $startHour = floor($event['start'] / 60);
+                        $groupedByHour[$startHour][] = $event;
                     }
-                    $lombaColumnIndex++;
+
+                    $currentTop = 0;
+                    $hourHeight = 100; // atur sesuai kebutuhan CSS layout
+
+                    foreach ($groupedByHour as $hour => $group) {
+                        $count = count($group);
+                        foreach ($group as $i => $event) {
+                            $event['final_top'] = $currentTop;
+                            $event['final_left'] = ($i * (100 / $count));
+                            $event['final_width'] = 100 / $count;
+                            $finalEvents[] = $event;
+                        }
+                        $currentTop += $hourHeight;
+                    }
+                } else {
+                    // logika lama: berdasarkan venue / mata lomba (gunakan internal layout)
+                    $eventsByLomba = ['all' => $events];
+
+                    $totalLombaColumns = count($eventsByLomba);
+                    if ($totalLombaColumns == 0)
+                        return [];
+
+                    $lombaColumnWidth = 100 / $totalLombaColumns;
+                    $lombaColumnIndex = 0;
+
+                    foreach ($eventsByLomba as $lombaId => $lombaEvents) {
+                        $lombaColumnLeftOffset = $lombaColumnIndex * $lombaColumnWidth;
+                        $internalPositionedEvents = calculateInternalLayout($lombaEvents);
+                        foreach ($internalPositionedEvents as $event) {
+                            $event['final_width'] = ($event['widthPercent'] / 100) * $lombaColumnWidth;
+                            $event['final_left'] = $lombaColumnLeftOffset + (($event['leftPercent'] / 100) * $lombaColumnWidth);
+                            $finalEvents[] = $event;
+                        }
+                        $lombaColumnIndex++;
+                    }
                 }
+
                 return $finalEvents;
             }
-            $positionedEvents = calculateFinalPositions($events);
+
+
+
+            $positionedEvents = calculateFinalPositions($events, $selectedSubKategori);
+
         @endphp
 
         <div class="card shadow-sm mb-4">
@@ -179,27 +207,30 @@
                             style="min-height: {{ (($maxMinute - $minMinute) / $slotInterval) * $slotHeight }}px;">
                             @foreach ($positionedEvents as $e)
                                 <div class="event-card" style="
-                                                                                     top: {{ $e['top'] }}px;
-                                                                                     height: {{ $e['durationHeight'] - 2 }}px;
-                                                                                     left: {{ $e['final_left'] }}%;
-                                                                                     width: calc({{ $e['final_width'] }}% - 5px);
-                                                                                 ">
+                                                                                                                             top: {{ $e['top'] }}px;
+                                                                                                                             height: {{ $e['durationHeight'] - 2 }}px;
+                                                                                                                             left: {{ $e['final_left'] }}%;
+                                                                                                                             width: calc({{ $e['final_width'] }}% - 5px);
+                                                                                                                         ">
                                     <div class="event-content">
                                         <p class="event-title">{{ $e['jadwal']->mataLomba->nama_lomba }}</p>
                                         <p class="event-subtitle">
-                                            @php
-                                                // Coba ambil nama tim jika ada
-                                                $timNames = $e['jadwal']->tim->pluck('nama_tim')->all();
-                                                // Coba ambil nama peserta jika ada
-                                                $pesertaNames = $e['jadwal']->peserta->pluck('nama_peserta')->all();
-                                            @endphp
-
-                                            @if (!empty($timNames))
-                                                {{ implode(', ', $timNames) }}
-                                            @elseif (!empty($pesertaNames))
-                                                {{ implode(', ', $pesertaNames) }}
+                                            @if ($selectedSubKategori)
+                                                {{-- tampilkan peserta/tim --}}
+                                                @php
+                                                    $timNames = $e['jadwal']->tim->pluck('nama_tim')->all();
+                                                    $pesertaNames = $e['jadwal']->peserta->pluck('nama_peserta')->all();
+                                                @endphp
+                                                @if (!empty($timNames))
+                                                    {{ implode(', ', $timNames) }}
+                                                @elseif (!empty($pesertaNames))
+                                                    {{ implode(', ', $pesertaNames) }}
+                                                @else
+                                                    -
+                                                @endif
                                             @else
-                                                -
+                                                {{-- semua lomba, tidak tampilkan peserta/tim --}}
+                                                <!-- <em>Semua Peserta</em> -->
                                             @endif
                                         </p>
                                         <p class="event-time">
@@ -401,13 +432,14 @@
         .event-title {
             font-weight: 600;
             margin: 0 0 2px 0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            white-space: normal;
+            word-break: break-word;
+            /* ✔️ kalau ada kata panjang banget */
+            overflow-wrap: break-word;
         }
 
         .event-subtitle,
-        .event-venue,
+        .indeevent-venue,
         .event-time {
             margin: 0;
             font-size: 0.75rem;

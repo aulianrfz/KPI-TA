@@ -53,6 +53,7 @@ class MataLombaController extends Controller
             'deskripsi' => 'required|string',
             'jenis_pelaksanaan' => 'required|in:Online,Offline',
             'durasi' => 'required|integer|min:1',
+            'is_serentak' => 'required|boolean',
         ]);
 
         $data = $request->all();
@@ -101,6 +102,7 @@ class MataLombaController extends Controller
             'deskripsi' => 'nullable|string',
             'jenis_pelaksanaan' => 'required|in:Online,Offline',
             'durasi' => 'required|integer|min:1',
+            'is_serentak' => 'required|boolean',
         ]);
 
         $data = $request->all();

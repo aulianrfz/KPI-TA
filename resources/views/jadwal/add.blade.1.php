@@ -4,7 +4,7 @@
     @if(session('error_force'))
         <div id="errorModal" class="modal-overlay">
             <div class="modal-content">
-                <p>{!! nl2br(e(session('error_force'))) !!}</p>
+                <p>{{ session('error_force') }}</p>
                 <form method="POST" action="{{ route('jadwal.add') }}">
                     @csrf
                     @foreach(old() as $key => $value)
@@ -60,13 +60,14 @@
                 <input type="date" name="tanggal" id="customDate" class="form-control mt-2" style="display: none;">
             </div>
 
-            <div class="form-group col-md-6">
-                <label for="waktu_mulai">Waktu Mulai</label>
-                <input type="text" id="waktu_mulai" name="waktu_mulai" class="form-control" placeholder="HH:mm" maxlength="5" autocomplete="off" required>
+            <div class="form-group">
+                <label>Waktu Mulai</label>
+                <input type="time" name="waktu_mulai" class="form-control" required>
             </div>
-            <div class="form-group col-md-6">
-                <label for="waktu_selesai">Waktu Selesai</label>
-                <input type="text" id="waktu_selesai" name="waktu_selesai" class="form-control" placeholder="HH:mm" maxlength="5" autocomplete="off" required>
+
+            <div class="form-group">
+                <label>Waktu Selesai</label>
+                <input type="time" name="waktu_selesai" class="form-control" required>
             </div>
 
             <div class="form-group">
@@ -76,7 +77,7 @@
 
             <div class="form-group">
                 <label>Venue</label>
-                <select name="venue_id" class="form-control" required>
+                <select name="venue_id" class="form-control">
                     <option value="">- Pilih Venue -</option>
                     @foreach($venue as $item)
                         <option value="{{ $item->id }}" {{ old('venue_id') == $item->id ? 'selected' : '' }}>
@@ -361,29 +362,6 @@
             user-select: none;
         }
     </style>
-
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        function autoFormatTime(input) {
-            input.addEventListener('input', function (e) {
-                let value = this.value.replace(/[^0-9]/g, ''); // hanya angka
-                if (value.length > 4) {
-                    value = value.slice(0, 4); // maksimal 4 angka
-                }
-
-                if (value.length >= 3) {
-                    this.value = value.slice(0, 2) + ':' + value.slice(2);
-                } else {
-                    this.value = value;
-                }
-            });
-        }
-
-        autoFormatTime(document.getElementById('waktu_mulai'));
-        autoFormatTime(document.getElementById('waktu_selesai'));
-    });
-</script>
-
 
 
 @endsection

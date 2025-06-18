@@ -144,9 +144,57 @@
                             <div class="stepper-item active">
                                 <div class="step-counter">3</div>
                             </div>
+                            <div class="stepper-item">
+                                <div class="step-counter">4</div>
+                            </div>
                         </div>
 
                         <h4 class="fw-bold mb-4 mt-5">Constraint Tambahan</h4>
+
+                        <div class="row mb-4 gx-3">
+                            <div class="col-12">
+                                <div class="p-3 rounded shadow-sm"
+                                    style="background-color: #e9f7fc; border-left: 5px solid #17a2b8;">
+                                    <div class="row align-items-center">
+                                        <label class="form-label-custom fw-bold mb-1 text-primary">Terapkan Semua</label>
+                                        <div class="col-md-3">
+                                            <select id="select-all-hari" class="form-select form-select-sm">
+                                                <option value="">Pilih Hari</option>
+                                                @foreach ($jadwalHarian as $jadwal)
+                                                    <option value="{{ $jadwal['tanggal'] }}">
+                                                        {{ \Carbon\Carbon::parse($jadwal['tanggal'])->translatedFormat('l, d M Y') }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <input type="text" id="select-all-mulai"
+                                                class="form-control form-control-sm time-picker" placeholder="Mulai">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <input type="text" id="select-all-selesai"
+                                                class="form-control form-control-sm time-picker" placeholder="Selesai">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <input type="number" id="select-all-saving" class="form-control form-control-sm"
+                                                placeholder="Saving Time">
+                                        </div>
+                                        <div class="col-md-3 d-grid gap-2">
+                                            <button type="button" class="btn btn-sm btn-info text-white"
+                                                onclick="applyToAll()">
+                                                Terapkan
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger"
+                                                onclick="clearAll()">
+                                                Hapus
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
 
                         <form action="{{ route('jadwal.store') }}" method="POST">
                             @csrf
@@ -157,29 +205,48 @@
                                         <label class="form-label-custom mb-0">{{ $lomba['nama_mata_lomba'] }}</label>
                                     </div>
                                     <div class="col-md-3">
-                                        <select class="form-select" name="hari[{{ $lomba['mata_lomba_id'] }}]">
-                                            <option value="" selected>Pilih Hari</option>
+                                        <!-- <select class="form-select" name="hari[{{ $lomba['mata_lomba_id'] }}]">
+                                                                                            <option value="" selected>Pilih Hari</option>
+                                                                                            @foreach ($jadwalHarian as $jadwal)
+                                                                                                <option value="{{ $jadwal['tanggal'] }}">
+                                                                                                    {{ \Carbon\Carbon::parse($jadwal['tanggal'])->translatedFormat('l, d M Y') }}
+                                                                                                </option>
+                                                                                            @endforeach
+                                                                                        </select> -->
+                                        <select class="form-select hari-select" name="hari[{{ $lomba['mata_lomba_id'] }}]">
+                                            <option value="">Pilih Hari</option>
                                             @foreach ($jadwalHarian as $jadwal)
                                                 <option value="{{ $jadwal['tanggal'] }}">
                                                     {{ \Carbon\Carbon::parse($jadwal['tanggal'])->translatedFormat('l, d M Y') }}
                                                 </option>
                                             @endforeach
                                         </select>
+
                                     </div>
                                     <div class="col-md-2">
                                         {{-- 2. Ubah type="time" menjadi type="text" dan tambahkan class="time-picker" --}}
-                                        <input type="text" class="form-control time-picker"
+                                        <!-- <input type="text" class="form-control time-picker"
+                                                                                                                    name="waktu_mulai[{{ $lomba['mata_lomba_id'] }}]" placeholder="Mulai"> -->
+                                        <input type="text" class="form-control time-picker mulai-select"
                                             name="waktu_mulai[{{ $lomba['mata_lomba_id'] }}]" placeholder="Mulai">
                                     </div>
                                     <div class="col-md-2">
                                         {{-- Lakukan hal yang sama di sini --}}
-                                        <input type="text" class="form-control time-picker"
-                                            name="waktu_selesai[{{ $lomba['mata_lomba_id'] }}]" placeholder="Selesai">
+                                        <!-- <input type="text" class="form-control time-picker"
+                                                                                                            name="waktu_selesai[{{ $lomba['mata_lomba_id'] }}]" placeholder="Selesai"> -->
+                                        <input type="text" class="form-control time-picker selesai-select" placeholder="Selesai"
+                                            name="waktu_selesai[{{ $lomba['mata_lomba_id'] }}]">
                                     </div>
                                     <div class="col-md-2">
-                                        <input type="number" class="form-control"
+                                        <!-- <input type="number" class="form-control"
+                                                                                                    name="saving_time[{{ $lomba['mata_lomba_id'] }}]" placeholder="Saving Time"> -->
+                                        <input type="number" class="form-control saving-select"
                                             name="saving_time[{{ $lomba['mata_lomba_id'] }}]" placeholder="Saving Time">
                                     </div>
+                                    <!-- <div class="col-md-2">
+                                                                                                                                <input type="number" class="form-control" name="round[{{ $lomba['mata_lomba_id'] }}]"
+                                                                                                                                    placeholder="Round" min="1">
+                                                                                                                            </div> -->
                                 </div>
                             @endforeach
 
@@ -205,4 +272,50 @@
             time_24hr: true      // Memaksa tampilan UI menggunakan format 24 jam
         });
     </script>
+
+    <script>
+        flatpickr(".time-picker", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true
+        });
+
+        function applyToAll() {
+            const selectedHari = document.getElementById('select-all-hari').value;
+            const selectedMulai = document.getElementById('select-all-mulai').value;
+            const selectedSelesai = document.getElementById('select-all-selesai').value;
+            const selectedSaving = document.getElementById('select-all-saving').value;
+
+            document.querySelectorAll('.hari-select').forEach(el => {
+                if (selectedHari) el.value = selectedHari;
+            });
+
+            document.querySelectorAll('.mulai-select').forEach(el => {
+                if (selectedMulai) el._flatpickr.setDate(selectedMulai, true);
+            });
+
+            document.querySelectorAll('.selesai-select').forEach(el => {
+                if (selectedSelesai) el._flatpickr.setDate(selectedSelesai, true);
+            });
+
+            document.querySelectorAll('.saving-select').forEach(el => {
+                if (selectedSaving) el.value = selectedSaving;
+            });
+        }
+
+        function clearAll() {
+            document.getElementById('select-all-hari').value = '';
+            document.getElementById('select-all-mulai').value = '';
+            document.getElementById('select-all-selesai').value = '';
+            document.getElementById('select-all-saving').value = '';
+
+            document.querySelectorAll('.hari-select').forEach(el => el.value = '');
+            document.querySelectorAll('.mulai-select').forEach(el => el._flatpickr.clear());
+            document.querySelectorAll('.selesai-select').forEach(el => el._flatpickr.clear());
+            document.querySelectorAll('.saving-select').forEach(el => el.value = '');
+        }
+
+    </script>
+
 @endsection
