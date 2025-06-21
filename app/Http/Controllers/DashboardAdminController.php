@@ -21,9 +21,9 @@ class DashboardAdminController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-        $sort = $request->input('sort', 'asc');
+        $sort = $request->input('sort', 'desc');
 
-        $query = Pendaftar::with('peserta')
+        $query = Pendaftar::with('peserta', 'mataLomba')
             ->whereNotNull('url_qrCode')
             ->whereRaw("TRIM(COALESCE(url_qrCode, '')) NOT IN ('', '0', 'null')");
 
@@ -36,19 +36,10 @@ class DashboardAdminController extends Controller
             });
         }
 
-        $query->orderBy(
-            Peserta::select('nama_peserta')
-                ->whereColumn('peserta.id', 'pendaftar.peserta_id'),
-            $sort
-        );
-
-        $pendaftarList = $query->orderByDesc('created_at')->paginate(10)->withQueryString();
+         $pendaftarList = $query->orderBy('created_at', $sort)->paginate(10)->withQueryString();
 
         $totalPeserta = Pendaftar::whereNotNull('url_qrCode')
-            ->where('url_qrCode', '!=', '')
-            ->whereHas('membayar', function ($q) {
-                $q->where('status', 'Sudah Membayar');
-            })
+            ->where('url_qrCode', '!=', '0')
             ->count();
 
         $individuCount = Pendaftar::whereNotNull('url_qrCode')
@@ -111,7 +102,7 @@ class DashboardAdminController extends Controller
             return response()->json(['error' => 'QR code tidak valid: gagal mendekripsi ID.'], 400);
         }
 
-        $pendaftar = Pendaftar::with('peserta')->find($decryptedId);
+        $pendaftar = Pendaftar::with('peserta', 'mataLomba')->find($decryptedId);
 
         if (!$pendaftar) {
             return response()->json(['error' => 'QR code tidak valid: peserta tidak ditemukan.'], 404);
@@ -123,6 +114,7 @@ class DashboardAdminController extends Controller
             return response()->json([
                 'message' => 'Peserta sudah ditandai hadir sebelumnya.',
                 'nama_peserta' => $pendaftar->peserta->nama_peserta,
+                'nama_lomba' => $pendaftar->mataLomba->nama_lomba,
                 'foto_ktm' => $urlFotoKtm,
             ]);
         }
@@ -136,6 +128,7 @@ class DashboardAdminController extends Controller
         return response()->json([
             'message' => 'Peserta berhasil ditandai hadir.',
             'nama_peserta' => $pendaftar->peserta->nama_peserta,
+            'nama_lomba' => $pendaftar->mataLomba->nama_lomba,
             'foto_ktm' => $urlFotoKtm,
         ]);
     }

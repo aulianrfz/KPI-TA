@@ -13,7 +13,6 @@ class Invoice extends Model
 
     protected $fillable = [
         'total_tagihan',
-        'jabatan',
     ];
 
     public function pembayaran()

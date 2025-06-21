@@ -46,13 +46,13 @@ class Peserta extends Model
 
     public function tim()
     {
-        return $this->belongsToMany(Tim::class, 'bergabung', 'peserta_id', 'tim_id')
+        return $this->belongsToMany(Tim::class, 'peserta_tim', 'peserta_id', 'tim_id')
                     ->withPivot('posisi');
     }
 
     public function bergabung()
     {
-        return $this->hasOne(Bergabung::class, 'peserta_id');
+        return $this->hasOne(Bergabung::class,  'peserta_id');
     }
 
     public function pendaftar()

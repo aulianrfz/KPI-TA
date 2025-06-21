@@ -23,7 +23,7 @@ class PembayaranController extends Controller
 {
     public function index()
     {
-        $peserta = Peserta::with(['mataLomba.kategori.event', 'tim'])
+        $peserta = Peserta::with(['pendaftar.mataLomba', 'tim'])
             ->where('user_id', Auth::id())
             ->where(function ($query) {
                 $query->whereDoesntHave('tim')
@@ -129,7 +129,6 @@ class PembayaranController extends Controller
         if (!$invoice) {
             $invoice = Invoice::create([
                 'total_tagihan' => $biaya,
-                'jabatan' => 'Tim ' . $peserta->nama,
             ]);
         }
 

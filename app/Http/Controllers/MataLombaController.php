@@ -57,7 +57,7 @@ class MataLombaController extends Controller
         ]);
 
         $data = $request->all();
-        $data['jenis_lomba'] = $data['min_peserta'] > 1 ? 'Kelompok' : 'Individu';
+        $data['jenis_lomba'] = $data['maks_peserta'] > 1 ? 'Kelompok' : 'Individu';
 
         if ($request->hasFile('url_tor')) {
             $data['url_tor'] = $request->file('url_tor')->store('tor', 'public');
@@ -106,7 +106,7 @@ class MataLombaController extends Controller
         ]);
 
         $data = $request->all();
-        $data['jenis_lomba'] = $data['min_peserta'] > 1 ? 'Kelompok' : 'Individu';
+        $data['jenis_lomba'] = $data['maks_peserta'] > 1 ? 'Kelompok' : 'Individu';
 
         if ($request->hasFile('url_tor')) {
             if ($mataLomba->url_tor) {

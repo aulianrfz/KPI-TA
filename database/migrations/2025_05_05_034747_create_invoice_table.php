@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('invoice', function (Blueprint $table) {
             $table->id();
             $table->integer('total_tagihan');
-            $table->string('jabatan',50);
             $table->timestamps();
         });
     }

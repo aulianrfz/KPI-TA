@@ -40,7 +40,7 @@ class PendaftaranController extends Controller
             'peserta.*.nim' => 'required',
             'peserta.*.email' => 'required|email',
             'peserta.*.no_hp' => 'required',
-            'peserta.*.signature' => 'nullable|string',
+            'peserta.*.signature' => 'required|string',
         ]);
 
         $mataLomba = MataLomba::findOrFail($request->id_mataLomba);
@@ -96,7 +96,6 @@ class PendaftaranController extends Controller
 
             $invoice = Invoice::create([
                 'total_tagihan' => $mataLomba->biaya_pendaftaran,
-                'jabatan' => 'Ketua / Tim',
             ]);
         }
 
@@ -165,7 +164,6 @@ class PendaftaranController extends Controller
             if ($jenisPeserta === 'Individu') {
                 $invoice = Invoice::create([
                     'total_tagihan' => $mataLomba->biaya_pendaftaran,
-                    'jabatan' => 'Individu',
                 ]);
             }
 

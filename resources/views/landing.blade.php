@@ -21,10 +21,10 @@
 </div>
 
 <div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <!-- <div class="d-flex justify-content-between align-items-center mb-3">
         <h4 class="fw-bold" data-aos="zoom-in" style="color: #0367A6;">Upcoming Events</h4>
         <a href="#" class="text-primary">View All ></a>
-    </div>
+    </div> -->
     <div class="row">
     @foreach($events ?? [] as $event)
         <div class="col-md-4 mb-4" data-aos="zoom-in-down" data-aos-delay="100">

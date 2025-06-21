@@ -18,8 +18,8 @@ class MyEventController extends Controller
                 $query->where('user_id', Auth::id());
             })
             ->when($search, function ($query) use ($search) {
-                $query->whereHas('mataLomba', function ($q) use ($search) {
-                    $q->where('nama_lomba', 'like', '%' . $search . '%');
+                $query->whereHas('mataLomba.kategori.event', function ($q) use ($search) {
+                    $q->where('nama_event', 'like', '%' . $search . '%');
                 });
             })
             ->get();

@@ -127,8 +127,8 @@
             <form method="GET" action="{{ route('admin.dashboard') }}">
                 <input type="hidden" name="search" value="{{ request('search') }}">
                 <select name="sort" class="form-select" onchange="this.form.submit()">
-                    <option value="asc" {{ request('sort') === 'asc' ? 'selected' : '' }}>A-Z</option>
-                    <option value="desc" {{ request('sort') === 'desc' ? 'selected' : '' }}>Z-A</option>
+                    <option value="asc" {{ request('sort') === 'asc' ? 'selected' : '' }}>Terlama</option>
+                    <option value="desc" {{ request('sort') === 'desc' ? 'selected' : '' }}>Terbaru</option>
                 </select>
             </form>
         </div>
@@ -157,7 +157,7 @@
                             <td>{{ $pendaftar->peserta->institusi ?? '-' }}</td>
                             <td>{{ $pendaftar->peserta->no_hp ?? '-' }}</td>
                             <td>{{ $pendaftar->peserta->nim ?? '-' }}</td>
-                            <td>{{ \Carbon\Carbon::parse($pendaftar->created_at)->translatedFormat('l, d-m-Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($pendaftar->updated_at)->translatedFormat('l, d-m-Y') }}</td>
                             <td>
                                 @if ($pendaftar->url_qrCode && $pendaftar->peserta)
                                     <a href="{{ route('admin.peserta.identitas', ['id' => $pendaftar->peserta->id]) }}" class="btn btn-sm" style="background-color: #A6C9E5; color: #0064B6;">Lihat</a>
@@ -226,6 +226,10 @@
         <p id="statusKehadiranText" class="fw-bold mb-3 text-success"></p>
         <p>Nama Peserta:</p>
         <h5 id="namaPesertaText" class="text-primary"></h5>
+        <p>
+        Nama Lomba:
+        <span id="namaMataLombaText" class="text-primary"></span>
+        </p>
         <img id="fotoKtmPreview" src="/images/default-ktm.png" alt="Foto KTM" class="img-fluid rounded" style="max-height: 250px;">
       </div>
     </div>
@@ -289,9 +293,11 @@
         .then(data => {
             const statusText = document.getElementById("statusKehadiranText");
             const namaText = document.getElementById("namaPesertaText");
+            const namaLombaText = document.getElementById("namaMataLombaText");
             const fotoImg = document.getElementById("fotoKtmPreview");
 
             namaText.innerText = data.nama_peserta || '-';
+            namaLombaText.innerText = data.nama_lomba || '-';
             fotoImg.src = data.foto_ktm || '/images/default-ktm.png';
 
             if (data.message?.includes('sudah')) {

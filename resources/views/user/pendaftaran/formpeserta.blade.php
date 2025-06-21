@@ -46,6 +46,7 @@
 @endsection
 
 @push('scripts')
+
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
 
 <script>
@@ -56,21 +57,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let indexPeserta = {{ $mataLomba->min_peserta }};
     const maksPeserta = {{ $mataLomba->maks_peserta }};
-    let signaturePads = {};
+    const signaturePads = {};
 
     document.querySelectorAll("canvas[id^='signature-pad-']").forEach(function (canvas) {
         const index = canvas.id.split('-').pop();
         const pad = new SignaturePad(canvas, { backgroundColor: 'rgba(255,255,255,0)' });
         signaturePads[index] = pad;
+
         pad.onEnd = function () {
             document.getElementById('signature_' + index).value = pad.toDataURL();
         };
     });
 
-    const tambahPesertaBtn = document.getElementById('tambah-peserta-btn');
-    if (tambahPesertaBtn) {
-        tambahPesertaBtn.addEventListener('click', function () {
-           if (indexPeserta >= maksPeserta) {
+    document.getElementById('pendaftaran-form').addEventListener('submit', function () {
+        Object.keys(signaturePads).forEach(function (i) {
+            const pad = signaturePads[i];
+            if (pad && !pad.isEmpty()) {
+                document.getElementById('signature_' + i).value = pad.toDataURL();
+            }
+        });
+    });
+
+    document.getElementById('tambah-peserta-btn')?.addEventListener('click', function () {
+        if (indexPeserta >= maksPeserta) {
             Swal.fire({
                 icon: 'warning',
                 title: 'Maksimum Peserta Tercapai',
@@ -80,20 +89,19 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-            const container = document.getElementById('peserta-container');
-            const newPeserta = generatePesertaForm(indexPeserta, dataProvinsi, dataInstitusi, dataProdi);
-            container.insertAdjacentHTML('beforeend', newPeserta);
+        const container = document.getElementById('peserta-container');
+        const newPesertaHTML = generatePesertaForm(indexPeserta, dataProvinsi, dataInstitusi, dataProdi);
+        container.insertAdjacentHTML('beforeend', newPesertaHTML);
 
-            const canvas = document.getElementById(`signature-pad-${indexPeserta}`);
-            const pad = new SignaturePad(canvas, { backgroundColor: 'rgba(255,255,255,0)' });
-            signaturePads[indexPeserta] = pad;
-            pad.onEnd = function () {
-                document.getElementById(`signature_${indexPeserta}`).value = pad.toDataURL();
-            };
+        const canvas = document.getElementById(`signature-pad-${indexPeserta}`);
+        const pad = new SignaturePad(canvas, { backgroundColor: 'rgba(255,255,255,0)' });
+        signaturePads[indexPeserta] = pad;
+        pad.onEnd = function () {
+            document.getElementById(`signature_${indexPeserta}`).value = pad.toDataURL();
+        };
 
-            indexPeserta++;
-        });
-    }
+        indexPeserta++;
+    });
 
     window.clearSignature = function (index) {
         if (signaturePads[index]) {
@@ -126,22 +134,22 @@ document.addEventListener('DOMContentLoaded', function () {
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label>Nama</label>
-                            <input type="text" class="form-control" name="peserta[${index}][nama_peserta]" value="{{ old('peserta[${index}][nama_peserta]') }}" required>
+                            <input type="text" class="form-control" name="peserta[${index}][nama_peserta]" required>
                         </div>
                         <div class="col-md-6">
                             <label>NIM</label>
-                            <input type="text" class="form-control" name="peserta[${index}][nim]" value="{{ old('peserta[${index}][nim]') }}" required>
+                            <input type="text" class="form-control" name="peserta[${index}][nim]" required>
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label>Email</label>
-                            <input type="email" class="form-control" name="peserta[${index}][email]" value="{{ old('peserta[${index}][email]') }}" required>
+                            <input type="email" class="form-control" name="peserta[${index}][email]" required>
                         </div>
                         <div class="col-md-6">
                             <label>No HP</label>
-                            <input type="text" class="form-control" name="peserta[${index}][no_hp]" value="{{ old('peserta[${index}][no_hp]') }}" required>
+                            <input type="text" class="form-control" name="peserta[${index}][no_hp]" required>
                         </div>
                     </div>
 
@@ -191,4 +199,5 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 </script>
+
 @endpush

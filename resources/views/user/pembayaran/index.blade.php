@@ -24,11 +24,11 @@
 
             <div class="card shadow-sm border-0">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
+                    <!-- <div class="d-flex justify-content-between align-items-center mb-3">
                         <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                             Filter by
                         </button>
-                    </div>
+                    </div> -->
 
                     <div class="table-responsive">
                         <table class="table align-middle">
