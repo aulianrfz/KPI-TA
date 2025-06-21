@@ -5,42 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LOGO APP</title>
 
-    <!-- CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-
-    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"> -->
-
     <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
-
-    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
+        /* ======================================================= */
+        /* BAGIAN CSS YANG DIPERBAIKI */
+        /* ======================================================= */
+
         a {
             text-decoration: none;
             color: inherit; 
         }
 
+        /* PERBAIKAN: Aturan body sekarang bersih dari position dan padding-bottom */
         body {
             font-family: 'Segoe UI', sans-serif;
             background-color: #f8f9fa;
+        }
+        /* ATURAN LAMA YANG SEHARUSNYA DIHAPUS:
+        body {
+            ...
             position: relative;
             min-height: 100vh;
             padding-bottom: 500px;
         }
+        */
 
+        /* PERBAIKAN: Aturan footer sekarang bersih dari position dan bottom */
         footer {
             background: linear-gradient(90deg, #007BFF, #0056b3);
             color: white;
-            position: relative;
-            bottom: -170;
             width: 100%;
         }
+        /* ATURAN LAMA YANG SEHARUSNYA DIHAPUS:
+        footer {
+            ...
+            position: relative;
+            bottom: -170;
+        }
+        */
 
         footer a {
             color: white;
@@ -54,6 +61,10 @@
         .footer-links p {
             margin: 0.25rem 0;
         }
+        
+        /* ======================================================= */
+        /* SEMUA KODE CSS ANDA YANG LAIN DIBAWAH INI (TIDAK ADA YANG DIHAPUS) */
+        /* ======================================================= */
 
         .navbar .input-group input {
             border-radius: 0 5px 5px 0;
@@ -68,15 +79,18 @@
             color: inherit; 
         }
 
+        /* ATURAN LAMA YANG SEHARUSNYA DIHAPUS:
         html, body {
             height: 100%;
         }
+        */
 
+        /* ATURAN LAMA YANG SEHARUSNYA DIHAPUS:
         #app {
             flex: 1;
         }
+        */
 
-        
         .auth-wrapper {
             max-width: 400px;
             margin: 60px auto;
@@ -85,7 +99,6 @@
             overflow: hidden;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.15);
         }
-
 
         .auth-header {
             background-color: #0367A6;
@@ -152,7 +165,6 @@
             text-align: center;
         }
 
-
         @media (max-width: 768px) {
             .navbar .input-group {
                 width: 100% !important;
@@ -171,13 +183,17 @@
     AOS.init();
 </script>
 
-    @stack('scripts')
+@stack('scripts')
 
-<body>
+<body class="d-flex flex-column min-vh-100">
 
     @include('layouts.navbar')
 
-    @yield('content')
+    <main class="flex-grow-1">
+        @yield('content')
+    </main>
+
+    @include('layouts.footer')
 
     @yield('scripts')
 
@@ -186,7 +202,6 @@
     <script>
         AOS.init();
     </script>
-
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             @if(session('success'))
@@ -210,6 +225,5 @@
             @endif
         });
     </script>
-
 </body>
 </html>

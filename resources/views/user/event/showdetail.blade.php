@@ -54,6 +54,5 @@
 
 
        
-@include('layouts.footer')
 
 @endsection
