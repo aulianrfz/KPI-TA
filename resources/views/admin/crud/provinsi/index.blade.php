@@ -57,7 +57,7 @@
 
                         @if($provinsis->isEmpty())
                         <tr>
-                            <td colspan="4" class="text-center">Belum ada data institusi.</td>
+                            <td colspan="4" class="text-center">Belum ada data Provinsi.</td>
                         </tr>
                         @endif
                     </tbody>

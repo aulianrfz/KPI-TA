@@ -79,7 +79,8 @@ class KehadiranController extends Controller
             'pendaftar',
             'totalPeserta',
             'pesertaOnsite',
-            'belumDaftarUlang'
+            'belumDaftarUlang',
+            'mataLombaId'
         ));
     }
 

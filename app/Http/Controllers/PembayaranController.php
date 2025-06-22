@@ -173,7 +173,7 @@ class PembayaranController extends Controller
         $sortOrder = $request->input('sort', 'desc');
         $query->orderBy('waktu', in_array($sortOrder, ['asc', 'desc']) ? $sortOrder : 'desc');
 
-        $transaksi = $query->paginate(10)->appends($request->query());
+        $transaksi = $query->paginate(20)->appends($request->query());
 
         return view('admin.transaksi.konfirmasi_pembayaran', compact('transaksi'));
     }

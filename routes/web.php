@@ -104,7 +104,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/kehadiran/mata-lomba/{mataLombaId}', [KehadiranController::class, 'index'])->name('kehadiran.mata-lomba');
 
 
-        Route::get('/kehadiran', [KehadiranController::class, 'index'])->name('kehadiran.index');
+        // Route::get('/kehadiran', [KehadiranController::class, 'index'])->name('kehadiran.index');
         Route::get('/kehadiran/{id}/qr', [KehadiranController::class, 'showQR'])->name('admin.qr.show');
         Route::get('/kehadiran/{id}/edit', [KehadiranController::class, 'edit'])->name('kehadiran.edit');
         Route::put('/kehadiran/{id}', [KehadiranController::class, 'update'])->name('kehadiran.update');

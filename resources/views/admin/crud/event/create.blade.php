@@ -13,7 +13,7 @@
         </div>
 
         <div class="mb-3">
-            <label for="penyelenggara" class="form-label">Penyelenggara</label>
+            <label for="penyelenggara" class="form-label">Lokasi Penyelenggara</label>
             <input type="text" name="penyelenggara" class="form-control" required>
         </div>
 

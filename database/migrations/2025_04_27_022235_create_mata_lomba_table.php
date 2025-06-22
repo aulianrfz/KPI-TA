@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('venue_id')->nullable();
             $table->string('nama_lomba',100);
             $table->string('jenis_lomba',25);
-            $table->string('jurusan',50);
+            $table->string('jurusan',50)->nullable();
             $table->integer('min_peserta');
             $table->integer('maks_peserta');
             $table->integer('maks_total_peserta');

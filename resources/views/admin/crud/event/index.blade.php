@@ -34,7 +34,7 @@
                 <tr>
                     <th>No</th>
                     <th>Nama Event</th>
-                    <th>Penyelenggara</th>
+                    <th>Lokasi Penyelenggara</th>
                     <th>Mulai Pendaftran Pada Tanggal</th>
                     <th>Selesai Pendaftran Pada Tanggal</th>
                     <th>Foto</th>

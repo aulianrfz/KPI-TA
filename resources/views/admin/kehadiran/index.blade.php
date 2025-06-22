@@ -42,7 +42,7 @@
 
     <div class="container mt-5">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-2">
-        <form method="GET" action="{{ route('kehadiran.index') }}" class="w-100 w-md-auto">
+        <form method="GET" action="{{ route('kehadiran.mata-lomba', $mataLombaId) }}" class="w-100 w-md-auto">
             <div class="input-group" style="max-width: 400px;">
                 <input type="text" name="search" class="form-control" placeholder="Cari peserta"
                     value="{{ request('search') }}">
@@ -53,7 +53,7 @@
         </form>
 
         <div class="d-flex gap-2">
-            <form method="GET" action="{{ route('kehadiran.index') }}">
+            <form method="GET" action="{{ route('kehadiran.mata-lomba', $mataLombaId) }}">
                 <select name="sort" onchange="this.form.submit()" class="px-2 py-1 border rounded">
                     <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Data Terbaru</option>
                     <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Data Terlama</option>
