@@ -2,9 +2,7 @@
 
 @section('content')
 
-{{-- CSS KHUSUS UNTUK HALAMAN INI --}}
 <style>
-    /* Mengatur tampilan bar navigasi (Tabs) */
     .nav-tabs {
         border-bottom: 1px solid #dee2e6;
     }
@@ -25,7 +23,6 @@
         color: #0056b3;
     }
 
-    /* CSS UNTUK MENGATUR TAMPILAN SAAT DICETAK (PRINT) */
     @media print {
         body * { visibility: hidden; }
         #invoice-to-print, #invoice-to-print * { visibility: visible; }
@@ -97,6 +94,10 @@
                                     @if($anggota->id != $peserta->id)
                                     <div class="d-flex justify-content-between align-items-start mb-2">
                                         <div><p class="fw-bold mb-0">Anggota {{ $counter++ }}</p><span>{{ $anggota->nama_peserta }}</span></div>
+                                        <div class="text-end">
+                                        <p class="mb-0">{{ $anggota->email }}</p>
+                                        <p class="mb-0">{{ $anggota->no_hp }}</p>
+                                    </div>                                    
                                     </div>
                                     @endif
                                 @endforeach
@@ -110,7 +111,7 @@
                                 @php
                                     $biaya_pendaftaran = $peserta->pendaftar->mataLomba->biaya_pendaftaran ?? 0;
                                     $jumlahPeserta = $peserta->tim->first()?->peserta->count() ?? 1;
-                                    $total = $biaya_pendaftaran * $jumlahPeserta;
+                                    $total = $biaya_pendaftaran;
                                 @endphp
                                 <div class="d-flex justify-content-between mb-2"><span class="text-muted">Kategori</span><span>{{ $peserta->pendaftar?->mataLomba?->nama_lomba ?? '-' }}</span></div>
                                 <div class="d-flex justify-content-between mb-2"><span class="text-muted">Harga Satuan</span><span>Rp{{ number_format($biaya_pendaftaran, 0, ',', '.') }}</span></div>
@@ -138,7 +139,6 @@
                             <div class="card-body">
                                 <p class="mb-2">Silakan lakukan transfer ke rekening berikut:</p>
                                 
-                                {{-- LOGO BANK DIUBAH MENJADI BRI --}}
                                 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/BRI_2020.svg/1280px-BRI_2020.svg.png" alt="Logo Bank" class="mb-3" style="max-height: 25px;">
                                 
                                 <div class="mb-2">
@@ -207,7 +207,6 @@
     </div>
 </div>
 
-{{-- JAVASCRIPT UNTUK FUNGSI TOMBOL SALIN --}}
 <script>
     function copyToClipboard(text, buttonElement) {
         navigator.clipboard.writeText(text).then(function() {
