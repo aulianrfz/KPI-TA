@@ -86,7 +86,7 @@ class MataLombaController extends Controller
         return view('admin.crud.mataLomba.edit', compact('mataLomba', 'kategoris', 'venues'));
     }
 
-    public function update(Request $request, mataLomba $mataLomba)
+    public function update(Request $request, MataLomba $mataLomba)
     {
         $request->validate([
             'kategori_id' => 'required|exists:kategori,id',
@@ -108,11 +108,16 @@ class MataLombaController extends Controller
         $data = $request->all();
         $data['jenis_lomba'] = $data['maks_peserta'] > 1 ? 'Kelompok' : 'Individu';
 
-        if ($request->hasFile('url_tor')) {
+        if ($request->filled('hapus_tor') && $mataLomba->url_tor) {
+            Storage::disk('public')->delete($mataLomba->url_tor);
+            $data['url_tor'] = null;
+        } elseif ($request->hasFile('url_tor')) {
             if ($mataLomba->url_tor) {
                 Storage::disk('public')->delete($mataLomba->url_tor);
             }
             $data['url_tor'] = $request->file('url_tor')->store('tor', 'public');
+        } else {
+            unset($data['url_tor']);
         }
 
         if ($request->hasFile('foto_kompetisi')) {
@@ -120,13 +125,17 @@ class MataLombaController extends Controller
                 Storage::disk('public')->delete($mataLomba->foto_kompetisi);
             }
             $data['foto_kompetisi'] = $request->file('foto_kompetisi')->store('foto_kompetisi', 'public');
+        } else {
+            unset($data['foto_kompetisi']);
         }
 
         $mataLomba->update($data);
 
-        return redirect()->route('mataLomba.index', ['kategori_id' => $data['kategori_id']])
+        return redirect()
+            ->route('mataLomba.index', ['kategori_id' => $data['kategori_id']])
             ->with('success', 'Sub Kategori berhasil diperbarui.');
     }
+
 
     public function destroy(mataLomba $mataLomba)
     {

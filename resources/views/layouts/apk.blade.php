@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,9 +11,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
@@ -216,6 +219,78 @@
         .pagination .page-link {
             font-size: 0.75rem;
             padding: 0.3rem 0.6rem;
+        }
+
+        .edit-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        background-color: #fafafa;
+        }
+        .edit-container h3 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .edit-container a {
+            font-size: 14px;
+            text-decoration: none;
+            color: #007bff;
+        }
+        .edit-container a:hover {
+            text-decoration: underline;
+        }
+        .edit-container p {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            font-size: 14px;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 6px;
+            font-size: 14px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .btn {
+            font-size: 14px;
+            padding: 5px 12px;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: #fff;
+            border: none;
+        }
+        .btn-primary:hover,
+        .btn-secondary:hover {
+            opacity: 0.9;
+        }
+        .small-img {
+            margin: 5px 0;
+            max-width: 100px;
+            display: block;
+        }
+        .checkbox-label {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
         }
     </style>
 </head>

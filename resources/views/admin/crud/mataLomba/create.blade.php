@@ -42,7 +42,7 @@
             </div>
 
             <div class="form-group">
-                <label for="jurusan">Jurusan</label>
+                <label for="jurusan">Jurusan (opsional)</label>
                 <input type="text" name="jurusan" id="jurusan" class="form-control" >
             </div>
 
