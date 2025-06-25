@@ -35,11 +35,11 @@
             <input type="hidden" name="version" value="{{ $version }}">
 
             <div class="form-group">
-                <label>Sub Kategori</label>
-                <select name="mata_lomba_id" class="form-control">
-                    <option value="">- Pilih Sub Kategori -</option>
+                <label>Mata Lomba</label>
+                <select name="mata_lomba_id" class="form-control" id="mata-lomba-select">
+                    <option value="">Pilih Mata Lomba</option>
                     @foreach($mata_lomba as $item)
-                        <option value="{{ $item->id }}" {{ old('mata_lomba_id') == $item->id ? 'selected' : '' }}>
+                        <option value="{{ $item->id }}" data-jenis="{{ $item->jenis_lomba }}" {{ old('mata_lomba_id') == $item->id ? 'selected' : '' }}>
                             {{ $item->nama_lomba }}
                         </option>
                     @endforeach
@@ -50,7 +50,7 @@
             <div class="form-group">
                 <label>Tanggal</label>
                 <select name="tanggal_dropdown" class="form-control" onchange="toggleCustomDate(this.value)">
-                    <option value="">-- Pilih Tanggal --</option>
+                    <option value="">Pilih Tanggal</option>
                     @foreach($tanggal_unik as $tanggal)
                         <option value="{{ $tanggal }}">{{ \Carbon\Carbon::parse($tanggal)->translatedFormat('d F Y') }}</option>
                     @endforeach
@@ -58,15 +58,30 @@
                 </select>
 
                 <input type="date" name="tanggal" id="customDate" class="form-control mt-2" style="display: none;">
+                @error('tanggal')
+                    <div class="text-danger mt-1">{{ $message }}</div>
+                @enderror
+
             </div>
 
             <div class="form-group col-md-6">
                 <label for="waktu_mulai">Waktu Mulai</label>
-                <input type="text" id="waktu_mulai" name="waktu_mulai" class="form-control" placeholder="HH:mm" maxlength="5" autocomplete="off" required>
+                <input type="text" id="waktu_mulai" name="waktu_mulai"
+                    class="form-control @error('waktu_mulai') is-invalid @enderror" placeholder="HH:mm" maxlength="5"
+                    autocomplete="off" required value="{{ old('waktu_mulai') }}">
+                @error('waktu_mulai')
+                    <div class="text-danger">{{ $message }}</div>
+                @enderror
             </div>
+
             <div class="form-group col-md-6">
                 <label for="waktu_selesai">Waktu Selesai</label>
-                <input type="text" id="waktu_selesai" name="waktu_selesai" class="form-control" placeholder="HH:mm" maxlength="5" autocomplete="off" required>
+                <input type="text" id="waktu_selesai" name="waktu_selesai"
+                    class="form-control @error('waktu_selesai') is-invalid @enderror" placeholder="HH:mm" maxlength="5"
+                    autocomplete="off" required value="{{ old('waktu_selesai') }}">
+                @error('waktu_selesai')
+                    <div class="text-danger">{{ $message }}</div>
+                @enderror
             </div>
 
             <div class="form-group">
@@ -77,7 +92,7 @@
             <div class="form-group">
                 <label>Venue</label>
                 <select name="venue_id" class="form-control" required>
-                    <option value="">- Pilih Venue -</option>
+                    <option value="">Pilih Venue</option>
                     @foreach($venue as $item)
                         <option value="{{ $item->id }}" {{ old('venue_id') == $item->id ? 'selected' : '' }}>
                             {{ $item->name }}
@@ -86,7 +101,7 @@
                 </select>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" id="field-peserta">
                 <label>Peserta</label>
                 <div id="peserta-wrapper">
                     @php
@@ -97,16 +112,16 @@
                         @foreach($oldPeserta as $index => $pesertaId)
                             <div class="peserta-group mb-2" style="position: relative; max-width: 300px;">
                                 <select name="peserta_id[]" class="form-control">
-                                    <option value="">- Pilih Peserta -</option>
+                                    <option value="">Pilih Peserta</option>
                                     @foreach($peserta as $item)
-                                        <option value="{{ $item->id }}" {{ (isset($pesertaId) && $pesertaId == $item->id) ? 'selected' : '' }}>
+                                        <option value="{{ $item->id }}" {{ $pesertaId == $item->id ? 'selected' : '' }}>
                                             {{ $item->nama_peserta }}
                                         </option>
                                     @endforeach
                                 </select>
                                 <span class="remove-peserta" title="Hapus peserta"
                                     style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-                                           cursor:pointer; color:red; font-weight:bold; font-size:18px; user-select:none;">&times;</span>
+                                               cursor:pointer; color:red; font-weight:bold; font-size:18px; user-select:none;">&times;</span>
                             </div>
                         @endforeach
                     @else
@@ -119,14 +134,14 @@
                             </select>
                             <span class="remove-peserta" title="Hapus peserta"
                                 style="cursor:pointer; color:red; font-weight:bold; font-size:18px; margin-left:5px;">&times;</span>
-
                         </div>
                     @endif
+
                 </div>
                 <button type="button" class="btn btn-secondary btn-sm mt-2" id="add-peserta">Tambah Peserta</button>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" id="field-tim">
                 <label>Tim</label>
                 <div id="tim-wrapper">
                     @php
@@ -137,7 +152,7 @@
                         @foreach($oldTim as $index => $timId)
                             <div class="tim-group mb-2">
                                 <select name="tim_id[]" class="form-control">
-                                    <option value="">- Pilih Tim -</option>
+                                    <option value="">Pilih Tim</option>
                                     @foreach($tim as $item)
                                         <option value="{{ $item->id }}" {{ (isset($timId) && $timId == $item->id) ? 'selected' : '' }}>
                                             {{ $item->nama_tim }}
@@ -159,7 +174,7 @@
                             </select>
                             <span class="remove-tim" title="Hapus tim"
                                 style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-                                            cursor:pointer; color:red; font-weight:bold; font-size:18px; user-select:none;">&times;</span>
+                                                            cursor:pointer; color:red; font-weight:bold; font-size:18px; user-select:none;">&times;</span>
                         </div>
                     @endif
                 </div>
@@ -169,7 +184,7 @@
             <div class="form-group">
                 <label>Juri</label>
                 <select name="juri_id" class="form-control">
-                    <option value="">- Pilih Juri -</option>
+                    <option value="">Pilih Juri</option>
                     @foreach($juri as $item)
                         <option value="{{ $item->id }}" {{ old('juri_id') == $item->id ? 'selected' : '' }}>
                             {{ $item->nama }}
@@ -201,14 +216,14 @@
             let newGroup = document.createElement('div');
             newGroup.classList.add('peserta-group', 'mb-2');
             newGroup.innerHTML = `
-                <select name="peserta_id[]" class="form-control">
-                    <option value="">- Pilih Peserta -</option>
-                    @foreach($peserta as $item)
-                        <option value="{{ $item->id }}">{{ $item->nama_peserta }}</option>
-                    @endforeach
-                </select>
-                <span class="remove-peserta" title="Hapus peserta" style="cursor:pointer; color:red; font-weight:bold; font-size:18px; margin-left:5px;">&times;</span>
-            `;
+                        <select name="peserta_id[]" class="form-control">
+                            <option value="">- Pilih Peserta -</option>
+                            @foreach($peserta as $item)
+                                <option value="{{ $item->id }}">{{ $item->nama_peserta }}</option>
+                            @endforeach
+                        </select>
+                        <span class="remove-peserta" title="Hapus peserta" style="cursor:pointer; color:red; font-weight:bold; font-size:18px; margin-left:5px;">&times;</span>
+                    `;
             wrapper.appendChild(newGroup);
             toggleRemoveButtons('peserta');
         });
@@ -227,14 +242,14 @@
             let newGroup = document.createElement('div');
             newGroup.classList.add('tim-group', 'mb-2');
             newGroup.innerHTML = `
-                <select name="tim_id[]" class="form-control">
-                    <option value="">- Pilih Tim -</option>
-                    @foreach($tim as $item)
-                        <option value="{{ $item->id }}">{{ $item->nama_tim }}</option>
-                    @endforeach
-                </select>
-                <button type="button" class="btn btn-danger btn-sm mt-1 remove-tim">Hapus</button>
-            `;
+                        <select name="tim_id[]" class="form-control">
+                            <option value="">- Pilih Tim -</option>
+                            @foreach($tim as $item)
+                                <option value="{{ $item->id }}">{{ $item->nama_tim }}</option>
+                            @endforeach
+                        </select>
+                        <button type="button" class="btn btn-danger btn-sm mt-1 remove-tim">Hapus</button>
+                    `;
             wrapper.appendChild(newGroup);
             toggleRemoveButtons('tim');
         });
@@ -276,6 +291,34 @@
             }
         }
     </script>
+
+    <script>
+        function toggleCustomDate(value) {
+            const customDate = document.getElementById('customDate');
+
+            if (value === 'lainnya') {
+                customDate.style.display = 'block';
+                customDate.required = true;
+                customDate.value = '';
+            } else {
+                customDate.style.display = 'none';
+                customDate.required = false;
+                customDate.value = value; // isi value dari dropdown ke input hidden
+            }
+        }
+
+        // Saat submit form, pastikan tanggal yang dipakai tetap 'tanggal'
+        document.querySelector('form').addEventListener('submit', function () {
+            const tanggalDropdown = document.querySelector('select[name="tanggal_dropdown"]');
+            const customDate = document.getElementById('customDate');
+            const tanggalInput = document.querySelector('input[name="tanggal"]');
+
+            if (tanggalDropdown.value !== 'lainnya') {
+                tanggalInput.value = tanggalDropdown.value;
+            }
+        });
+    </script>
+
 
     <style>
         .modal-overlay {
@@ -363,26 +406,54 @@
     </style>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        function autoFormatTime(input) {
-            input.addEventListener('input', function (e) {
-                let value = this.value.replace(/[^0-9]/g, ''); // hanya angka
-                if (value.length > 4) {
-                    value = value.slice(0, 4); // maksimal 4 angka
-                }
+        document.addEventListener('DOMContentLoaded', function () {
+            const mataLombaSelect = document.getElementById('mata-lomba-select');
+            const pesertaField = document.getElementById('field-peserta');
+            const timField = document.getElementById('field-tim');
 
-                if (value.length >= 3) {
-                    this.value = value.slice(0, 2) + ':' + value.slice(2);
+            function toggleFields() {
+                const selectedOption = mataLombaSelect.options[mataLombaSelect.selectedIndex];
+                const jenis = selectedOption.getAttribute('data-jenis');
+
+                if (jenis === 'Individu') {
+                    pesertaField.style.display = 'block';
+                    timField.style.display = 'none';
+                } else if (jenis === 'Kelompok') {
+                    pesertaField.style.display = 'none';
+                    timField.style.display = 'block';
                 } else {
-                    this.value = value;
+                    pesertaField.style.display = 'none';
+                    timField.style.display = 'none';
                 }
-            });
-        }
+            }
 
-        autoFormatTime(document.getElementById('waktu_mulai'));
-        autoFormatTime(document.getElementById('waktu_selesai'));
-    });
-</script>
+            mataLombaSelect.addEventListener('change', toggleFields);
+            toggleFields(); // Panggil saat halaman pertama kali load
+        });
+    </script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function autoFormatTime(input) {
+                input.addEventListener('input', function (e) {
+                    let value = this.value.replace(/[^0-9]/g, ''); // hanya angka
+                    if (value.length > 4) {
+                        value = value.slice(0, 4); // maksimal 4 angka
+                    }
+
+                    if (value.length >= 3) {
+                        this.value = value.slice(0, 2) + ':' + value.slice(2);
+                    } else {
+                        this.value = value;
+                    }
+                });
+            }
+
+            autoFormatTime(document.getElementById('waktu_mulai'));
+            autoFormatTime(document.getElementById('waktu_selesai'));
+        });
+    </script>
 
 
 

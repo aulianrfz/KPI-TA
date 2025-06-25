@@ -162,6 +162,47 @@
     <div class="data-verification-card">
         <h2 class="text-center mb-4">Buat Jadwal</h2>
 
+       @if(session('venue_out_of_range'))
+    <div id="venueOutOfRangeModal" class="modal fade show" tabindex="-1" style="display: block; background-color: rgba(0, 0, 0, 0.5);" role="dialog" aria-modal="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title">Peringatan Jadwal</h5>
+                    <button type="button" class="btn-close" onclick="document.getElementById('venueOutOfRangeModal').style.display='none';" aria-label="Tutup"></button>
+                </div>
+                <div class="modal-body">
+                    {!! session('venue_out_of_range') !!}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="document.getElementById('venueOutOfRangeModal').style.display='none';">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+@endif
+
+@if(session('venue_not_set'))
+    <div id="venueNotSetModal" class="modal fade show" tabindex="-1" style="display: block; background-color: rgba(0, 0, 0, 0.5);" role="dialog" aria-modal="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Venue Belum Ditentukan</h5>
+                    <button type="button" class="btn-close" onclick="document.getElementById('venueNotSetModal').style.display='none';" aria-label="Tutup"></button>
+                </div>
+                <div class="modal-body">
+                    {!! session('venue_not_set') !!}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" onclick="document.getElementById('venueNotSetModal').style.display='none';">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+@endif
+
+
+
+
         @php
             $currentStep = 2;
             $totalSteps = 4;
@@ -194,10 +235,9 @@
 
             @php
                 $isVenueAvailable = \App\Models\Venue::count() > 0;
-                $isJuriAvailable = \App\Models\Juri::count() > 0;
                 $isMataLombaAvailable = \App\Models\MataLomba::count() > 0;
                 $isPesertaAvailable = \App\Models\Peserta::count() > 0;
-                $allDataAvailable = $isVenueAvailable && $isJuriAvailable && $isMataLombaAvailable && $isPesertaAvailable;
+                $allDataAvailable = $isVenueAvailable && $isMataLombaAvailable && $isPesertaAvailable;
             @endphp
 
             {{-- Data Peserta --}}
@@ -271,7 +311,7 @@
             
             <div class="form-actions">
                 <button type="submit" class="btn btn-custom-primary" {{ !$allDataAvailable ? 'disabled' : '' }}>
-                    Lanjut ke Penjadwalan
+                    Next
                 </button>
             </div>
 

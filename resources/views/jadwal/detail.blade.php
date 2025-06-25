@@ -12,8 +12,14 @@
         {{-- FILTER FORM --}}
         <div class="d-flex justify-content-between align-items-center mb-4">
             <form method="GET" class="filter-bar">
-                <input type="date" name="tanggal" class="form-control" value="{{ $selectedDate }}"
-                    onchange="this.form.submit()">
+                <select name="tanggal" class="form-select" onchange="this.form.submit()">
+                    @foreach ($allDates as $tanggal)
+                        <option value="{{ $tanggal }}" {{ $selectedDate == $tanggal ? 'selected' : '' }}>
+                            {{ \Carbon\Carbon::parse($tanggal)->translatedFormat('l, d M Y') }}
+                        </option>
+                    @endforeach
+                </select>
+
                 <select name="mata_lomba" class="form-select" onchange="this.form.submit()">
                     <option value="">Semua Mata Lomba</option>
                     @foreach ($allSubKategori as $mataLomba)
@@ -22,19 +28,32 @@
                         </option>
                     @endforeach
                 </select>
-            </form>
+            </form>\
             <a href="{{ route('jadwal.change', ['id' => $jadwalMaster->id]) }}" class="btn btn-primary">Change Jadwal</a>
         </div>
 
         @php
             // --- BLOK PHP INI TIDAK PERLU DIUBAH SAMA SEKALI ---
-            $slotInterval = 15;
-            $slotHeight = 40;
-            $startHour = 7;
-            $endHour = 18;
+            $slotInterval = 5;
+            $slotHeight = 30;
+            $jadwalsGabungan = $jadwals->merge($jadwalTanpaMataLomba);
+            $allTimes = $jadwalsGabungan->flatMap(function ($j) {
+                return [
+                    'start' => \Carbon\Carbon::parse($j->waktu_mulai),
+                    'end' => \Carbon\Carbon::parse($j->waktu_selesai),
+                ];
+            });
+
+            // Cari waktu minimum dan maksimum
+            $minTime = $jadwalsGabungan->min('waktu_mulai');
+            $maxTime = $jadwalsGabungan->max('waktu_selesai');
+
+            $startHour = \Carbon\Carbon::parse($minTime)->hour;
+            $endHour = \Carbon\Carbon::parse($maxTime)->hour + 1; // Tambahkan 1 jam agar tidak mepet
+
             $minMinute = $startHour * 60;
             $maxMinute = $endHour * 60;
-            $filteredJadwals = $jadwals->filter(function ($j) use ($minMinute, $maxMinute) {
+            $filteredJadwals = $jadwalsGabungan->filter(function ($j) use ($minMinute, $maxMinute) {
                 $start = \Carbon\Carbon::parse($j->waktu_mulai);
                 $end = \Carbon\Carbon::parse($j->waktu_selesai);
                 $startMinutes = $start->hour * 60 + $start->minute;
@@ -43,6 +62,13 @@
             });
             $events = [];
             foreach ($filteredJadwals as $j) {
+                \Log::info('Memproses agenda', [
+                    'id' => $j->id,
+                    'waktu_mulai' => $j->waktu_mulai,
+                    'waktu_selesai' => $j->waktu_selesai,
+                    'venue' => $j->venue->name ?? null,
+                    'mata_lomba_id' => $j->mata_lomba_id,
+                ]);
                 $start = \Carbon\Carbon::parse($j->waktu_mulai);
                 $end = \Carbon\Carbon::parse($j->waktu_selesai);
                 $startMinutes = $start->hour * 60 + $start->minute;
@@ -149,25 +175,37 @@
                         $currentTop += $hourHeight;
                     }
                 } else {
-                    // logika lama: berdasarkan venue / mata lomba (gunakan internal layout)
-                    $eventsByLomba = ['all' => $events];
+                    // logika berdasarkan venue (default)
+                    $eventsByVenue = [];
 
-                    $totalLombaColumns = count($eventsByLomba);
-                    if ($totalLombaColumns == 0)
+                    foreach ($events as $event) {
+                        \Log::info('event masuk finalPosition: ', [
+                            'id' => $event['jadwal']->id,
+                            'venue' => $event['jadwal']->venue->name ?? '-',
+                            'mata_lomba_id' => $event['jadwal']->mata_lomba_id
+                        ]);
+                        $venueId = $event['jadwal']->venue->id ?? 'tanpa_venue';
+                        $eventsByVenue[$venueId][] = $event;
+                    }
+
+                    $totalVenueColumns = count($eventsByVenue);
+                    if ($totalVenueColumns === 0)
                         return [];
 
-                    $lombaColumnWidth = 100 / $totalLombaColumns;
-                    $lombaColumnIndex = 0;
+                    $venueColumnWidth = 100 / $totalVenueColumns;
+                    $venueColumnIndex = 0;
 
-                    foreach ($eventsByLomba as $lombaId => $lombaEvents) {
-                        $lombaColumnLeftOffset = $lombaColumnIndex * $lombaColumnWidth;
-                        $internalPositionedEvents = calculateInternalLayout($lombaEvents);
+                    foreach ($eventsByVenue as $venueId => $venueEvents) {
+                        $venueColumnLeftOffset = $venueColumnIndex * $venueColumnWidth;
+                        $internalPositionedEvents = calculateInternalLayout($venueEvents);
+
                         foreach ($internalPositionedEvents as $event) {
-                            $event['final_width'] = ($event['widthPercent'] / 100) * $lombaColumnWidth;
-                            $event['final_left'] = $lombaColumnLeftOffset + (($event['leftPercent'] / 100) * $lombaColumnWidth);
+                            $event['final_width'] = ($event['widthPercent'] / 100) * $venueColumnWidth;
+                            $event['final_left'] = $venueColumnLeftOffset + (($event['leftPercent'] / 100) * $venueColumnWidth);
                             $finalEvents[] = $event;
                         }
-                        $lombaColumnIndex++;
+
+                        $venueColumnIndex++;
                     }
                 }
 
@@ -192,7 +230,7 @@
                         </div>
                         <div class="time-slots-container">
                             @for ($minute = $minMinute; $minute < $maxMinute; $minute += 60)
-                                <div class="time-slot" style="height: {{ $slotHeight * 4 }}px;">
+                                <div class="time-slot" style="height: {{ $slotHeight * 12 }}px;">
                                     <span class="time-label">{{ sprintf('%02d:00', $minute / 60) }}</span>
                                 </div>
                             @endfor
@@ -205,43 +243,59 @@
                         {{-- PERUBAHAN KUNCI 1: Menambahkan div events-container --}}
                         <div class="events-container"
                             style="min-height: {{ (($maxMinute - $minMinute) / $slotInterval) * $slotHeight }}px;">
-                            @foreach ($positionedEvents as $e)
-                                <div class="event-card" style="
-                                                                                                                             top: {{ $e['top'] }}px;
-                                                                                                                             height: {{ $e['durationHeight'] - 2 }}px;
-                                                                                                                             left: {{ $e['final_left'] }}%;
-                                                                                                                             width: calc({{ $e['final_width'] }}% - 5px);
-                                                                                                                         ">
-                                    <div class="event-content">
-                                        <p class="event-title">{{ $e['jadwal']->mataLomba->nama_lomba }}</p>
-                                        <p class="event-subtitle">
-                                            @if ($selectedSubKategori)
-                                                {{-- tampilkan peserta/tim --}}
-                                                @php
-                                                    $timNames = $e['jadwal']->tim->pluck('nama_tim')->all();
-                                                    $pesertaNames = $e['jadwal']->peserta->pluck('nama_peserta')->all();
-                                                @endphp
-                                                @if (!empty($timNames))
-                                                    {{ implode(', ', $timNames) }}
-                                                @elseif (!empty($pesertaNames))
-                                                    {{ implode(', ', $pesertaNames) }}
-                                                @else
-                                                    -
-                                                @endif
-                                            @else
-                                                {{-- semua lomba, tidak tampilkan peserta/tim --}}
-                                                <!-- <em>Semua Peserta</em> -->
-                                            @endif
-                                        </p>
-                                        <p class="event-time">
-                                            {{ \Carbon\Carbon::parse($e['jadwal']->waktu_mulai)->format('H:i') }} -
-                                            {{ \Carbon\Carbon::parse($e['jadwal']->waktu_selesai)->format('H:i') }}
-                                        </p>
-                                        <p class="event-venue">{{ $e['jadwal']->venue->name ?? '-' }}</p>
-
-                                    </div>
+                            @if (empty($positionedEvents))
+                                <div class="p-4 text-center text-muted">
+                                    Tidak ada lomba atau agenda yang dijadwalkan pada tanggal ini.
                                 </div>
-                            @endforeach
+                            @else
+                                @foreach ($positionedEvents as $e)
+                                    <div class="event-card"
+                                        style="
+                                                                                                                                                                                                                                                                                                             top: {{ $e['top'] }}px;
+                                                                                                                                                                                                                                                                                                             height: {{ $e['durationHeight'] - 2 }}px;
+                                                                                                                                                                                                                                                                                                             left: {{ $e['final_left'] }}%;
+                                                                                                                                                                                                                                                                                                             width: calc({{ $e['final_width'] }}% - 2px);
+                                                                                                                                                                                                                                                                                                  ">
+                                        <div class="event-content">
+                                            <p class="event-title">
+                                                @php
+                                                    $mataLomba = $e['jadwal']->mataLomba;
+                                                    $kegiatan = $e['jadwal']->kegiatan ?? null;
+                                                    $venueName = $e['jadwal']->venue->name ?? '-';
+                                                @endphp
+
+                                                {{ $mataLomba->nama_lomba ?? ($kegiatan ?: '-') }}
+                                            </p>
+
+                                            <p class="event-subtitle">
+                                                @if ($selectedSubKategori)
+                                                    {{-- tampilkan peserta/tim --}}
+                                                    @php
+                                                        $timNames = $e['jadwal']->tim->pluck('nama_tim')->all();
+                                                        $pesertaNames = $e['jadwal']->peserta->pluck('nama_peserta')->all();
+                                                    @endphp
+                                                    @if (!empty($timNames))
+                                                        {{ implode(', ', $timNames) }}
+                                                    @elseif (!empty($pesertaNames))
+                                                        {{ implode(', ', $pesertaNames) }}
+                                                    @else
+                                                        -
+                                                    @endif
+                                                @else
+                                                    {{-- semua lomba, tidak tampilkan peserta/tim --}}
+                                                    <!-- <em>Semua Peserta</em> -->
+                                                @endif
+                                            </p>
+                                            <p class="event-time">
+                                                {{ \Carbon\Carbon::parse($e['jadwal']->waktu_mulai)->format('H:i') }} -
+                                                {{ \Carbon\Carbon::parse($e['jadwal']->waktu_selesai)->format('H:i') }}
+                                            </p>
+                                            <p class="event-venue">{{ $e['jadwal']->venue->name ?? '-' }}</p>
+
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -284,7 +338,8 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 100%;
+            /* sebelumnya 1200px */
         }
 
         .page-header {
@@ -333,6 +388,12 @@
             display: flex;
             border: 1px solid #e9ecef;
         }
+
+        .text-muted {
+            font-size: 1rem;
+            color: #6c757d;
+        }
+
 
         .time-column,
         .schedule-column {
@@ -429,6 +490,14 @@
             z-index: 5;
         }
 
+        .event-card.active {
+            z-index: 999 !important;
+            transform: scale(1.05);
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+            background-color: #bbdefb;
+        }
+
+
         .event-title {
             font-weight: 600;
             margin: 0 0 2px 0;
@@ -503,4 +572,21 @@
     <script>
         // Script tidak perlu diubah.
     </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const eventCards = document.querySelectorAll('.event-card');
+
+            eventCards.forEach(card => {
+                card.addEventListener('click', function () {
+                    const isActive = this.classList.contains('active');
+                    eventCards.forEach(c => c.classList.remove('active'));
+                    if (!isActive) this.classList.add('active');
+                });
+
+            });
+        });
+
+    </script>
+
 @endsection

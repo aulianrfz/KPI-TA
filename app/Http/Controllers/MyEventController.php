@@ -42,9 +42,9 @@ class MyEventController extends Controller
                         $q->whereDoesntHave('tim')
                             ->orWhereExists(function ($sub) {
                                 $sub->select(DB::raw(1))
-                                    ->from('bergabung')
-                                    ->whereColumn('bergabung.peserta_id', 'peserta.id')
-                                    ->where('bergabung.posisi', 'Ketua');
+                                    ->from('peserta_tim')
+                                    ->whereColumn('peserta_tim.peserta_id', 'peserta.id')
+                                    ->where('peserta_tim.posisi', 'Ketua');
                             });
                     });
             })

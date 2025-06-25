@@ -103,6 +103,33 @@
             vertical-align: middle;
             /* Untuk alignment vertikal jika konten berbeda tinggi */
         }
+
+        /* Untuk "Tampilkan ... entri" (selector: .dataTables_length) */
+        .dataTables_length {
+            padding-left: 1rem;
+            /* Geser dari kiri */
+            margin-bottom: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        /* Untuk tombol cari (selector: .dataTables_filter) */
+        .dataTables_filter {
+            padding-right: 1rem;
+            /* Geser dari kanan */
+            margin-bottom: 0.5rem;
+            margin-top: 1rem;
+            text-align: right;
+        }
+
+        /* Untuk "Menampilkan 1 sampai ..." (selector: .dataTables_info) */
+        .dataTables_info {
+            padding-left: 1rem;
+        }
+
+        /* Jika pagination terlalu mepet */
+        .dataTables_paginate {
+            padding-right: 1rem;
+        }
     </style>
 
     <div class="container"> {{-- Container utama --}}
@@ -120,32 +147,32 @@
             </div>
             <div class="d-flex align-items-center">
                 {{-- Formulir Pencarian --}}
-                <form class="d-flex me-2" role="search" method="GET"
-                    action="{{ route('jadwal.change', $jadwalMaster->id) }}">
-                    <div class="input-group input-group-sm">
-                        <input type="text" name="search_query" class="form-control" placeholder="Cari Sesuatu Disini..."
-                            aria-label="Cari sub kategori" style="width: 200px;" value="{{ request('search_query') }}">
-                        <button class="btn btn-search-custom-icon" type="submit" id="button-search"><i
-                                class="fas fa-search"></i></button>
-                    </div>
-                </form>
+                <!-- <form class="d-flex me-2" role="search" method="GET"
+                            action="{{ route('jadwal.change', $jadwalMaster->id) }}">
+                            <div class="input-group input-group-sm">
+                                <input type="text" name="search_query" class="form-control" placeholder="Cari Sesuatu Disini..."
+                                    aria-label="Cari sub kategori" style="width: 200px;" value="{{ request('search_query') }}">
+                                <button class="btn btn-search-custom-icon" type="submit" id="button-search"><i
+                                        class="fas fa-search"></i></button>
+                            </div>
+                        </form>
 
-                {{-- Dropdown Filter --}}
-                <div class="dropdown me-2">
-                    <button class="btn btn-sm btn-light border dropdown-toggle" type="button" id="filterDropdown"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        Filter by
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="filterDropdown">
-                        <li><a class="dropdown-item"
-                                href="{{ request()->fullUrlWithQuery(['sort_by' => 'kategori']) }}">Kategori</a></li>
-                        <li><a class="dropdown-item"
-                                href="{{ request()->fullUrlWithQuery(['sort_by' => 'venue']) }}">Venue</a></li>
+                        {{-- Dropdown Filter --}}
+                        <div class="dropdown me-2">
+                            <button class="btn btn-sm btn-light border dropdown-toggle" type="button" id="filterDropdown"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Filter by
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="filterDropdown">
+                                <li><a class="dropdown-item"
+                                        href="{{ request()->fullUrlWithQuery(['sort_by' => 'kategori']) }}">Kategori</a></li>
+                                <li><a class="dropdown-item"
+                                        href="{{ request()->fullUrlWithQuery(['sort_by' => 'venue']) }}">Venue</a></li>
 
-                    </ul>
+                            </ul>
 
 
-                </div>
+                        </div> -->
                 <form method="GET" class="d-flex me-2 align-items-center">
                     <select name="tanggal" class="form-select form-select-sm me-2" onchange="this.form.submit()">
                         <option value="">Tanggal</option>
@@ -223,20 +250,16 @@
                             <tbody>
                                 @foreach($jadwals as $jadwal)
                                     <tr>
-                                        {{-- Penyesuaian nomor urut jika menggunakan pagination --}}
-                                        @if ($jadwals instanceof \Illuminate\Pagination\AbstractPaginator)
-                                            <td>{{ ($jadwals->currentPage() - 1) * $jadwals->perPage() + $loop->iteration }}</td>
-                                        @else
-                                            <td>{{ $loop->iteration }}</td>
-                                        @endif
+                                        <!--  -->
+                                        <td>{{ $loop->iteration }}</td>
 
                                         <!-- <td>
-                                                                                                                                                                                                                @if(isset($jadwal->durasi))
-                                                                                                                                                                                                                    '{{ $jadwal->durasi }}
-                                                                                                                                                                                                                @else
-                                                                                                                                                                                                                    -
-                                                                                                                                                                                                                @endif
-                                                                                                                                                                                                            </td> -->
+                                                                                                                                                                                                                                                                            @if(isset($jadwal->durasi))
+                                                                                                                                                                                                                                                                                '{{ $jadwal->durasi }}
+                                                                                                                                                                                                                                                                            @else
+                                                                                                                                                                                                                                                                                -
+                                                                                                                                                                                                                                                                            @endif
+                                                                                                                                                                                                                                                                        </td> -->
                                         <td>{{ $jadwal->tanggal ?? '-' }}</td>
                                         <td>
                                             {{ \Carbon\Carbon::parse($jadwal->waktu_mulai)->format('H.i') }} -
@@ -269,6 +292,7 @@
                                             @endif
                                         </td>
 
+
                                         <td>{{ $jadwal->juri->nama ?? '-' }}</td>
                                         <td class="text-center pe-3"> {{-- Tombol aksi sudah rata tengah --}}
                                             <a href="{{ route('jadwal.edit', $jadwal->id) }}"
@@ -286,13 +310,6 @@
                                 @endforeach
                             </tbody>
                         </table>
-                        <div class="d-flex flex-column align-items-center my-3">
-                            <div class="text-muted small mb-2">
-                                Menampilkan {{ $jadwals->firstItem() }} sampai {{ $jadwals->lastItem() }} dari total
-                                {{ $jadwals->total() }} data
-                            </div>
-                            {{ $jadwals->links('pagination::bootstrap-5') }}
-                        </div>
 
 
                     </div>
@@ -344,5 +361,35 @@
             });
         }
     </script>
+
+    {{-- CDN DataTables --}}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('.table').DataTable({
+                responsive: true,
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ entri",
+                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                    paginate: {
+                        first: "Pertama",
+                        last: "Terakhir",
+                        next: "›",
+                        previous: "‹"
+                    },
+                    zeroRecords: "Tidak ditemukan data yang sesuai",
+                    infoEmpty: "Menampilkan 0 sampai 0 dari 0 data",
+                    infoFiltered: "(disaring dari _MAX_ total data)",
+                },
+                pageLength: 10,
+                lengthMenu: [5, 10, 25, 50, 100]
+            });
+        });
+    </script>
+
 
 @endsection

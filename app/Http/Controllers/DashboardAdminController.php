@@ -36,7 +36,7 @@ class DashboardAdminController extends Controller
             });
         }
 
-         $pendaftarList = $query->orderBy('created_at', $sort)->paginate(10)->withQueryString();
+        $pendaftarList = $query->orderBy('created_at', $sort)->paginate(10)->withQueryString();
 
         $totalPeserta = Pendaftar::whereNotNull('url_qrCode')
             ->where('url_qrCode', '!=', '0')
@@ -135,7 +135,10 @@ class DashboardAdminController extends Controller
 
     public function showIdentitas($id)
     {
-        $pendaftar = Pendaftar::with(['peserta'])->findOrFail($id);
+        $pendaftar = Pendaftar::with(['peserta'])
+            ->where('peserta_id', $id)
+            ->firstOrFail();
+
         return view('admin.dashboard.identitas', compact('pendaftar'));
     }
 

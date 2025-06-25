@@ -49,15 +49,7 @@
                     $disableCreate = $jadwals->contains('status', 'Menunggu');
                 @endphp
 
-                @if ($disableCreate)
-                    <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#waitingModal">
-                        Buat Jadwal
-                    </button>
-                @else
-                    <a href="{{ route('jadwal.create') }}" class="btn btn-dark">
-                        Buat Jadwal
-                    </a>
-                @endif
+                <button id="btnBuatJadwal" class="btn btn-dark">Buat Jadwal</button>
             </div>
         </div>
 
@@ -91,8 +83,14 @@
                                         <small
                                             class="text-muted">{{ \Carbon\Carbon::parse($jadwal->created_at)->format('H:i') }}</small>
                                     </td>
-                                    <td>{{ $jadwal->status ?? 'Belum Dijadwalkan' }}</td>
-                                    <td>
+                                    <td id="status-{{ $jadwal->id }}">
+                                        {{ $jadwal->status ?? 'Belum Dijadwalkan' }}
+                                        <br>
+                                        @if($jadwal->status === 'Menunggu')
+                                            <small class="text-muted">Progress: {{ $jadwal->progress }}%</small>
+                                        @endif
+                                    </td>
+                                    <td id="action-{{ $jadwal->id }}">
                                         @if($jadwal->status === 'Menunggu')
                                             <button class="btn btn-sm btn-secondary" disabled>Detail</button>
                                         @elseif($jadwal->status === 'Gagal')
@@ -104,6 +102,7 @@
                                             <a href="{{ route('jadwal.detail', $jadwal->id) }}" class="btn btn-sm btn-info">Lihat</a>
                                         @endif
                                     </td>
+
                                     <td>
                                         <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal"
                                             data-bs-target="#deleteModal"
@@ -164,9 +163,10 @@
             const button = event.relatedTarget;
             const alasan = button.getAttribute('data-alasan');
             const content = gagalModal.querySelector('#alasanGagalContent');
-            content.textContent = alasan || 'Tidak ada informasi penyebab.';
+            content.innerHTML = (alasan || 'Tidak ada informasi penyebab.').replace(/\n/g, '<br>');
         });
     </script>
+
 
     <!-- Script untuk atur form action saat modal muncul -->
     <script>
@@ -196,5 +196,65 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function fetchStatus() {
+            fetch('{{ route('jadwal.status') }}')
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach((jadwal, index) => {
+                        const statusCell = document.getElementById(`status-${jadwal.id}`);
+                        const actionCell = document.getElementById(`action-${jadwal.id}`);
+
+                        if (statusCell && actionCell) {
+                            if (jadwal.status === 'Menunggu') {
+                                statusCell.innerHTML = `
+                                        <span>${jadwal.status}</span>
+                                        <div class="progress mt-1" style="height: 6px;">
+                                            <div class="progress-bar bg-info" role="progressbar" style="width: ${jadwal.progress}%" aria-valuenow="${jadwal.progress}" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                        <small class="text-muted">${jadwal.progress}%</small>
+                                    `;
+                            } else {
+                                statusCell.innerHTML = jadwal.status;
+                            }
+
+
+
+                            if (jadwal.status === 'Selesai') {
+                                actionCell.innerHTML = `<a href="/jadwal/${jadwal.id}/detail" class="btn btn-sm btn-info">Lihat</a>`;
+                            } else if (jadwal.status === 'Gagal') {
+                                actionCell.innerHTML = `<button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#gagalModal" data-alasan="${jadwal.alasan_gagal}">Lihat Alasan</button>`;
+                            } else {
+                                actionCell.innerHTML = `<button class="btn btn-sm btn-secondary" disabled>Detail</button>`;
+                            }
+                        }
+                    });
+                });
+        }
+
+        setInterval(fetchStatus, 2000); // cek setiap 5 detik
+    </script>
+
+    <script>
+        document.getElementById('btnBuatJadwal').addEventListener('click', function () {
+            fetch("{{ route('jadwal.checkStatus') }}")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.waiting) {
+                        const waitingModal = new bootstrap.Modal(document.getElementById('waitingModal'));
+                        waitingModal.show();
+                    } else {
+                        window.location.href = "{{ route('jadwal.create') }}";
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking status:', error);
+                    alert('Terjadi kesalahan. Silakan coba lagi.');
+                });
+        });
+    </script>
+
+
 
 @endsection

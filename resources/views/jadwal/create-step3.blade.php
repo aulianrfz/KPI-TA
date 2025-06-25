@@ -124,6 +124,11 @@
             border-color: #6c757d;
             color: #343a40;
         }
+
+        .clear-time {
+            padding: 0 6px;
+            line-height: 1;
+        }
     </style>
 
     <div class="container py-5">
@@ -167,14 +172,19 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-2 d-flex align-items-center gap-1">
                                             <input type="text" id="select-all-mulai"
                                                 class="form-control form-control-sm time-picker" placeholder="Mulai">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary clear-time-global"
+                                                data-target="#select-all-mulai" style="display: none;">&times;</button>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-2 d-flex align-items-center gap-1">
                                             <input type="text" id="select-all-selesai"
                                                 class="form-control form-control-sm time-picker" placeholder="Selesai">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary clear-time-global"
+                                                data-target="#select-all-selesai" style="display: none;">&times;</button>
                                         </div>
+
                                         <div class="col-md-2">
                                             <input type="number" id="select-all-saving" class="form-control form-control-sm"
                                                 placeholder="Saving Time">
@@ -200,54 +210,74 @@
                             @csrf
 
                             @foreach ($mataLomba as $lomba)
+                                @php
+                                    $id = $lomba['mata_lomba_id'];
+
+                                    // Ambil semua error yang berhubungan dengan mata lomba ini
+                                    $errorsForLomba = collect($fieldErrors)->filter(function ($_, $key) use ($id) {
+                                        return str_ends_with($key, ".$id");
+                                    });
+                                @endphp
+
                                 <div class="row align-items-center mb-3 gx-3">
                                     <div class="col-md-3">
                                         <label class="form-label-custom mb-0">{{ $lomba['nama_mata_lomba'] }}</label>
                                     </div>
+
+                                    {{-- Hari --}}
                                     <div class="col-md-3">
-                                        <!-- <select class="form-select" name="hari[{{ $lomba['mata_lomba_id'] }}]">
-                                                                                            <option value="" selected>Pilih Hari</option>
-                                                                                            @foreach ($jadwalHarian as $jadwal)
-                                                                                                <option value="{{ $jadwal['tanggal'] }}">
-                                                                                                    {{ \Carbon\Carbon::parse($jadwal['tanggal'])->translatedFormat('l, d M Y') }}
-                                                                                                </option>
-                                                                                            @endforeach
-                                                                                        </select> -->
-                                        <select class="form-select hari-select" name="hari[{{ $lomba['mata_lomba_id'] }}]">
+                                        <select class="form-select hari-select" name="hari[{{ $id }}]">
                                             <option value="">Pilih Hari</option>
                                             @foreach ($jadwalHarian as $jadwal)
-                                                <option value="{{ $jadwal['tanggal'] }}">
+                                                <option value="{{ $jadwal['tanggal'] }}" {{ old("hari.$id") == $jadwal['tanggal'] ? 'selected' : '' }}>
                                                     {{ \Carbon\Carbon::parse($jadwal['tanggal'])->translatedFormat('l, d M Y') }}
                                                 </option>
                                             @endforeach
                                         </select>
+                                    </div>
 
-                                    </div>
-                                    <div class="col-md-2">
-                                        {{-- 2. Ubah type="time" menjadi type="text" dan tambahkan class="time-picker" --}}
-                                        <!-- <input type="text" class="form-control time-picker"
-                                                                                                                    name="waktu_mulai[{{ $lomba['mata_lomba_id'] }}]" placeholder="Mulai"> -->
+                                    {{-- Waktu Mulai --}}
+                                    <div class="col-md-2 d-flex align-items-center gap-1">
                                         <input type="text" class="form-control time-picker mulai-select"
-                                            name="waktu_mulai[{{ $lomba['mata_lomba_id'] }}]" placeholder="Mulai">
+                                            name="waktu_mulai[{{ $id }}]" placeholder="Mulai"
+                                            value="{{ old("waktu_mulai.$id") }}">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary clear-time"
+                                            data-target="mulai-select" style="display: none;">
+                                            &times;
+                                        </button>
                                     </div>
+
+                                    {{-- Waktu Selesai --}}
+                                    <div class="col-md-2 d-flex align-items-center gap-1">
+                                        <input type="text" class="form-control time-picker selesai-select"
+                                            name="waktu_selesai[{{ $id }}]" placeholder="Selesai"
+                                            value="{{ old("waktu_selesai.$id") }}">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary clear-time"
+                                            data-target="selesai-select" style="display: none;">
+                                            &times;
+                                        </button>
+                                    </div>
+
+
+                                    {{-- Saving Time --}}
                                     <div class="col-md-2">
-                                        {{-- Lakukan hal yang sama di sini --}}
-                                        <!-- <input type="text" class="form-control time-picker"
-                                                                                                            name="waktu_selesai[{{ $lomba['mata_lomba_id'] }}]" placeholder="Selesai"> -->
-                                        <input type="text" class="form-control time-picker selesai-select" placeholder="Selesai"
-                                            name="waktu_selesai[{{ $lomba['mata_lomba_id'] }}]">
+                                        <input type="number" class="form-control saving-select" name="saving_time[{{ $id }}]"
+                                            placeholder="Saving Time" value="{{ old("saving_time.$id") }}">
                                     </div>
-                                    <div class="col-md-2">
-                                        <!-- <input type="number" class="form-control"
-                                                                                                    name="saving_time[{{ $lomba['mata_lomba_id'] }}]" placeholder="Saving Time"> -->
-                                        <input type="number" class="form-control saving-select"
-                                            name="saving_time[{{ $lomba['mata_lomba_id'] }}]" placeholder="Saving Time">
-                                    </div>
-                                    <!-- <div class="col-md-2">
-                                                                                                                                <input type="number" class="form-control" name="round[{{ $lomba['mata_lomba_id'] }}]"
-                                                                                                                                    placeholder="Round" min="1">
-                                                                                                                            </div> -->
                                 </div>
+
+                                {{-- Error untuk satu mata lomba --}}
+                                @if ($errorsForLomba->isNotEmpty())
+                                    <div class="row mb-3">
+                                        <div class="col-md-12">
+                                            @foreach ($errorsForLomba as $messages)
+                                                @foreach ($messages as $message)
+                                                    <div class="text-danger">{!! $message !!}</div>
+                                                @endforeach
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
                             @endforeach
 
                             <div class="d-flex justify-content-between mt-5">
@@ -255,15 +285,49 @@
                                 <button type="submit" class="btn btn-submit">Submit</button>
                             </div>
                         </form>
+
+
+
+
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    @if(isset($modal_error))
+        <div class="modal fade" id="modalAlert" tabindex="-1" aria-labelledby="modalAlertLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title" id="modalAlertLabel">Peringatan</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {!! $modal_error !!}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            window.addEventListener('DOMContentLoaded', function () {
+                var modal = new bootstrap.Modal(document.getElementById('modalAlert'));
+                modal.show();
+            });
+        </script>
+    @endif
+
+
+
     {{-- 3. Tambahkan script untuk Flatpickr di akhir --}}
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
+
         // Inisialisasi Flatpickr pada semua input dengan class .time-picker
         flatpickr(".time-picker", {
             enableTime: true,    // Mengaktifkan pilihan waktu
@@ -271,7 +335,60 @@
             dateFormat: "H:i",   // Format yang disimpan (H=24 jam, i=menit)
             time_24hr: true      // Memaksa tampilan UI menggunakan format 24 jam
         });
+
+        document.querySelectorAll('.time-picker').forEach(input => {
+            input.addEventListener('input', function () {
+                const wrapper = input.closest('.d-flex');
+                const clearBtn = wrapper.querySelector('.clear-time');
+
+                if (input.value.trim() !== "") {
+                    clearBtn.style.display = 'inline-block';
+                } else {
+                    clearBtn.style.display = 'none';
+                }
+            });
+        });
+
+        // tombol ❌: hapus input + sembunyikan lagi
+        document.querySelectorAll('.clear-time').forEach(button => {
+            button.addEventListener('click', function () {
+                const parent = button.closest('.d-flex');
+                const input = parent.querySelector(`.${button.dataset.target}`);
+                if (input && input._flatpickr) {
+                    input._flatpickr.clear();
+                }
+                input.value = "";
+                button.style.display = 'none';
+            });
+        });
+
+        // tombol ❌ di bagian "Terapkan Semua"
+        document.querySelectorAll('.clear-time-global').forEach(button => {
+            const input = document.querySelector(button.dataset.target);
+
+            // toggle tombol ❌ ketika input berubah
+            input.addEventListener('input', function () {
+                if (input.value.trim() !== "") {
+                    button.style.display = 'inline-block';
+                } else {
+                    button.style.display = 'none';
+                }
+            });
+
+            // klik tombol ❌ akan kosongkan input + sembunyikan tombol
+            button.addEventListener('click', function () {
+                if (input._flatpickr) {
+                    input._flatpickr.clear();
+                }
+                input.value = "";
+                button.style.display = 'none';
+            });
+        });
+
+
     </script>
+
+
 
     <script>
         flatpickr(".time-picker", {
@@ -317,5 +434,7 @@
         }
 
     </script>
+
+
 
 @endsection

@@ -15,6 +15,7 @@ class Jadwal extends Model
         'version',
         'status',
         'alasan_gagal',
+        'progress'
         // 'event_id'
     ];
 
