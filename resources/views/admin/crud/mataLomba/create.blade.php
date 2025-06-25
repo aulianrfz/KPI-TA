@@ -43,7 +43,7 @@
 
             <div class="form-group">
                 <label for="jurusan">Jurusan</label>
-                <input type="text" name="jurusan" id="jurusan" class="form-control" required>
+                <input type="text" name="jurusan" id="jurusan" class="form-control" >
             </div>
 
             <div class="form-group">
@@ -101,7 +101,7 @@
             </div>
 
             <div class="form-group">
-                <label for="foto_kompetisi">Foto Kompetisi (opsional)</label>
+                <label for="foto_kompetisi">Foto Kompetisi</label>
                 <input type="file" name="foto_kompetisi" id="foto_kompetisi" class="form-control-file" required>
             </div>
 

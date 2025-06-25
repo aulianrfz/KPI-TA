@@ -196,7 +196,7 @@
                             <input type="file" name="bukti" id="bukti" class="form-control" required>
                         </div>
                         @error('bukti')<div class="text-danger mt-1">{{ $message }}</div>@enderror
-                        <div class="mb-3"><label for="bank" class="form-label">Bank</label><input type="text" class="form-control" id="bank" name="bank" required></div>
+                        <div class="mb-3"><label for="bank" class="form-label">Bank Pengirim</label><input type="text" class="form-control" id="bank" name="bank" required></div>
                         <div class="mb-3"><label for="nama_pengirim" class="form-label">Nama Pengirim (Opsional)</label><input type="text" class="form-control" id="nama_pengirim" name="nama_pengirim"></div>
                         <div class="mb-4"><label for="catatan" class="form-label">Catatan (Opsional)</label><textarea class="form-control" id="catatan" name="catatan" rows="2"></textarea></div>
                     </div>

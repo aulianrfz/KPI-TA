@@ -20,6 +20,7 @@
             <p class="text-muted mb-2"><strong>Jurusan:</strong> {{ $events->jurusan }}</p>
             <p class="text-muted mb-2"><strong>Minimal Peserta:</strong> {{ $events->min_peserta }}</p>
             <p class="text-muted mb-2"><strong>Maksimal Peserta:</strong> {{ $events->maks_peserta }}</p>
+            <p class="text-muted mb-2"><strong>Maksimal Total Peserta Lomba ini:</strong> {{ $events->maks_total_peserta }}</p>
             <p class="text-muted mb-2"><strong>Biaya Pendaftaran:</strong> {{ number_format($events->biaya_pendaftaran, 0, ',', '.') }}</p>
         </div>
          <div class="col-12 mt-4 text-center">

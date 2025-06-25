@@ -39,8 +39,7 @@
 
             <div class="mb-3">
                 <label for="jurusan" class="form-label">Jurusan</label>
-                <input type="text" name="jurusan" id="jurusan" class="form-control" value="{{ $mataLomba->jurusan }}"
-                    required>
+                <input type="text" name="jurusan" id="jurusan" class="form-control" value="{{ $mataLomba->jurusan }}">
             </div>
 
             <div class="mb-3">
