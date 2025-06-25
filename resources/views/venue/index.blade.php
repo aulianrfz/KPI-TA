@@ -200,7 +200,6 @@
                             <th style="width: 15%;">Aksi</th>
                         </tr>
                     </thead>
-                    <>
                         @forelse($venues as $index => $venue)
                             <tr>
                                 <td>
