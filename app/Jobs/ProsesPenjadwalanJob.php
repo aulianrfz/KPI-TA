@@ -50,12 +50,16 @@ class ProsesPenjadwalanJob implements ShouldQueue
     {
         Log::info("Running job handle");
 
+        $startTime = microtime(true);
+        Log::info("Mulai proses penjadwalan pada " . now()->toDateTimeString());
+
+
         $penjadwal = new PenjadwalanController();
 
         $domain = $penjadwal->constraintPropagation($this->variabelX, $this->constraintTambahan, $this->jadwalHarian);
         Log::info('Generated domain: ' . json_encode($domain));
 
-        $jadwalValidSolutions = $penjadwal->backtrack($domain, 3);
+        $jadwalValidSolutions = $penjadwal->backtrack($domain, 3, $this->constraintTambahan,$this->jadwalId, $this->jadwalHarian);
 
         Log::info("Selesai backtrack pada job");
 
@@ -63,6 +67,10 @@ class ProsesPenjadwalanJob implements ShouldQueue
             $alasan = $jadwalValidSolutions['error'] ?? 'Tidak ada solusi valid ditemukan.';
 
             Log::warning("Gagal penjadwalan: $alasan");
+
+            $endTime = microtime(true);
+            $duration = $endTime - $startTime;
+            Log::warning("Penjadwalan gagal. Durasi: " . number_format($duration, 2) . " detik");
 
             if ($this->version == 1) {
                 $jadwalMaster = Jadwal::find($this->jadwalId);
@@ -96,7 +104,7 @@ class ProsesPenjadwalanJob implements ShouldQueue
                     'version' => $version,
                     'status' => 'Menunggu',
                     // 'event_id' => '1',
-                    
+
                 ]);
                 $this->saveAgenda($jadwalBaru, $jadwalValidSolutions[$i]);
                 $jadwalBaru->update(['status' => 'Selesai']);
@@ -114,27 +122,31 @@ class ProsesPenjadwalanJob implements ShouldQueue
             $jadwalMaster->update(['status' => 'Selesai']);
         }
 
+        $endTime = microtime(true);
+        $duration = $endTime - $startTime;
+
+        Log::info("Penjadwalan selesai pada " . now()->toDateTimeString() . ". Durasi: " . number_format($duration, 2) . " detik");
+
         Log::info("Penjadwalan selesai.");
     }
 
-    // Fungsi bantu simpan agenda dari solusi
     private function saveAgenda($jadwalMaster, $jadwalValid)
     {
         foreach ($jadwalValid as $jadwal) {
-            Log::debug("Memproses jadwal", ['jadwal' => $jadwal]);
+            // Log::debug("Memproses jadwal", ['jadwal' => $jadwal]);
 
             $mataLomba = MataLomba::where('nama_lomba', $jadwal['kategori_lomba'])->first();
             if (!$mataLomba) {
-                Log::warning("MataLomba tidak ditemukan untuk kategori lomba: {$jadwal['kategori_lomba']}");
+                // Log::warning("MataLomba tidak ditemukan untuk kategori lomba: {$jadwal['kategori_lomba']}");
                 continue;
             }
 
-            Log::debug("MataLomba ditemukan", ['mataLomba' => $mataLomba->toArray()]);
+            // Log::debug("MataLomba ditemukan", ['mataLomba' => $mataLomba->toArray()]);
 
             $isSerentak = $mataLomba->is_serentak;
             $namaTim = $jadwal['nama_tim'] ?? null;
 
-            Log::debug("Is Serentak", ['is_serentak' => $isSerentak, 'nama_tim' => $namaTim]);
+            // Log::debug("Is Serentak", ['is_serentak' => $isSerentak, 'nama_tim' => $namaTim]);
 
             $agenda = Agenda::create([
                 'jadwal_id' => $jadwalMaster->id,
@@ -153,45 +165,45 @@ class ProsesPenjadwalanJob implements ShouldQueue
             if ($isSerentak) {
                 if (is_array($namaTim)) {
                     // Serentak & tim
-                    Log::debug("Serentak & tim, menyimpan agenda_tim untuk banyak tim");
+                    // Log::debug("Serentak & tim, menyimpan agenda_tim untuk banyak tim");
                     $timList = Tim::whereIn('nama_tim', $namaTim)->get();
 
                     if ($timList->isEmpty()) {
-                        Log::warning("Tidak ditemukan tim dengan nama_tim: " . implode(", ", $namaTim));
+                        // Log::warning("Tidak ditemukan tim dengan nama_tim: " . implode(", ", $namaTim));
                     } else {
                         foreach ($timList as $tim) {
                             $agenda->tim()->attach($tim->id);
-                            Log::debug("Tim dilampirkan ke agenda", ['tim_id' => $tim->id]);
+                            // Log::debug("Tim dilampirkan ke agenda", ['tim_id' => $tim->id]);
                         }
                     }
                     // Karena sudah simpan tim, **tidak perlu simpan peserta**
                 } else {
                     // Serentak & individu
-                    Log::debug("Serentak & individu, menyimpan agenda_peserta");
+                    // Log::debug("Serentak & individu, menyimpan agenda_peserta");
                     $pesertaIds = Peserta::whereIn('nim', $jadwal['peserta'])->pluck('id')->toArray();
                     $agenda->peserta()->attach($pesertaIds);
                 }
             } else {
                 // Non-serentak
                 if ($namaTim) {
-                    Log::debug("Non-serentak tim, cari dan simpan agenda_tim");
+                    // Log::debug("Non-serentak tim, cari dan simpan agenda_tim");
 
                     $tim = Tim::where('nama_tim', $namaTim)->first();
                     if (!$tim) {
-                        Log::warning("Tim tidak ditemukan dengan nama_tim: $namaTim");
+                        // Log::warning("Tim tidak ditemukan dengan nama_tim: $namaTim");
                     } else {
                         $agenda->tim()->attach($tim->id);
                         // Jangan simpan peserta jika tim sudah ada
                     }
                 } else {
-                    Log::debug("Non-serentak individu, simpan agenda_peserta");
+                    // Log::debug("Non-serentak individu, simpan agenda_peserta");
 
                     // **Tambahkan cek: apakah agenda_tim kosong?**
                     if ($agenda->tim()->count() === 0) {
                         if (count($jadwal['peserta']) === 1) {
                             $peserta = Peserta::where('nim', $jadwal['peserta'][0])->first();
                             if (!$peserta) {
-                                Log::warning("Peserta dengan NIM {$jadwal['peserta'][0]} tidak ditemukan");
+                                // Log::warning("Peserta dengan NIM {$jadwal['peserta'][0]} tidak ditemukan");
                                 continue;
                             }
                             $agenda->peserta()->attach($peserta->id);
@@ -199,8 +211,6 @@ class ProsesPenjadwalanJob implements ShouldQueue
                             $pesertaIds = Peserta::whereIn('nim', $jadwal['peserta'])->pluck('id')->toArray();
                             $agenda->peserta()->attach($pesertaIds);
                         }
-                    } else {
-                        Log::debug("Skip menyimpan peserta karena sudah ada tim pada agenda");
                     }
                 }
             }

@@ -35,7 +35,7 @@ class EventController extends Controller
             'deskripsi' => 'nullable|string',
             'tanggal_akhir' => 'required|date|after_or_equal:tanggal',
             'tanggal' => 'required|Date',
-            'foto' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         if ($request->hasFile('foto')) {

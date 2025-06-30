@@ -129,11 +129,16 @@ Route::middleware('auth')->group(function () {
         Route::get('/jadwal', [PenjadwalanController::class, 'index'])->name('jadwal.index');
         Route::get('/jadwal/create', [PenjadwalanController::class, 'create'])->name('jadwal.create');
         Route::post('/jadwal/create/step2', [PenjadwalanController::class, 'createStep2'])->name('jadwal.create.step2');
+        Route::get('/jadwal/create/step2', [PenjadwalanController::class, 'showStep2'])->name('jadwal.create.step2');
         Route::post('/jadwal/store', [PenjadwalanController::class, 'store'])->name('jadwal.store');
-        Route::post('/jadwal/create-step3', [PenjadwalanController::class, 'createStep3'])->name('jadwal.create.step3');
+        // Route::post('/jadwal/create-step3', [PenjadwalanController::class, 'createStep3'])->name('jadwal.create.step3');
         Route::get('/jadwal/{id}/change', [PenjadwalanController::class, 'change'])->name('jadwal.change');
         Route::get('/jadwal/{id}/detail', [PenjadwalanController::class, 'detail'])->name('jadwal.detail');
+        Route::match(['get', 'post'], '/jadwal/create-step3', [PenjadwalanController::class, 'createStep3'])->name('jadwal.create.step3');
 
+        Route::get('/jadwal/status', [PenjadwalanController::class, 'getStatus'])->name('jadwal.status');
+        Route::get('/jadwal/check-status', [PenjadwalanController::class, 'checkStatus'])->name('jadwal.checkStatus');
+        Route::get('/jadwal/refresh', [PenjadwalanController::class, 'refresh'])->name('jadwal.refresh');
 
         Route::get('/jadwal/{nama_jadwal}/{tahun}/{version}/switch', [PenjadwalanController::class, 'switchJadwal'])->name('jadwal.switch');
         Route::post('/jadwal/switch/proses', [PenjadwalanController::class, 'prosesSwitch'])->name('jadwal.switch.proses');
@@ -155,6 +160,20 @@ Route::get('/import-excel', [ImportExcelController::class, 'import_excel']);
 Route::post('/import-excel', [ImportExcelController::class, 'import_excel_post'])->name('import_excel_post');
 
 Route::post('/generate-schedule', [PenjadwalanController::class, 'generateSchedule']);
+
+
+Route::get('/test-email', function () {
+    try {
+        Mail::raw('Ini adalah email percobaan dari Laravel.', function ($message) {
+            $message->to('aulianurulf25@gmail.com') // ← GANTI DENGAN EMAIL TUJUAN
+                ->subject('Tes Email dari Laravel');
+        });
+
+        return 'Email berhasil dikirim.';
+    } catch (\Exception $e) {
+        return 'Gagal kirim email: ' . $e->getMessage();
+    }
+});
 
 // nyoba halaman sukses
 // Route::get('/sukses', [PendaftaranController::class, 'sukses']);

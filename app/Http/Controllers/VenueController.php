@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Venue;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
+
 
 class VenueController extends Controller
 {
@@ -42,9 +44,14 @@ class VenueController extends Controller
     {
         return view('venue.edit', compact('venue'));
     }
-
     public function update(Request $request, Venue $venue)
     {
+        // konversi waktu dari format 12 jam ke 24 jam
+        $request->merge([
+            'waktu_mulai_tersedia' => Carbon::parse($request->input('waktu_mulai_tersedia'))->format('H:i'),
+            'waktu_berakhir_tersedia' => Carbon::parse($request->input('waktu_berakhir_tersedia'))->format('H:i'),
+        ]);
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'tanggal_tersedia' => 'required|date',
@@ -56,6 +63,7 @@ class VenueController extends Controller
 
         return redirect()->route('venue.index')->with('success', 'Venue berhasil diperbarui');
     }
+
 
     public function destroy(Venue $venue)
     {

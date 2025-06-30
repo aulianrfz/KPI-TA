@@ -210,7 +210,10 @@ class DashboardAdminController extends Controller
 
     public function showIdentitas($id)
     {
-        $pendaftar = Pendaftar::with(['peserta'])->findOrFail($id);
+        $pendaftar = Pendaftar::with(['peserta'])
+            ->where('peserta_id', $id)
+            ->firstOrFail();
+
         return view('admin.dashboard.identitas', compact('pendaftar'));
     }
 
