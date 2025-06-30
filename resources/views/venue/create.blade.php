@@ -1,15 +1,10 @@
 @extends('layouts.apk')
 
 @section('content')
-    {{-- Menambahkan link CDN Bootstrap secara eksplisit di dalam blade ini --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    {{-- Pastikan Font Awesome dimuat oleh layouts.apk atau tambahkan CDN di sini jika ikon tidak muncul --}}
-    {{--
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> --}}
 
     <style>
-        /* General Page Styles */
         .form-page-title-container {
             display: flex;
             align-items: center;
@@ -18,7 +13,6 @@
 
         .form-page-title {
             color: #3A3B7B;
-            /* Warna biru tua/ungu */
             font-weight: 600;
             font-size: 1.75rem;
             margin-bottom: 0;
@@ -33,7 +27,6 @@
             color: #3A3B7B;
         }
 
-        /* Card Styling */
         .form-card {
             background-color: #ffffff;
             border-radius: 0.75rem;
@@ -42,7 +35,6 @@
             margin-bottom: 2rem;
         }
 
-        /* Form Element Styling */
         .form-label-styled {
             font-weight: 500;
             margin-bottom: 0.5rem;
@@ -51,9 +43,7 @@
 
         .form-control-custom-bg {
             background-color: #f8f9fa;
-            /* Latar abu-abu muda */
             border: 1px solid #e9ecef;
-            /* Border tipis */
             border-radius: 0.375rem;
         }
 
@@ -63,10 +53,8 @@
             box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
         }
 
-        /* Button Styling */
         .btn-custom-cancel {
             background-color: #dc3545;
-            /* Merah */
             color: white;
             border-color: #dc3545;
             padding: 0.5rem 1rem;
@@ -79,7 +67,6 @@
 
         .btn-custom-save {
             background-color: #198754;
-            /* Hijau */
             color: white;
             border-color: #198754;
             padding: 0.5rem 1rem;
@@ -97,7 +84,6 @@
     </style>
 
     <div class="container">
-        {{-- Judul Halaman dan Tombol Kembali --}}
         <div class="form-page-title-container">
             <a href="{{ route('venue.index') }}" class="btn btn-link p-0 me-3" title="Kembali ke Daftar Venue">
                 <i class="fas fa-arrow-left btn-back-icon"></i> {{-- Pastikan Font Awesome dimuat --}}
@@ -109,7 +95,6 @@
             <form action="{{ route('venue.store') }}" method="POST">
                 @csrf
 
-                {{-- Nama Venue --}}
                 <div class="mb-3">
                     <label for="name" class="form-label form-label-styled">Nama Venue</label>
                     <input type="text" name="name" id="name"
@@ -120,7 +105,6 @@
                     @enderror
                 </div>
 
-                {{-- Tanggal Tersedia --}}
                 <div class="mb-3">
                     <label for="tanggal_tersedia" class="form-label form-label-styled">Tanggal Tersedia</label>
                     <input type="date" name="tanggal_tersedia" id="tanggal_tersedia"
@@ -131,7 +115,6 @@
                     @enderror
                 </div>
 
-                {{-- Waktu Mulai Tersedia --}}
                 <div class="mb-3">
                     <label for="waktu_mulai_tersedia" class="form-label form-label-styled">Waktu Mulai Tersedia</label>
                     <input type="time" name="waktu_mulai_tersedia" id="waktu_mulai_tersedia"
@@ -142,7 +125,6 @@
                     @enderror
                 </div>
 
-                {{-- Waktu Berakhir Tersedia --}}
                 <div class="mb-3">
                     <label for="waktu_berakhir_tersedia" class="form-label form-label-styled">Waktu Berakhir
                         Tersedia</label>
@@ -162,9 +144,4 @@
 
         </div>
     </div>
-    {{-- Bootstrap JS Bundle (jika ada komponen Bootstrap yang memerlukan JS) --}}
-    {{--
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script> --}}
 @endsection

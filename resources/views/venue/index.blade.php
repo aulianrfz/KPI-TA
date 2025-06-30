@@ -1,16 +1,10 @@
 @extends('layouts.apk')
 
 @section('content')
-    {{-- Menambahkan link CDN Bootstrap secara eksplisit di dalam blade ini --}}
-    {{-- Memperbaiki kesalahan ketik xintegrity menjadi integrity --}}
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    {{-- Pastikan Font Awesome dimuat oleh layouts.apk atau tambahkan CDN di sini jika ikon tidak muncul --}}
-    {{--
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> --}}
-
     <style>
-        /* General Page Styles */
         .page-header-container {
             display: flex;
             justify-content: space-between;
@@ -20,7 +14,6 @@
 
         .page-title {
             color: #3A3B7B;
-            /* Warna biru tua/ungu */
             font-weight: 600;
             font-size: 1.75rem;
             margin-bottom: 0;
@@ -28,7 +21,6 @@
 
         .btn-add-custom {
             background-color: #0d6efd;
-            /* Biru standar Bootstrap */
             color: white;
             padding: 0.4rem 0.8rem;
             font-size: 0.9rem;
@@ -41,7 +33,6 @@
 
         .btn-search-icon-table {
             background-color: #20c997;
-            /* Warna teal/hijau */
             border-color: #20c997;
             color: white;
         }
@@ -53,10 +44,8 @@
 
         .input-group-table-search .form-control {
             font-size: 0.9rem;
-            /* Sesuaikan ukuran font input search */
         }
 
-        /* Card Styling */
         .table-card {
             background-color: #ffffff;
             border-radius: 0.75rem;
@@ -74,10 +63,8 @@
             align-items: center;
         }
 
-        /* Table Styling */
         .table-header-dark-custom {
             background-color: #343a40 !important;
-            /* Warna abu-abu gelap (Bootstrap thead-dark) */
         }
 
         .table-header-dark-custom th {
@@ -91,7 +78,6 @@
             text-align: center;
             vertical-align: middle;
             font-size: 0.9rem;
-            /* Ukuran font konten tabel */
         }
 
         .btn-action-edit-custom,
@@ -160,11 +146,8 @@
     </style>
 
     <div class="container">
-        {{-- Judul Halaman --}}
         <div class="page-header-container">
             <h2 class="page-title">Venue</h2>
-            {{-- Tombol kembali bisa ditambahkan di sini jika diperlukan dari halaman lain --}}
-            {{-- <a href="{{ url()->previous() }}" class="btn btn-sm btn-outline-secondary">Kembali</a> --}}
         </div>
 
         @if(session('success'))
@@ -248,7 +231,6 @@
         </div>
     </div>
 
-    {{-- Modal Konfirmasi Delete Venue --}}
     <div class="modal fade" id="deleteVenueModal" tabindex="-1" aria-labelledby="deleteVenueModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">

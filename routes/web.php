@@ -86,7 +86,15 @@ Route::middleware('auth')->group(function () {
 
 
         Route::get('/listcrud', [DashboardAdminController::class, 'listCrud'])->name('admin.list.crud');
-        Route::get('/dashboardadmin', [DashboardAdminController::class, 'index'])->name('admin.dashboard');
+        
+        //DASHBOARD ADMIN
+        // Pilih event terlebih dahulu
+        Route::get('/admin/dashboard', [DashboardAdminController::class, 'listEvents'])->name('dashboard.index');
+
+        // Lihat peserta dashboard berdasarkan event
+        Route::get('/admin/dashboard/event/{eventId}', [DashboardAdminController::class, 'byEvent'])->name('dashboard.by-event');
+
+        // Route::get('/dashboardadmin', [DashboardAdminController::class, 'index'])->name('admin.dashboard');
         Route::post('/admin/mark-present', [DashboardAdminController::class, 'markAsPresent'])->name('admin.markPresent');
         Route::get('/admin/peserta/{id}/identitas', [DashboardAdminController::class, 'showIdentitas'])->name('admin.peserta.identitas');
         Route::get('/verifikasi/qr/{id}', [DashboardAdminController::class, 'verifikasiQR'])->name('verifikasi.qr');
@@ -111,6 +119,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/kehadiran-export', [KehadiranController::class, 'exportExcel'])->name('kehadiran.export');
 
         //transaksi
+        Route::get('/admin/transaksi/index', [PembayaranController::class, 'listEvents'])->name('transaksi.index');
+        Route::get('/admin/transaksi/event/{eventId}', [PembayaranController::class, 'byEvent'])->name('transaksi.by-event');
         Route::get('/admin/transaksi', [PembayaranController::class, 'show'])->name('transaksi.index');
         Route::post('/admin/transaksi/bulk-action', [PembayaranController::class, 'bulkAction'])->name('admin.transaksi.bulkAction');
         Route::get('/verifikasi/qr/{id}', [PembayaranController::class, 'showQr'])->name('verifikasi.qr');

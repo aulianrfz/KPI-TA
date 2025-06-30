@@ -7,6 +7,7 @@ use App\Models\Pendaftar;
 use App\Models\Peserta;
 use App\Models\Membayar;
 use App\Models\Invoice;
+use App\Models\Event;
 use App\Mail\QrCodeMail;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
@@ -157,26 +158,57 @@ class PembayaranController extends Controller
         return redirect()->route('pembayaran.index')->with('success', 'Bukti pembayaran berhasil diunggah.');
     }
 
-    public function show(Request $request)
+    public function listEvents()
     {
-        $query = Membayar::with(['peserta.pendaftar.mataLomba', 'invoice', 'mataLomba'])
+        $events = Event::latest()->get();
+        return view('admin.transaksi.list_event', compact('events'));
+    }
+
+    public function byEvent(Request $request, $eventId)
+    {
+        $search = $request->input('search');
+        $sortOrder = $request->input('sort', 'desc');
+
+        $query = Membayar::with(['peserta.pendaftar.mataLomba.kategori.event', 'invoice', 'mataLomba'])
+            ->whereHas('peserta.pendaftar.mataLomba.kategori', function ($q) use ($eventId) {
+                $q->where('event_id', $eventId);
+            })
             ->whereNotIn('status', ['Sudah Membayar', 'Ditolak']);
 
-        if ($request->filled('search')) {
-            $search = $request->input('search');
+        if ($search) {
             $query->whereHas('peserta', function ($q) use ($search) {
                 $q->where('nama_peserta', 'like', "%{$search}%")
                 ->orWhere('institusi', 'like', "%{$search}%");
             });
         }
 
-        $sortOrder = $request->input('sort', 'desc');
         $query->orderBy('waktu', in_array($sortOrder, ['asc', 'desc']) ? $sortOrder : 'desc');
 
         $transaksi = $query->paginate(20)->appends($request->query());
+        $event = Event::findOrFail($eventId);
 
-        return view('admin.transaksi.konfirmasi_pembayaran', compact('transaksi'));
+        return view('admin.transaksi.konfirmasi_pembayaran', compact('transaksi', 'event'));
     }
+    // public function show(Request $request)
+    // {
+    //     $query = Membayar::with(['peserta.pendaftar.mataLomba', 'invoice', 'mataLomba'])
+    //         ->whereNotIn('status', ['Sudah Membayar', 'Ditolak']);
+
+    //     if ($request->filled('search')) {
+    //         $search = $request->input('search');
+    //         $query->whereHas('peserta', function ($q) use ($search) {
+    //             $q->where('nama_peserta', 'like', "%{$search}%")
+    //             ->orWhere('institusi', 'like', "%{$search}%");
+    //         });
+    //     }
+
+    //     $sortOrder = $request->input('sort', 'desc');
+    //     $query->orderBy('waktu', in_array($sortOrder, ['asc', 'desc']) ? $sortOrder : 'desc');
+
+    //     $transaksi = $query->paginate(20)->appends($request->query());
+
+    //     return view('admin.transaksi.konfirmasi_pembayaran', compact('transaksi'));
+    // }
 
     public function bulkAction(Request $request)
     {

@@ -102,7 +102,7 @@
     </div>
 
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start mb-3 gap-3">
-        <form method="GET" action="{{ route('admin.dashboard') }}" class="w-100 w-md-50">
+        <form method="GET" action="{{ route('dashboard.by-event', $event->id) }}" class="w-100 w-md-50">
             <div class="col-md-5 col-lg-10">
                 <div class="position-relative">
                     <input
@@ -124,7 +124,7 @@
                 class="btn btn-success">
                 <i class="bi bi-file-earmark-excel me-1"></i> Export Excel
             </a>
-            <form method="GET" action="{{ route('admin.dashboard') }}">
+            <form method="GET" action="{{ route('dashboard.by-event', $event->id) }}">
                 <input type="hidden" name="search" value="{{ request('search') }}">
                 <select name="sort" class="form-select" onchange="this.form.submit()">
                     <option value="asc" {{ request('sort') === 'asc' ? 'selected' : '' }}>Terlama</option>
