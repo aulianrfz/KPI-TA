@@ -32,10 +32,10 @@ class EventController extends Controller
         $validated = $request->validate([
             'nama_event' => 'required|string|max:255',
             'penyelenggara' => 'required|string|max:255',
-            'deskripsi' => 'nullable|string',
+            'deskripsi' => 'required|string',
             'tanggal_akhir' => 'required|date|after_or_equal:tanggal',
             'tanggal' => 'required|Date',
-            'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'foto' => 'required|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         if ($request->hasFile('foto')) {
@@ -57,7 +57,7 @@ class EventController extends Controller
         $validated = $request->validate([
             'nama_event' => 'required|string|max:255',
             'penyelenggara' => 'required|string|max:255',
-            'deskripsi' => 'nullable|string',
+            'deskripsi' => 'required|string',
             'tanggal' => 'required|Date',
             'tanggal_akhir' => 'required|date|after_or_equal:tanggal',
             'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',

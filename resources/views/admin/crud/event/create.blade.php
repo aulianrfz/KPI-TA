@@ -19,7 +19,7 @@
 
         <div class="mb-3">
             <label for="deskripsi" class="form-label">Deskripsi</label>
-            <textarea name="deskripsi" class="form-control" rows="4"></textarea>
+            <textarea name="deskripsi" class="form-control" rows="4" required></textarea>
         </div>
 
         <div class="mb-3">
@@ -34,7 +34,7 @@
         
         <div class="mb-3">
             <label for="foto" class="form-label">Foto</label>
-            <input type="file" name="foto" class="form-control">
+            <input type="file" name="foto" class="form-control"required>
         </div>
 
         <button type="submit" class="btn btn-primary">Simpan</button>
