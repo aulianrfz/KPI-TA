@@ -345,64 +345,126 @@
             </ul>
         </aside>
 
-        <main class="main-content">
-            <nav class="top-navbar">
-                <div class="navbar-left">
-                    <i class="bi bi-list" id="toggle-sidebar-btn"></i>
-                    @php
-                        $headerTitle = $title ?? 'Dashboard'; // Default dari $title atau 'Dashboard'
+    <main class="main-content">
+        <nav class="top-navbar">
+            <div class="navbar-left">
+                <i class="bi bi-list" id="toggle-sidebar-btn"></i>
 
-                        if (request()->is('dashboardadmin')) {
-                            $headerTitle = 'Home';
-                        } elseif (request()->is('pendaftaran*')) { // Sesuaikan path 'pendaftaran*' jika sudah ada linknya
-                            $headerTitle = 'Pendaftaran';
-                        } elseif (request()->is('admin/transaksi*')) {
-                            $headerTitle = 'Transaksi';
+                @php
+                    use App\Models\Event;
+                    use Illuminate\Support\Str;
+
+                    $headerTitle = $title ?? 'Dashboard';
+
+                    function isGeneralRoute(): bool {
+                        return request()->is('admin/dashboard') ||
+                            request()->is('kehadiran/event*') ||
+                            request()->is('pendaftaran/event*') ||
+                            request()->is('admin/transaksi/index*') ||
+                            request()->is('kuisioner*') ||
+                            request()->is('listcrud*') ||
+                            request()->is('listevent*') ||
+                            request()->is('kategori*') ||
+                            request()->is('mataLomba*') ||
+                            request()->is('provinsi*') ||
+                            request()->is('institusi*') ||
+                            request()->is('jurusan*') ||
+                            request()->routeIs('jadwal.*') ||
+                            request()->routeIs('juri.*') ||
+                            request()->routeIs('venue.*') ||
+                            request()->is('sertifikat*') ||
+                            request()->is('pengajuan*') ||
+                            request()->is('laporan/penjualan*');
+                    }
+
+                    $selectedEventId = session('selected_event');
+                    $event = $selectedEventId && !isGeneralRoute() ? Event::find($selectedEventId) : null;
+                    $eventName = $event && $event->nama_event !== '15' ? $event->nama_event : null;
+
+
+                    if ($eventName) {
+                        if (request()->routeIs('dashboard.by-event')) {
+                            $headerTitle = 'KPI: ' . $eventName;
                         } elseif (request()->is('kehadiran/event*')) {
+                            $headerTitle = 'Kehadiran: ' . $eventName;
+                        } elseif (request()->is('pendaftaran*')) {
+                            $headerTitle = 'Pendaftaran: ' . $eventName;
+                        } elseif (request()->is('admin/transaksi*')) {
+                            $headerTitle = 'Transaksi: ' . $eventName;
+                        } else {
+                            $headerTitle = $eventName;
+                        }
+
+                    } else {
+                        $routeName = request()->route()->getName();
+                        $path = request()->path();
+
+                        if ($path === 'admin/dashboard') {
+                            $headerTitle = 'Home';
+                        } elseif (str_starts_with($routeName, 'dashboard.by-event')) {
+                            $headerTitle = 'Event KPI';
+                        } elseif (str_starts_with($path, 'pendaftaran')) {
+                            $headerTitle = 'Pendaftaran';
+                        } elseif (str_starts_with($path, 'admin/transaksi')) {
+                            $headerTitle = 'Transaksi';
+                        } elseif (str_starts_with($path, 'kehadiran/event')) {
                             $headerTitle = 'Daftar Hadir';
-                        } elseif (request()->is('laporan/penjualan*')) { // Sesuaikan path 'laporan/penjualan*' jika sudah ada linknya
+                        } elseif (str_starts_with($path, 'laporan/penjualan')) {
                             $headerTitle = 'Laporan Penjualan';
-                        } elseif (request()->is('listcrud*')) {
+                        } elseif (str_starts_with($path, 'listcrud')) {
                             $headerTitle = 'CRUD';
-                        } elseif (request()->routeIs('jadwal.index') || request()->routeIs('jadwal.create') || request()->routeIs('jadwal.edit')) {
+                        } elseif (str_starts_with($path, 'listevent')) {
+                            $headerTitle = 'Event';
+                        }elseif (str_starts_with($path, 'kategori')) {
+                            $headerTitle = 'Kategori';
+                        }elseif (str_starts_with($path, 'mataLomba')) {
+                            $headerTitle = 'Mata Lomba';
+                        }elseif (str_starts_with($path, 'provinsi')) {
+                            $headerTitle = 'Provinsi';
+                        }elseif (str_starts_with($path, 'institusi')) {
+                            $headerTitle = 'Institusi';
+                        }elseif (str_starts_with($path, 'jurusan')) {
+                            $headerTitle = 'Jurusan';
+                        }
+                        elseif (Str::startsWith($routeName, 'jadwal.')) {
                             $headerTitle = 'Penjadwalan';
-                        } elseif (request()->is('kuisioner*')) { // Sesuaikan path 'kuisioner*' jika sudah ada linknya
+                        } elseif (str_starts_with($path, 'kuisioner')) {
                             $headerTitle = 'Kuisioner';
-                        } elseif (request()->routeIs('juri.index') || request()->routeIs('juri.create') || request()->routeIs('juri.edit')) {
+                        } elseif (Str::startsWith($routeName, 'juri.')) {
                             $headerTitle = 'Juri';
-                        } elseif (request()->routeIs('venue.index') || request()->routeIs('venue.create') || request()->routeIs('venue.edit')) {
+                        } elseif (Str::startsWith($routeName, 'venue.')) {
                             $headerTitle = 'Venue';
-                        } elseif (request()->is('sertifikat*')) { // Sesuaikan path 'sertifikat*' jika sudah ada linknya
+                        } elseif (str_starts_with($path, 'sertifikat')) {
                             $headerTitle = 'Sertifikat';
-                        } elseif (request()->is('pengajuan*')) { // Sesuaikan path 'pengajuan*' jika sudah ada linknya
+                        } elseif (str_starts_with($path, 'pengajuan')) {
                             $headerTitle = 'Pengajuan';
                         }
-                        // Jika Anda memiliki variabel $title yang dikirim dari controller untuk <title> HTML,
-                        // dan itu sudah cukup, Anda bisa sederhanakan menjadi:
-                        // $headerTitle = $title ?? 'Dashboard';
-                        // Namun, kode di atas memberikan kontrol lebih spesifik untuk navbar jika berbeda dari $title.
-                    @endphp
-                    <div class="navbar-title">{{ $headerTitle }}</div>
-                </div>
-                <div class="navbar-profile">
-                    <form method="POST" action="{{ route('logout') }}" class="d-inline">
-                        @csrf
-                        <button type="submit" class="btn btn-link p-0" title="Logout" style="line-height: 1;">
-                            <i class="bi bi-power power-icon"></i>
-                        </button>
-                    </form>
-                    <a href="/profile" class="d-flex align-items-center">
-                        <img src="https://ui-avatars.com/api/?name={{ Auth::user()->first_name ?? 'User' }}+{{ Auth::user()->last_name ?? '' }}&background=0367A6&color=fff"
-                            alt="Profile" class="rounded-circle" width="35" height="35">
-                    </a>
-                </div>
-            </nav>
+                    }
+                @endphp
 
-            <div class="content-body">
-                @yield('content')
+                <div class="navbar-title">{{ $headerTitle }}</div>
             </div>
 
-        </main>
+            <div class="navbar-profile">
+                <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                    @csrf
+                    <button type="submit" class="btn btn-link p-0" title="Logout" style="line-height: 1;">
+                        <i class="bi bi-power power-icon"></i>
+                    </button>
+                </form>
+                <a href="/profile" class="d-flex align-items-center">
+                    <img src="https://ui-avatars.com/api/?name={{ Auth::user()->first_name ?? 'User' }}+{{ Auth::user()->last_name ?? '' }}&background=0367A6&color=fff"
+                        alt="Profile" class="rounded-circle" width="35" height="35">
+                </a>
+            </div>
+        </nav>
+
+        <div class="content-body">
+            @yield('content')
+        </div>
+    </main>
+
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

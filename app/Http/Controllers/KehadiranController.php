@@ -23,6 +23,7 @@ class KehadiranController extends Controller
 
     public function kategori($eventId, Request $request)
     {
+        session(['selected_event' => $eventId]);
         $event = Event::with('kategori')->findOrFail($eventId);
         $categories = $event->kategori;
 
@@ -43,6 +44,7 @@ class KehadiranController extends Controller
 
     public function index(Request $request, $mataLombaId)
     {
+        session(['selected_event' => $mataLombaId]);
         $search = $request->input('search');
         $sort = $request->input('sort', 'desc');
 

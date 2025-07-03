@@ -10,32 +10,47 @@ use Illuminate\Support\Facades\Storage;
 
 class MataLombaController extends Controller
 {
-    public function index(Request $request)
-    {
-        $kategoriId = $request->input('kategori_id');
-        $search = $request->input('search');
+public function index(Request $request)
+{
+    $kategoriId = $request->input('kategori_id');
+    $search = $request->input('search');
+    $eventId = null;
 
-        $query = mataLomba::with(['kategori', 'venue']);
+    $query = MataLomba::with(['kategori', 'venue']);
 
-        if ($kategoriId) {
-            $query->where('kategori_id', $kategoriId);
-        }
-
-        if ($search) {
-            $query->where('nama_lomba', 'like', '%' . $search . '%');
-        }
-
-        $mataLombas = $query->paginate(10)->appends($request->only(['kategori_id', 'search']));
-
-        return view('admin.crud.mataLomba.index', compact('mataLombas', 'kategoriId'));
+    if ($kategoriId) {
+        $query->where('kategori_id', $kategoriId);
+        $kategori = KategoriLomba::find($kategoriId);
+        $eventId = $kategori ? $kategori->event_id : null;
     }
 
-    public function create()
-    {
-        $kategoris = KategoriLomba::all();
-        $venues = Venue::all();
-        return view('admin.crud.mataLomba.create', compact('kategoris', 'venues'));
+    if ($search) {
+        $query->where('nama_lomba', 'like', '%' . $search . '%');
     }
+
+    $mataLombas = $query->paginate(10)->appends($request->only(['kategori_id', 'search']));
+
+    return view('admin.crud.mataLomba.index', compact('mataLombas', 'kategoriId', 'eventId'));
+}
+
+
+public function create(Request $request)
+{
+    $eventId = $request->input('event_id');
+
+    if (!$eventId) {
+        return redirect()->route('kategori.index')->with('warning', 'Silakan pilih event terlebih dahulu.');
+    }
+
+    $kategoris = KategoriLomba::with('event')
+        ->where('event_id', $eventId)
+        ->get();
+
+    $venues = Venue::all();
+
+    return view('admin.crud.mataLomba.create', compact('kategoris', 'venues', 'eventId'));
+}
+
 
     public function store(Request $request)
     {

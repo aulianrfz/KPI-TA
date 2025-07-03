@@ -10,6 +10,7 @@ use App\Models\Invoice;
 use App\Models\Event;
 use App\Mail\QrCodeMail;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -166,6 +167,7 @@ class PembayaranController extends Controller
 
     public function byEvent(Request $request, $eventId)
     {
+        session(['selected_event' => $eventId]);
         $search = $request->input('search');
         $sortOrder = $request->input('sort', 'desc');
 
@@ -246,19 +248,27 @@ class PembayaranController extends Controller
                         ->margin(10)
                         ->build();
 
-                    $filename = 'qr_codes/pendaftar_' . $pendaftar->id . '.png';
-                    Storage::disk('public')->put($filename, $result->getString());
-                    $qrPath = storage_path('app/public/' . $filename);
-                    $qrUrl = asset('storage/' . $filename);
+                    // $filename = 'qr_codes/pendaftar_' . $pendaftar->id . '.png';
+                    // Storage::disk('public')->put($filename, $result->getString());
+                    // // $qrPath = storage_path('app/public/' . $filename);
+                    // // $qrUrl = asset('storage/' . $filename);
+                    // $qrRelativePath = 'storage/' . $filename;
 
-                    $pendaftar->update(['url_qrCode' => $qrUrl]);
+                    $eventName = Str::slug($pendaftar->mataLomba->kategori->event->nama_event, '_'); // slug: "event_abc"
+                    $filename = 'qr_codes/pendaftar_' . $pendaftar->id . '_' . $eventName . '.png';
+
+                    Storage::disk('public')->put($filename, $result->getString());
+                    $qrRelativePath = 'storage/' . $filename;
+
+
+                    $pendaftar->update(['url_qrCode' => $qrRelativePath]);
 
                     if ($p->email) {
                         Mail::to($p->email)->send(new QrCodeMail(
                             $p->nama_peserta,
                             $pendaftar->mataLomba->nama_lomba ?? '-',
                             $pendaftar->mataLomba->kategori->nama_kategori ?? '-',
-                            $qrPath
+                            $qrRelativePath
                         ));
                     }
                 }

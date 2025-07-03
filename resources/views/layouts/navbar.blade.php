@@ -34,7 +34,7 @@
                     <a href="{{ route('events.list') }}" class="btn btn-primary me-3" style="background-color: #0367A6; border-color: #0367A6;">My Event</a>
                 @endif
                 @if(Auth::user()->role === 'admin')
-                    <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-primary me-2" style="border-color: #0367A6;">Home</a>
+                    <a href="{{ route('dashboard.index') }}" class="btn btn-outline-primary me-2" style="border-color: #0367A6;">Home</a>
                 @endif
                 <a href="{{ route('profile.show') }}" class="d-flex align-items-center">
                     <img src="https://ui-avatars.com/api/?name={{ Auth::user()->first_name }}+{{ Auth::user()->last_name }}&background=0367A6&color=fff" 

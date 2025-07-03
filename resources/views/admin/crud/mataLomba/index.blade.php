@@ -4,8 +4,10 @@
 <div class="container mt-5">
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="mb-0">Sub Kategori</h4>
-            <a href="{{ route('mataLomba.create') }}" class="btn btn-primary">+ Tambah Data</a>
+            <h4 class="mb-0">Mata Lomba</h4>
+            <a href="{{ route('mataLomba.create', ['event_id' => $eventId]) }}" class="btn btn-primary">
+                + Tambah Mata Lomba
+            </a>
         </div>
 
         @if(session('success'))

@@ -28,6 +28,7 @@ class DashboardAdminController extends Controller
 
     public function byEvent(Request $request, $eventId)
     {
+        session(['selected_event' => $eventId]);
         $search = $request->input('search');
         $sort = $request->input('sort', 'desc');
 
@@ -210,12 +211,18 @@ class DashboardAdminController extends Controller
 
     public function showIdentitas($id)
     {
-        $pendaftar = Pendaftar::with(['peserta'])
+        $pendaftar = Pendaftar::with([
+                'peserta.tim',
+                'mataLomba.kategori.event'
+            ])
             ->where('peserta_id', $id)
             ->firstOrFail();
 
-        return view('admin.dashboard.identitas', compact('pendaftar'));
+        $event = $pendaftar->mataLomba->kategori->event ?? null;
+
+        return view('admin.dashboard.identitas', compact('pendaftar', 'event'));
     }
+
 
     public function listCrud()
     {

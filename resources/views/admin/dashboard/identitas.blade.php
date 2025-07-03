@@ -4,7 +4,7 @@
 <div class="container py-4">
 
     <div class="d-flex align-items-center mb-3">
-        <a href="{{ route('admin.dashboard')}}" class="btn btn-outline-primary me-2">
+        <a href="{{ route('dashboard.by-event', $event->id) }}" class="btn btn-outline-primary me-2">
             <i class="bi bi-arrow-left"></i>
         </a>
         <h5 class="mb-0 fw-bold text-uppercase">QR Attendance</h5>

@@ -15,7 +15,7 @@
             </div>
         @endif
 
-        <form method="GET" action="{{ route('transaksi.index') }}" class="mb-4" id="filterForm">
+        <form method="GET" action="{{ route('transaksi.by-event', $event->id) }}" class="mb-4" id="filterForm">
             <div class="row g-2 align-items-center">
                 <div class="col-md-5 col-lg-4">
                     <div class="position-relative">

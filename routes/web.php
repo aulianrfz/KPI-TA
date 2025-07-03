@@ -165,7 +165,7 @@ Route::post('/generate-schedule', [PenjadwalanController::class, 'generateSchedu
 Route::get('/test-email', function () {
     try {
         Mail::raw('Ini adalah email percobaan dari Laravel.', function ($message) {
-            $message->to('aulianurulf25@gmail.com') // ← GANTI DENGAN EMAIL TUJUAN
+            $message->to('aulianurulf25@gmail.com')
                 ->subject('Tes Email dari Laravel');
         });
 
@@ -174,6 +174,3 @@ Route::get('/test-email', function () {
         return 'Gagal kirim email: ' . $e->getMessage();
     }
 });
-
-// nyoba halaman sukses
-// Route::get('/sukses', [PendaftaranController::class, 'sukses']);

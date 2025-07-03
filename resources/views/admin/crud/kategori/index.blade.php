@@ -9,29 +9,33 @@
         </button>
     </div>
 
-    <form method="GET" action="{{ route('kategori.index') }}" class="row g-3 mb-4 align-items-center">
-        <div class="col-md-4">
-            <select name="event_id" class="form-select" onchange="this.form.submit()">
-                <option value="">-- Pilih Event --</option>
-                @foreach($events as $event)
-                    <option value="{{ $event->id }}" {{ request('event_id') == $event->id ? 'selected' : '' }}>
-                        {{ $event->nama_event }}
-                    </option>
-                @endforeach
-            </select>
+    <form method="GET" action="{{ route('kategori.index') }}" class="mb-3">
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <div style="width: 250px;">
+                <select name="event_id" class="form-select" onchange="this.form.submit()">
+                    <option value="">-- Pilih Event --</option>
+                    @foreach($events as $event)
+                        <option value="{{ $event->id }}" {{ request('event_id') == $event->id ? 'selected' : '' }}>
+                            {{ $event->nama_event }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            @if(request('event_id'))
+                <div class="position-relative" style="width: 300px;">
+                    <input type="text" name="search" class="form-control ps-4"
+                        placeholder="Cari berdasarkan nama kategori"
+                        value="{{ request('search') }}">
+                </div>
+
+                <button type="submit" class="btn btn-success">
+                    <i class="fa fa-search"></i>
+                </button>
+
+                <a href="{{ route('kategori.index') }}" class="btn btn-secondary">Reset</a>
+            @endif
         </div>
-        @if(request('event_id'))
-        <div class="col-md-4">
-            <input type="text" name="search" class="form-control" placeholder="Cari kategori..."
-                value="{{ request('search') }}">
-        </div>
-        <div class="col-md-4 text-end">
-            <button type="submit" class="btn btn-success">
-                <i class="fa fa-search me-1"></i> Cari
-            </button>
-            <a href="{{ route('kategori.index') }}" class="btn btn-secondary">Reset</a>
-        </div>
-        @endif
     </form>
 
     @if(request('event_id'))
@@ -62,7 +66,7 @@
                                         <button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
                                     </form>
                                     <a href="{{ route('mataLomba.index', ['kategori_id' => $kategori->id]) }}" class="btn btn-info btn-sm">
-                                        <i class="fa fa-eye"></i> Sub Kategori
+                                        <i class="fa fa-eye"></i> Mata Lomba
                                     </a>
                                 </td>
                             </tr>
