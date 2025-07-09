@@ -15,8 +15,8 @@ class Jadwal extends Model
         'version',
         'status',
         'alasan_gagal',
-        'progress'
-        // 'event_id'
+        'progress',
+        'event_id',
     ];
 
     public function agendas()
@@ -24,10 +24,10 @@ class Jadwal extends Model
         return $this->hasMany(Agenda::class, 'jadwal_id');
     }
 
-    // public function event()
-    // {
-    //     return $this->belongsTo(Event::class, 'event_id');
-    // }
+    public function event()
+    {
+        return $this->belongsTo(Event::class, 'event_id');
+    }
 
 
 }

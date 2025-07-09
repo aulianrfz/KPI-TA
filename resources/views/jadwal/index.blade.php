@@ -3,7 +3,9 @@
 @section('content')
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="fw-bold">Jadwal</h4>
+            <h4 class="fw-bold">
+                Jadwal{{ $event ? ' - ' . $event->nama_event : '' }}
+            </h4>
             <div class="d-flex gap-2">
                 <div class="dropdown d-inline-block">
                     <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
@@ -14,7 +16,8 @@
                         <li class="dropdown-header">Tahun</li>
                         @foreach ($availableYears as $year)
                             <li>
-                                <a class="dropdown-item" href="{{ route('jadwal.index', ['tahun' => $year]) }}">
+                                <a class="dropdown-item"
+                                    href="{{ route('jadwal.index', ['event' => request()->route('event'), 'tahun' => $year]) }}">
                                     {{ $year }}
                                 </a>
                             </li>
@@ -26,7 +29,8 @@
 
                         <!-- Urutkan Berdasarkan Status -->
                         <li>
-                            <a class="dropdown-item" href="{{ route('jadwal.index', ['sort' => 'status']) }}">
+                            <a class="dropdown-item"
+                                href="{{ route('jadwal.index', ['event' => request()->route('event'), 'sort' => 'status']) }}">
                                 Status
                             </a>
                         </li>
@@ -35,7 +39,8 @@
 
                 <!-- Tombol Clear Filter -->
                 @if(request()->has('tahun') || request('sort') === 'status')
-                    <a href="{{ route('jadwal.index') }}" class="btn btn-outline-danger ms-2">
+                    <a href="{{ route('jadwal.index', ['event' => request()->route('event')]) }}"
+                        class="btn btn-outline-danger ms-2">
                         Clear Filter
                     </a>
                 @endif
@@ -209,12 +214,12 @@
                         if (statusCell && actionCell) {
                             if (jadwal.status === 'Menunggu') {
                                 statusCell.innerHTML = `
-                                        <span>${jadwal.status}</span>
-                                        <div class="progress mt-1" style="height: 6px;">
-                                            <div class="progress-bar bg-info" role="progressbar" style="width: ${jadwal.progress}%" aria-valuenow="${jadwal.progress}" aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>
-                                        <small class="text-muted">${jadwal.progress}%</small>
-                                    `;
+                                                                <span>${jadwal.status}</span>
+                                                                <div class="progress mt-1" style="height: 6px;">
+                                                                    <div class="progress-bar bg-info" role="progressbar" style="width: ${jadwal.progress}%" aria-valuenow="${jadwal.progress}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                                </div>
+                                                                <small class="text-muted">${jadwal.progress}%</small>
+                                                            `;
                             } else {
                                 statusCell.innerHTML = jadwal.status;
                             }
@@ -245,7 +250,16 @@
                         const waitingModal = new bootstrap.Modal(document.getElementById('waitingModal'));
                         waitingModal.show();
                     } else {
-                        window.location.href = "{{ route('jadwal.create') }}";
+                        // simpan event_id ke session, lalu redirect ke jadwal.create
+                        fetch("{{ route('jadwal.setEventSession', ['event' => request()->route('event')]) }}", {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json',
+                            }
+                        }).then(() => {
+                            window.location.href = "{{ route('jadwal.create') }}";
+                        });
                     }
                 })
                 .catch(error => {

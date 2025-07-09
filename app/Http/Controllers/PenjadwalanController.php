@@ -24,23 +24,37 @@ use App\Jobs\ProsesPenjadwalanJob;
 class PenjadwalanController extends Controller
 {
 
-    public function index()
+    public function index($eventId = null)
     {
+        $event = $eventId ? Event::find($eventId) : null;
         $query = Jadwal::with(['agendas']);
 
+        if ($eventId) {
+            $query->where('event_id', $eventId);
+        }
+
         if (request()->has('tahun')) {
-            $query->where('tahun', request('tahun'))
-                ->orderBy('created_at', 'desc');
-        } elseif (request('sort') === 'status') {
+            $query->where('tahun', request('tahun'));
+        }
+
+        if (request('sort') === 'status') {
             $query->orderByRaw("FIELD(status, 'Selesai', 'Menunggu', 'Gagal')");
         }
 
-        $jadwals = $query->get();
-
+        $jadwals = $query->orderBy('created_at', 'desc')->get();
         $availableYears = Jadwal::select('tahun')->distinct()->pluck('tahun');
 
-        return view('jadwal.index', compact('jadwals', 'availableYears'));
+        return view('jadwal.index', compact('jadwals', 'availableYears', 'event'));
     }
+
+
+    public function event()
+    {
+        $events = Event::all();
+        // dd($events);
+        return view('jadwal.event', compact('events'));
+    }
+
 
     public function checkStatus()
     {
@@ -396,7 +410,7 @@ class PenjadwalanController extends Controller
                 )
             ) {
 
-                $detail = [];         
+                $detail = [];
                 // venue
                 foreach ($bentrokVenueList as $b) {
                     $namaLomba = $b->mataLomba->nama_lomba ?? '(Tanpa Mata Lomba)';
@@ -525,6 +539,8 @@ class PenjadwalanController extends Controller
             'waktu_selesai.*' => 'required|date_format:H:i',
         ], $messages);
 
+        $eventId = session('jadwal_event_id');
+
         // Validasi bahwa waktu_mulai < waktu_selesai untuk setiap tanggal
         foreach ($request->tanggal as $i => $tanggal) {
             if ($request->waktu_mulai[$i] >= $request->waktu_selesai[$i]) {
@@ -545,7 +561,13 @@ class PenjadwalanController extends Controller
 
         $pesertaPerKategori = $this->processPesertaKategoriLomba();
 
-        $mataLombaMap = MataLomba::all()->keyBy('nama_lomba');
+        // dd($pesertaPerKategori);
+        $mataLombaMap = MataLomba::with('kategori')
+            ->whereHas('kategori', function ($q) use ($eventId) {
+                $q->where('event_id', $eventId);
+            })
+            ->get()
+            ->keyBy('nama_lomba');
 
         $totalDurasiMenit = 0;
         $lombaSerentakYangSudahDihitung = [];
@@ -608,7 +630,7 @@ class PenjadwalanController extends Controller
             }
         }
 
-        $totalDurasiMenit = max($venueDurasiMap);
+        $totalDurasiMenit = empty($venueDurasiMap) ? 0 : max($venueDurasiMap);
 
         // Buffer waktu
         $bufferMenit = max((int) round($totalDurasiMenit * 0.3), 180);
@@ -672,6 +694,7 @@ class PenjadwalanController extends Controller
         return view('jadwal.create-step2', [
             'jadwal_nama' => $request->nama_jadwal,
             'jadwal_harian' => $jadwal_per_tanggal,
+            'event_id' => $eventId,
         ]);
     }
 
@@ -704,6 +727,8 @@ class PenjadwalanController extends Controller
         $jadwalHarian = session('jadwal_harian', []);
         $startTime = session('jadwal_waktu_mulai', '08:00');
         $endTime = session('jadwal_waktu_selesai', '17:00');
+        $eventId = session('jadwal_event_id');
+        // dd($eventId);
         $variabelX = $this->processPesertaKategoriLomba();
         // dd($variabelX);
         $pesertaKategori = $variabelX;
@@ -716,7 +741,7 @@ class PenjadwalanController extends Controller
             'tahun' => $tahun,
             'version' => '1',
             'status' => 'Menunggu',
-            'event_id' => '1',
+            'event_id' => $eventId,
         ]);
 
         ProsesPenjadwalanJob::dispatch(
@@ -728,7 +753,8 @@ class PenjadwalanController extends Controller
             $jadwalHarian,
             $namaJadwal,
             $jadwalAwal->id,
-            1
+            1,
+            $eventId,
         );
 
         // return response()->json([
@@ -742,10 +768,12 @@ class PenjadwalanController extends Controller
             'jadwal_waktu_selesai',
             'jadwal_harian',
             'constraint_lomba',
+            'jadwal_event_id',
         ]);
 
         return view('jadwal.proses', [
             'namaJadwal' => $namaJadwal,
+            'eventId' => $eventId,
         ]);
     }
 
@@ -2460,7 +2488,7 @@ class PenjadwalanController extends Controller
             $shuffledKategoriUtamaList = [];
 
             foreach ($venueGroupedKategori as $venue => $kategoriList) {
-                mt_srand($attempt + intval($venue)); 
+                mt_srand($attempt + intval($venue));
                 shuffle($kategoriList); // acak
 
                 if (count($kategoriList) > 2 && isset($firstKategoriHistory[$venue])) {
@@ -2481,7 +2509,7 @@ class PenjadwalanController extends Controller
                 $shuffledKategoriUtamaList = array_merge($shuffledKategoriUtamaList, $kategoriList);
                 // Log::info("[$attempt] Setelah shuffle venue $venue: " . json_encode($kategoriList));
             }
-            mt_srand(); 
+            mt_srand();
 
             $kategoriUtamaList = $shuffledKategoriUtamaList;
 
@@ -2894,11 +2922,13 @@ class PenjadwalanController extends Controller
 
         Log::info('Variabel X berhasil dibuat (berdasarkan peserta dan kategori)', ['variabelX' => $variabelX]);
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Variabel X berhasil dibuat',
-            'data' => $variabelX
-        ]);
+        // return response()->json([
+        //     'status' => 'success',
+        //     'message' => 'Variabel X berhasil dibuat',
+        //     'data' => $variabelX
+        // ]);
+
+        return $variabelX;
     }
     private function processSubKategoriLomba()
     {
@@ -2928,25 +2958,29 @@ class PenjadwalanController extends Controller
         return $mataLombaList;
     }
 
-
-
     public function processPesertaKategoriLomba()
     {
+        $eventId = session('jadwal_event_id'); // pastikan ini ada ya
         $result = [];
         $timMap = [];
 
         $pesertaMembayarIds = Membayar::where('status', 'Sudah Membayar')->pluck('peserta_id')->toArray();
-        // dd($pesertaMembayarIds);
-        // Kelompok
-        $timList = Tim::with(['peserta.pendaftar.mataLomba'])
+
+        // 🔍 ambil tim yang anggotanya bayar DAN event_id sesuai
+        $timList = Tim::with(['peserta.pendaftar.mataLomba.kategori'])
+            ->whereHas('peserta.pendaftar.mataLomba.kategori', function ($query) use ($eventId) {
+                $query->where('event_id', $eventId);
+            })
             ->whereHas('peserta', function ($query) use ($pesertaMembayarIds) {
                 $query->whereIn('peserta.id', $pesertaMembayarIds);
             })
             ->get();
 
         foreach ($timList as $tim) {
-            $anggotaValid = $tim->peserta->filter(function ($anggota) use ($pesertaMembayarIds) {
-                return in_array($anggota->id, $pesertaMembayarIds);
+            $anggotaValid = $tim->peserta->filter(function ($anggota) use ($pesertaMembayarIds, $eventId) {
+                $mataLomba = $anggota->pendaftar?->mataLomba;
+                $kategori = $mataLomba?->kategori;
+                return in_array($anggota->id, $pesertaMembayarIds) && $kategori?->event_id == $eventId;
             });
 
             if ($anggotaValid->isEmpty())
@@ -2960,19 +2994,15 @@ class PenjadwalanController extends Controller
             $isSerentak = $mataLomba->is_serentak;
 
             if ($isSerentak) {
-                // Serentak & kelompok: nama_tim jadi array of tim
                 $timMap[$key]['kategori_lomba'] = $mataLomba->nama_lomba;
                 $timMap[$key]['nama_tim'][] = $tim->nama_tim;
                 $timMap[$key]['anggota'] = array_merge(
                     $timMap[$key]['anggota'] ?? [],
                     $anggotaValid->pluck('nim')->toArray()
                 );
-
-                // Hapus duplikat nama_tim & anggota
                 $timMap[$key]['nama_tim'] = array_unique($timMap[$key]['nama_tim']);
                 $timMap[$key]['anggota'] = array_unique($timMap[$key]['anggota']);
             } else {
-                // Tidak serentak: tetap satu tim per key
                 $keyTim = $key . '-' . $tim->nama_tim;
                 $timMap[$keyTim]['kategori_lomba'] = $mataLomba->nama_lomba;
                 $timMap[$keyTim]['nama_tim'] = $tim->nama_tim;
@@ -2980,15 +3010,18 @@ class PenjadwalanController extends Controller
             }
         }
 
-        // Individu
-        $pesertaIndividu = Peserta::with('pendaftar.mataLomba')
+        // 🔍 Peserta individu
+        $pesertaIndividu = Peserta::with('pendaftar.mataLomba.kategori')
             ->whereDoesntHave('tim')
             ->whereIn('id', $pesertaMembayarIds)
+            ->whereHas('pendaftar.mataLomba.kategori', function ($q) use ($eventId) {
+                $q->where('event_id', $eventId);
+            })
             ->get();
 
         foreach ($pesertaIndividu as $pesertaItem) {
             $mataLomba = $pesertaItem->pendaftar?->mataLomba;
-            if (!$mataLomba)
+            if (!$mataLomba || $mataLomba->kategori?->event_id != $eventId)
                 continue;
 
             $key = $mataLomba->nama_lomba;
@@ -3009,8 +3042,6 @@ class PenjadwalanController extends Controller
         }
 
         $result = array_values($timMap);
-
-        // dd($result);
         return $result;
     }
 
@@ -3028,22 +3059,18 @@ class PenjadwalanController extends Controller
     {
         try {
             $jadwal = Jadwal::findOrFail($id);
-            // dd($id);
+            $eventId = $jadwal->event_id; // ambil dari jadwal biar gak null
 
-            // dd($jadwal->agenda());
-            // hapus agenda yang terkait dengan jadwal ini
             $jadwal->agendas()->delete();
-
-            // hapus jadwal
             $jadwal->delete();
 
-            return redirect()->route('jadwal.index')->with('success', 'Jadwal dan agenda terkait berhasil dihapus');
+            return redirect()->route('jadwal.index', ['event' => $eventId])
+                ->with('success', 'Jadwal dan agenda terkait berhasil dihapus');
         } catch (\Exception $e) {
             \Log::error('Gagal hapus jadwal', ['jadwal_id' => $id, 'error' => $e->getMessage()]);
             return back()->with('error', 'Gagal menghapus jadwal');
         }
     }
-
 
 
 

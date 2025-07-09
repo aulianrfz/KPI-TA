@@ -20,6 +20,9 @@ use App\Http\Controllers\KehadiranController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VenueController;
 use App\Http\Controllers\JuriController;
+use App\Http\Controllers\SuperAdminController;
+use App\Http\Controllers\SupporterController;
+use App\Http\Controllers\PembimbingController;
 use App\Http\Middleware\RoleMiddleware;
 
 // Route::get('/', function () {
@@ -36,6 +39,9 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
+
+    Route::get('/register/admin', [AuthController::class, 'showAdminRegisterForm'])->name('register.admin.form');
+    Route::post('/register/admin', [AuthController::class, 'registerAdmin'])->name('register.admin');
 });
 
 //profile
@@ -68,8 +74,17 @@ Route::middleware('auth')->group(function () {
 
         // pembayaran
         Route::get('/pembayaran', [PembayaranController::class, 'index'])->name('pembayaran.index');
-        Route::get('/pembayaran/bayar/{id}', [PembayaranController::class, 'bayar'])->name('pembayaran.bayar');
-        Route::post('pembayaran/{id}/upload', [PembayaranController::class, 'uploadBuktiPembayaran'])->name('pembayaran.upload');
+        Route::get('/pembayaran/{tipe}/{id}', [PembayaranController::class, 'bayar'])->name('pembayaran.bayar');
+        Route::post('/pembayaran/{tipe}/{id}/upload', [PembayaranController::class, 'uploadBuktiPembayaran'])->name('pembayaran.upload');
+
+        // supporter
+        Route::get('/supporter/daftar/{eventId}', [SupporterController::class, 'create'])->name('supporter.form');
+        Route::post('/supporter/daftar', [SupporterController::class, 'store'])->name('supporter.store');
+
+        //pembimbing
+        Route::get('/pembimbing/daftar/{event}', [PembimbingController::class, 'create'])->name('pembimbing.create');
+        Route::post('/pembimbing/daftar', [PembimbingController::class, 'store'])->name('pembimbing.store');
+
 
     });
 
@@ -86,7 +101,7 @@ Route::middleware('auth')->group(function () {
 
 
         Route::get('/listcrud', [DashboardAdminController::class, 'listCrud'])->name('admin.list.crud');
-        
+
         //DASHBOARD ADMIN
         // Pilih event terlebih dahulu
         Route::get('/admin/dashboard', [DashboardAdminController::class, 'listEvents'])->name('dashboard.index');
@@ -126,7 +141,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/verifikasi/qr/{id}', [PembayaranController::class, 'showQr'])->name('verifikasi.qr');
 
         //jadwal
-        Route::get('/jadwal', [PenjadwalanController::class, 'index'])->name('jadwal.index');
+        // Route::get('/jadwal', [PenjadwalanController::class, 'index'])->name('jadwal.index');
         Route::get('/jadwal/create', [PenjadwalanController::class, 'create'])->name('jadwal.create');
         Route::post('/jadwal/create/step2', [PenjadwalanController::class, 'createStep2'])->name('jadwal.create.step2');
         Route::get('/jadwal/create/step2', [PenjadwalanController::class, 'showStep2'])->name('jadwal.create.step2');
@@ -142,19 +157,39 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/jadwal/{nama_jadwal}/{tahun}/{version}/switch', [PenjadwalanController::class, 'switchJadwal'])->name('jadwal.switch');
         Route::post('/jadwal/switch/proses', [PenjadwalanController::class, 'prosesSwitch'])->name('jadwal.switch.proses');
-        Route::resource('jadwal', PenjadwalanController::class);
+        // Route::resource('jadwal', PenjadwalanController::class);
         Route::get('/jadwal/{id}/edit', [PenjadwalanController::class, 'edit'])->name('jadwal.edit');
         Route::put('/jadwal/{id}', [PenjadwalanController::class, 'update'])->name('jadwal.update');
         Route::get('/jadwal/{nama_jadwal}/{tahun}/{version}/create', [PenjadwalanController::class, 'createWithDetail'])->name('jadwal.create.withDetail');
         Route::post('/jadwal/add', [PenjadwalanController::class, 'add'])->name('jadwal.add');
         Route::delete('/jadwal/{id}', [PenjadwalanController::class, 'destroy'])->name('jadwal.destroy');
 
+        //baru
+        Route::get('/jadwal/event', [PenjadwalanController::class, 'event'])->name('jadwal.event');
+        Route::get('/jadwal/{event?}', [PenjadwalanController::class, 'index'])->name('jadwal.index');
+        Route::post('/jadwal/{event}/set-session', function ($event) {
+            session(['jadwal_event_id' => $event]);
+            return response()->json(['status' => 'ok']);
+        })->name('jadwal.setEventSession');
+
         Route::get('/generate-variabel-x', [PenjadwalanController::class, 'generateVariabelX']);
         Route::delete('/jadwal/{id}/delete', [PenjadwalanController::class, 'destroyJadwal'])->name('jadwal.destroyJadwal');
     });
 });
 
-
+Route::middleware([RoleMiddleware::class . ':superadmin'])->group(function () {
+    Route::get('/admin/manage', [SuperAdminController::class, 'manage'])->name('superadmin.admin.manage');
+    Route::get('/admin/list', [SuperAdminController::class, 'listAll'])->name('superadmin.admin.list');
+    Route::get('/admin/create', [SuperAdminController::class, 'create'])->name('superadmin.admin.create');
+    Route::post('/admin/store', [SuperAdminController::class, 'store'])->name('superadmin.admin.store');
+    Route::get('/admin/{id}/edit', [SuperAdminController::class, 'edit'])->name('superadmin.admin.edit');
+    Route::put('/admin/{id}', [SuperAdminController::class, 'update'])->name('superadmin.admin.update');
+    Route::delete('/admin/{id}', [SuperAdminController::class, 'destroy'])->name('superadmin.admin.destroy');
+    Route::get('/admin/approval', [SuperAdminController::class, 'listAdmin'])->name('superadmin.admin.approval');
+    Route::post('/admin/approval/{id}/approve', [SuperAdminController::class, 'approveAdmin'])->name('superadmin.admin.approve');
+    Route::post('/admin/approval/{id}/reject', [SuperAdminController::class, 'rejectAdmin'])->name('superadmin.admin.reject');
+    Route::post('/admin/approval/bulk-action', [SuperAdminController::class, 'bulkAction'])->name('superadmin.admin.bulkAction');
+});
 
 Route::get('/import-excel', [ImportExcelController::class, 'import_excel']);
 Route::post('/import-excel', [ImportExcelController::class, 'import_excel_post'])->name('import_excel_post');
@@ -174,3 +209,6 @@ Route::get('/test-email', function () {
         return 'Gagal kirim email: ' . $e->getMessage();
     }
 });
+
+// nyoba halaman sukses
+// Route::get('/sukses', [PendaftaranController::class, 'sukses']);

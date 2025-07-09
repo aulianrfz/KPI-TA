@@ -22,11 +22,11 @@ class ProsesPenjadwalanJob implements ShouldQueue
 
     protected $startTime, $endTime, $variabelX,
     $pesertaKategori, $constraintTambahan, $jadwalHarian,
-    $namaJadwal, $jadwalId, $version;
+    $namaJadwal, $jadwalId, $version, $eventId;
 
     public $timeout = 0;
 
-    public function __construct($startTime, $endTime, $variabelX, $pesertaKategori, $constraintTambahan, $jadwalHarian, $namaJadwal, $jadwalId, $version)
+    public function __construct($startTime, $endTime, $variabelX, $pesertaKategori, $constraintTambahan, $jadwalHarian, $namaJadwal, $jadwalId, $version, $eventId)
     {
         $this->startTime = $startTime;
         $this->endTime = $endTime;
@@ -37,6 +37,7 @@ class ProsesPenjadwalanJob implements ShouldQueue
         $this->namaJadwal = $namaJadwal;
         $this->jadwalId = $jadwalId;
         $this->version = $version;
+        $this->eventId = $eventId;
 
         Log::info("Job dispatched with data: " . json_encode([
             'constraintTambahan' => $constraintTambahan,
@@ -103,7 +104,7 @@ class ProsesPenjadwalanJob implements ShouldQueue
                     'tahun' => now()->year,
                     'version' => $version,
                     'status' => 'Menunggu',
-                    // 'event_id' => '1',
+                    'event_id' => $this->eventId,
 
                 ]);
                 $this->saveAgenda($jadwalBaru, $jadwalValidSolutions[$i]);
@@ -116,7 +117,7 @@ class ProsesPenjadwalanJob implements ShouldQueue
                 'tahun' => now()->year,
                 'version' => $this->version,
                 'status' => 'Menunggu',
-                // 'event_id' => '1',
+                'event_id' => $this->eventId,
             ]);
             $this->saveAgenda($jadwalMaster, $jadwalValidSolutions[0]);
             $jadwalMaster->update(['status' => 'Selesai']);

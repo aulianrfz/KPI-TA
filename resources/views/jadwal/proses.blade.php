@@ -95,10 +95,11 @@
                         <div class="mt-4">
                             <h5 class="mb-3">Jadwal <strong>{{ $namaJadwal }}</strong> sedang diproses di background.</h5>
                             <p>Silakan kembali ke halaman daftar jadwal untuk melihat hasilnya nanti.</p>
-
-                            <a href="{{ route('jadwal.index', '1') }}" class="btn btn-primary btn-lg mt-3 px-4">
+                            <a href="{{ route('jadwal.index', ['event' => $eventId]) }}"
+                                class="btn btn-primary btn-lg mt-3 px-4">
                                 Kembali ke Jadwal
                             </a>
+
                         </div>
 
                     </div>

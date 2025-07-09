@@ -321,8 +321,8 @@
                         class="nav-link {{ request()->is('listcrud*') ? 'active' : '' }}"><i
                             class="bi bi-tags-fill"></i><span>CRUD</span></a></li>
                 <li class="nav-item mb-2">
-                    <a href="{{ route('jadwal.index') }}"
-                        class="nav-link {{ request()->routeIs('jadwal.index') || request()->routeIs('jadwal.create') || request()->routeIs('jadwal.edit') ? 'active' : '' }}">
+                    <a href="{{ route('jadwal.event') }}"
+                        class="nav-link {{ request()->routeIs('jadwal.event') || request()->routeIs('jadwal.create') || request()->routeIs('jadwal.edit') ? 'active' : '' }}">
                         <i class="bi bi-calendar-event-fill"></i>
                         <span>Penjadwalan</span>
                     </a>
@@ -342,6 +342,16 @@
                 </li>
                 <li class="nav-item mb-2"><a href="#" class="nav-link {{ request()->is('sertifikat*') ? 'active' : '' }}"><i class="bi bi-award-fill"></i><span>Sertifikat</span></a></li>
                 <li class="nav-item mb-2"><a href="#" class="nav-link {{ request()->is('pengajuan*') ? 'active' : '' }}"><i class="bi bi-box-arrow-in-up"></i><span>Pengajuan</span></a></li>
+                @php $role = auth()->user()->role; @endphp
+                {{-- menu approve admin (hanya superadmin) --}}
+                @if($role === 'superadmin')
+                    <li class="nav-item mb-2">
+                        <a href="{{ route('superadmin.admin.manage') }}"
+                            class="nav-link {{ request()->routeIs('superadmin.admin.manage') ? 'active' : '' }}">
+                            <i class="bi bi-person-gear-fill"></i><span>Manage Admin</span>
+                        </a>
+                    </li>
+                @endif
             </ul>
         </aside>
 

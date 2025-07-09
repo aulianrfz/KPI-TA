@@ -10,6 +10,8 @@ use App\Exports\PendaftarExport;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
 use App\Models\Pendaftar;
+use App\Models\PendaftarSupporter;
+use App\Models\PendaftarPembimbing;
 use App\Models\Peserta;
 use App\Models\Bergabung;
 use App\Models\Tim;
@@ -42,9 +44,9 @@ class DashboardAdminController extends Controller
         if ($search) {
             $query->whereHas('peserta', function ($q) use ($search) {
                 $q->where('nama_peserta', 'like', "%$search%")
-                ->orWhere('nim', 'like', "%$search%")
-                ->orWhere('no_hp', 'like', "%$search%")
-                ->orWhere('institusi', 'like', "%$search%");
+                    ->orWhere('nim', 'like', "%$search%")
+                    ->orWhere('no_hp', 'like', "%$search%")
+                    ->orWhere('institusi', 'like', "%$search%");
             });
         }
 
@@ -70,7 +72,8 @@ class DashboardAdminController extends Controller
                         ->whereRaw("TRIM(COALESCE(url_qrCode, '')) NOT IN ('', '0', 'null')")
                         ->exists();
 
-                    if (!$punyaQrDanBayar) return false;
+                    if (!$punyaQrDanBayar)
+                        return false;
                 }
 
                 return true;
@@ -165,56 +168,132 @@ class DashboardAdminController extends Controller
 
     public function markAsPresent(Request $request)
     {
-        Log::info('markAsPresent dipanggil dengan data:', $request->all());
+        Log::info('[MARK AS PRESENT] Masuk ke markAsPresent() dengan data request:', $request->all());
 
         if (!$request->has('id')) {
+            Log::warning('[MARK AS PRESENT] ID tidak ditemukan di request.');
             return response()->json(['error' => "QR code tidak valid: tidak ada parameter 'id'"], 400);
         }
 
         try {
-            $decryptedId = Crypt::decrypt($request->input('id'));
+            $decrypted = Crypt::decrypt($request->input('id'));
+            Log::info("[MARK AS PRESENT] ID berhasil didekripsi: {$decrypted}");
         } catch (\Exception $e) {
-            Log::error('Gagal dekripsi ID QR code: ' . $e->getMessage());
+            Log::error('[MARK AS PRESENT] Gagal dekripsi ID QR code: ' . $e->getMessage());
             return response()->json(['error' => 'QR code tidak valid: gagal mendekripsi ID.'], 400);
         }
 
-        $pendaftar = Pendaftar::with('peserta', 'mataLomba')->find($decryptedId);
+        // Identifikasi tipe dan ambil ID numerik
+        if (str_starts_with($decrypted, 'peserta_')) {
+            $id = (int) str_replace('peserta_', '', $decrypted);
+            $pendaftar = Pendaftar::with('peserta', 'mataLomba')->find($id);
 
-        if (!$pendaftar) {
-            return response()->json(['error' => 'QR code tidak valid: peserta tidak ditemukan.'], 404);
-        }
+            if (!$pendaftar) {
+                Log::warning("[MARK AS PRESENT] Peserta tidak ditemukan: ID {$id}");
+                return response()->json(['error' => 'Data peserta tidak ditemukan.'], 404);
+            }
 
-        $urlFotoKtm = $pendaftar->peserta->url_ktm ? asset('storage/' . $pendaftar->peserta->url_ktm) : null;
+            Log::info("[MARK AS PRESENT] Ditemukan sebagai PESERTA: {$pendaftar->peserta->nama_peserta}");
+            $urlFotoKtm = $pendaftar->peserta->url_ktm ? asset('storage/' . $pendaftar->peserta->url_ktm) : null;
 
-        if ($pendaftar->status_kehadiran === 'Hadir') {
+            if ($pendaftar->status_kehadiran === 'Hadir') {
+                return response()->json([
+                    'message' => 'Peserta sudah ditandai hadir sebelumnya.',
+                    'nama_peserta' => $pendaftar->peserta->nama_peserta,
+                    'nama_lomba' => $pendaftar->mataLomba->nama_lomba,
+                    'foto_ktm' => $urlFotoKtm,
+                ]);
+            }
+
+            $pendaftar->update([
+                'status_kehadiran' => 'Hadir',
+                'tanggal_kehadiran' => now()
+            ]);
+
             return response()->json([
-                'message' => 'Peserta sudah ditandai hadir sebelumnya.',
+                'message' => 'Peserta berhasil ditandai hadir.',
                 'nama_peserta' => $pendaftar->peserta->nama_peserta,
                 'nama_lomba' => $pendaftar->mataLomba->nama_lomba,
                 'foto_ktm' => $urlFotoKtm,
             ]);
         }
 
-        $pendaftar->status_kehadiran = 'Hadir';
-        $pendaftar->tanggal_kehadiran = now();
-        $pendaftar->save();
+        if (str_starts_with($decrypted, 'supporter_')) {
+            $id = (int) str_replace('supporter_', '', $decrypted);
+            $pendaftarSupporter = PendaftarSupporter::with('supporter', 'event')->find($id);
 
-        Log::info("Peserta ID {$decryptedId} berhasil ditandai hadir.");
+            if (!$pendaftarSupporter) {
+                Log::warning("[MARK AS PRESENT] Supporter tidak ditemukan: ID {$id}");
+                return response()->json(['error' => 'Data supporter tidak ditemukan.'], 404);
+            }
 
-        return response()->json([
-            'message' => 'Peserta berhasil ditandai hadir.',
-            'nama_peserta' => $pendaftar->peserta->nama_peserta,
-            'nama_lomba' => $pendaftar->mataLomba->nama_lomba,
-            'foto_ktm' => $urlFotoKtm,
-        ]);
+            Log::info("[MARK AS PRESENT] Ditemukan sebagai SUPPORTER: {$pendaftarSupporter->supporter->nama}");
+
+            if ($pendaftarSupporter->status_kehadiran) {
+                return response()->json([
+                    'message' => 'Supporter sudah ditandai hadir sebelumnya.',
+                    'nama_peserta' => $pendaftarSupporter->supporter->nama,
+                    'nama_lomba' => $pendaftarSupporter->event->nama_event,
+                    'foto_ktm' => null,
+                ]);
+            }
+
+            $pendaftarSupporter->update([
+                'status_kehadiran' => 'Hadir',
+                'tanggal_kehadiran' => now()
+            ]);
+
+            return response()->json([
+                'message' => 'Supporter berhasil ditandai hadir.',
+                'nama_peserta' => $pendaftarSupporter->supporter->nama,
+                'nama_lomba' => $pendaftarSupporter->event->nama_event,
+                'foto_ktm' => null,
+            ]);
+        }
+
+        if (str_starts_with($decrypted, 'pembimbing_')) {
+            $id = (int) str_replace('pembimbing_', '', $decrypted);
+            $pendaftarPembimbing = PendaftarPembimbing::with('pembimbing', 'event')->find($id);
+
+            if (!$pendaftarPembimbing) {
+                Log::warning("[MARK AS PRESENT] Pembimbing tidak ditemukan: ID {$id}");
+                return response()->json(['error' => 'Data pembimbing tidak ditemukan.'], 404);
+            }
+
+            Log::info("[MARK AS PRESENT] Ditemukan sebagai PEMBIMBING: {$pendaftarPembimbing->pembimbing->nama_lengkap}");
+
+            if ($pendaftarPembimbing->status_kehadiran) {
+                return response()->json([
+                    'message' => 'Pembimbing sudah ditandai hadir sebelumnya.',
+                    'nama_peserta' => $pendaftarPembimbing->pembimbing->nama_lengkap,
+                    'nama_lomba' => $pendaftarPembimbing->event->nama_event,
+                    'foto_ktm' => null,
+                ]);
+            }
+
+            $pendaftarPembimbing->update([
+                'status_kehadiran' => 'Hadir',
+                'tanggal_kehadiran' => now()
+            ]);
+
+            return response()->json([
+                'message' => 'Pembimbing berhasil ditandai hadir.',
+                'nama_peserta' => $pendaftarPembimbing->pembimbing->nama_lengkap,
+                'nama_lomba' => $pendaftarPembimbing->event->nama_event,
+                'foto_ktm' => null,
+            ]);
+        }
+
+        Log::warning("[MARK AS PRESENT] Prefix ID tidak valid: {$decrypted}");
+        return response()->json(['error' => 'QR code tidak valid: format ID tidak dikenal.'], 400);
     }
 
     public function showIdentitas($id)
     {
         $pendaftar = Pendaftar::with([
-                'peserta.tim',
-                'mataLomba.kategori.event'
-            ])
+            'peserta.tim',
+            'mataLomba.kategori.event'
+        ])
             ->where('peserta_id', $id)
             ->firstOrFail();
 
