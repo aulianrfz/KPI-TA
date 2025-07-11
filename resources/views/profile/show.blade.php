@@ -43,7 +43,7 @@
 
         <div class="d-flex justify-content-between">
             <a href="{{ route('profile.edit') }}" class="btn btn-secondary">Edit Profil</a>
-            <a href="#" class="btn btn-outline-primary">Ajukan Pengajuan</a>
+            <a href="{{ route('pengajuan.index') }}" class="btn btn-outline-primary">Ajukan Pengajuan</a>
         </div>
     </div>
 </div>

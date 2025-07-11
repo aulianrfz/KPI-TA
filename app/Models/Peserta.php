@@ -22,6 +22,7 @@ class Peserta extends Model
         'url_ktm',
         'url_ttd',
         'jenis_peserta',
+        'sertifikat_generated',
     ];
 
     public function provinsi()
@@ -65,4 +66,8 @@ class Peserta extends Model
         return $this->hasMany(Membayar::class, 'peserta_id');
     }
 
+    public function jawabanKuisioner()
+    {
+        return $this->hasMany(JawabanKuisioner::class, 'peserta_id');
+    }
 }

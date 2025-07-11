@@ -1,8 +1,11 @@
 @extends('layouts.apk')
 
+@section('title', 'Laporan Penjualan')
+
 @section('content')
 <div class="container py-4">
 
+    {{-- Ringkasan Statistik --}}
     <div class="row g-3 mb-4">
         <div class="col-md-4">
             <div class="card shadow-sm border-0 rounded-4 text-center py-3 h-100">
@@ -45,31 +48,30 @@
         </div>
     </div>
 
-    <div class="container py-4">
-        <div class="row mb-3">
-            <div class="col-md-5">
-                <form method="GET" action="{{ route('laporan.penjualan') }}" class="w-100 w-md-50">
-                    <div class="position-relative">
-                        <input type="text" name="search" class="form-control -pill ps-5" placeholder="Search for something" value="{{ request('search') }}">
-                        <span class="position-absolute top-50 start-0 translate-middle-y ps-3 text-muted">
-                            <i class="bi bi-search"></i>
-                        </span>
-                    </div>
-                </form>
-            </div>
-
-            <div class="col-md-2">
-                <form method="GET" action="{{ route('laporan.penjualan') }}">
-                    <input type="hidden" name="search" value="{{ request('search') }}">
-                    <select name="sort" class="form-select" onchange="this.form.submit()">
-                        <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>A-Z</option>
-                        <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Z-A</option>
-                    </select>
-                </form>
-            </div>
+    {{-- Form Pencarian dan Sorting --}}
+    <div class="row mb-3">
+        <div class="col-md-5">
+            <form method="GET" action="{{ route('laporan.penjualan', $eventId) }}" class="w-100">
+                <div class="position-relative">
+                    <input type="text" name="search" class="form-control ps-5" placeholder="Cari nama institusi" value="{{ request('search') }}">
+                    <span class="position-absolute top-50 start-0 translate-middle-y ps-3 text-muted">
+                        <i class="bi bi-search"></i>
+                    </span>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-2">
+            <form method="GET" action="{{ route('laporan.penjualan', $eventId) }}">
+                <input type="hidden" name="search" value="{{ request('search') }}">
+                <select name="sort" class="form-select" onchange="this.form.submit()">
+                    <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>A-Z</option>
+                    <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Z-A</option>
+                </select>
+            </form>
         </div>
     </div>
 
+    {{-- Tabel Laporan --}}
     <div class="card shadow-sm border-0 rounded-4">
         <div class="card-body table-responsive p-0">
             <table class="table table-hover mb-0 text-center">
@@ -79,7 +81,7 @@
                         <th>Nama Institusi</th>
                         <th>Total Tiket</th>
                         <th>Total Mahasiswa</th>
-                        <th>Action</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -90,31 +92,33 @@
                             <td>{{ $item->total_tiket }}</td>
                             <td>{{ $item->total_mahasiswa }} Orang</td>
                             <td>
-                                <a href="{{ route('laporan.penjualan.detail', $item->institusi) }}" class="btn btn-sm btn-outline-primary">
+                                <a href="{{ route('laporan.penjualan.detail', ['event' => $eventId, 'institusi' => urlencode($item->institusi)]) }}" class="btn btn-sm btn-outline-primary">
                                     <i class="bi bi-eye"></i> Lihat
                                 </a>
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="7" class="text-center py-4">Tidak ada data.</td></tr>
+                        <tr><td colspan="5" class="text-center py-4">Tidak ada data ditemukan.</td></tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
 
-        <div class="d-flex justify-content-end align-items-center mt-3 gap-2">
+        {{-- Pagination --}}
+        <div class="d-flex justify-content-end align-items-center mt-3 gap-2 px-3">
             <span class="small text-muted mb-0">
                 Page {{ $laporanList->currentPage() }} of {{ $laporanList->lastPage() }}
             </span>
             @if ($laporanList->onFirstPage())
-                <span class="btn btn-sm btn-light disabled" style="pointer-events: none;">‹</span>
+                <span class="btn btn-sm btn-light disabled">‹</span>
             @else
                 <a href="{{ $laporanList->previousPageUrl() }}" class="btn btn-sm btn-outline-secondary">‹</a>
             @endif
+
             @if ($laporanList->hasMorePages())
                 <a href="{{ $laporanList->nextPageUrl() }}" class="btn btn-sm btn-outline-secondary">›</a>
             @else
-                <span class="btn btn-sm btn-light disabled" style="pointer-events: none;">›</span>
+                <span class="btn btn-sm btn-light disabled">›</span>
             @endif
         </div>
     </div>

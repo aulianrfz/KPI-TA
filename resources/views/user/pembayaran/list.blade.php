@@ -4,23 +4,25 @@
 
 <div class="container-fluid py-4">
     <div class="row">
+        <!-- Sidebar -->
         <div class="col-md-2 d-none d-md-block bg-light border-end p-3">
             <ul class="nav flex-column mt-4">
                 <li class="nav-item mb-3">
-                    <a href="{{ route('events.list') }}" class="nav-link text-primary">
+                    <a href="{{ route('events.list') }}" class="nav-link text-dark">
                         <i class="bi bi-person-circle me-2"></i> My Categories
                     </a>
                 </li>
                 <li class="nav-item mb-3">
-                    <a href="{{ route('pembayaran.index') }}" class="nav-link text-dark">
+                    <a href="{{ route('pembayaran.index') }}" class="nav-link text-primary">
                         <i class="bi bi-wallet2 me-2"></i> Pembayaran
                     </a>
                 </li>
             </ul>
         </div>
 
+        <!-- Main Content -->
         <div class="col-md-10">
-            <h4 class="fw-bold mb-4"  style="color: #0367A6">Event yang Kamu Ikuti</h4>
+            <h4 class="fw-bold mb-4">Event yang Kamu Ikuti</h4>
             <div class="row">
                 @forelse ($groupedByEvent as $eventId => $pendaftars)
                     @php $event = $pendaftars->first()->mataLomba->kategori->event ?? null; @endphp

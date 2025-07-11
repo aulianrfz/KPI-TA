@@ -8,10 +8,25 @@ use App\Models\MataLomba;
 use App\Models\Pendaftar;
 use App\Models\KategoriLomba;
 use App\Models\Event;
+use Carbon\Carbon;
 
 
 class DashboardUserController extends Controller
 {
+    // public function index(Request $request)
+    // {
+    //     $query = Event::query();
+
+    //     if ($request->has('search') && $request->search != '') {
+    //         $query->where('nama_event', 'like', '%' . $request->search . '%')
+    //             ->orWhere('penyelenggara', 'like', '%' . $request->search . '%');
+    //     }
+
+    //     $events = $query->get();
+
+    //     return view('landing', compact('events'));
+    // }
+
     public function index(Request $request)
     {
         $query = Event::query();
@@ -22,8 +37,9 @@ class DashboardUserController extends Controller
         }
 
         $events = $query->get();
+        $activeEventsForBanner = Event::whereDate('tanggal_akhir', '>=', Carbon::today())->get();
 
-        return view('landing', compact('events'));
+        return view('landing', compact('events', 'activeEventsForBanner'));
     }
 
     public function show($id)

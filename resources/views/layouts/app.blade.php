@@ -175,6 +175,14 @@
                 gap: 0.5rem;
             }
         }
+        .badge {
+        font-size: 0.85rem;
+        padding: 0.4em 0.8em;
+        border-radius: 0.375rem;
+        }
+        .text-success { color: #198754; }
+        .text-danger { color: #dc3545; }
+        .text-muted { color: #6c757d; }
     </style>
 </head>
 

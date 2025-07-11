@@ -20,15 +20,10 @@
         </div>
 
         <div class="col-md-10">
-            <h4 class="fw-bold mb-4">Kategori Lomba Saya</h4>
+            <h4 class="fw-bold mb-4"  style="color: #0367A6">Kategori Lomba Saya</h4>
 
             <div class="card shadow-sm border-0">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                            Filter by
-                        </button>
-                    </div>
 
                     <div class="table-responsive">
                         <table class="table align-middle">
@@ -55,7 +50,7 @@
                                                 </button>
                                                 <ul class="dropdown-menu">
                                                     <li>
-                                                        <a class="dropdown-item" href="#">
+                                                        <a class="dropdown-item" href="{{ route('my-event.detail', $item->id) }}">
                                                             Lihat Detail
                                                         </a>
                                                     </li>

@@ -21,6 +21,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VenueController;
 use App\Http\Controllers\JuriController;
 use App\Http\Middleware\RoleMiddleware;
+use App\Http\Controllers\PengajuanController;
+use App\Http\Controllers\KuisionerController;
+use App\Http\Controllers\SertifikatController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -65,11 +68,20 @@ Route::middleware('auth')->group(function () {
         // dashboard myevent
         Route::get('/my-event', [MyEventController::class, 'index'])->name('events.list');
         Route::get('/my-event/{eventId}/lomba', [MyEventController::class, 'detailEvent'])->name('events.lomba.detail');
+        Route::get('/my-event/detail/{id}', [MyEventController::class, 'showDetail'])->name('my-event.detail');
+        Route::get('/kuisioner/isi/{peserta}', [MyEventController::class, 'isi'])->name('kuisioner.isi');
+        Route::post('/kuisioner/simpan/{peserta}', [MyEventController::class, 'simpan'])->name('kuisioner.simpan');
 
         // pembayaran
         Route::get('/pembayaran', [PembayaranController::class, 'index'])->name('pembayaran.index');
         Route::get('/pembayaran/bayar/{id}', [PembayaranController::class, 'bayar'])->name('pembayaran.bayar');
         Route::post('pembayaran/{id}/upload', [PembayaranController::class, 'uploadBuktiPembayaran'])->name('pembayaran.upload');
+
+        //pengajuan
+        Route::get('/pengajuan', [PengajuanController::class, 'index'])->name('pengajuan.index');
+        Route::get('/pengajuan/create', [PengajuanController::class, 'create'])->name('pengajuan.create');
+        Route::post('/pengajuan', [PengajuanController::class, 'store'])->name('pengajuan.store');
+        Route::get('/pengajuan/retur', function () {return view('user.pengajuan.retur');})->name('pengajuan.retur');
 
     });
 
@@ -86,6 +98,17 @@ Route::middleware('auth')->group(function () {
 
 
         Route::get('/listcrud', [DashboardAdminController::class, 'listCrud'])->name('admin.list.crud');
+
+
+        //kuisioner
+        Route::get('/kuisioner/event', [KuisionerController::class, 'selectEvent'])->name('kuisioner.select-event');
+        Route::get('kuisioner/admin/event/{id}', [KuisionerController::class, 'byEvent'])->name('kuisioner.by-event');
+        Route::get('kuisioner/admin/event/{id}/create', [KuisionerController::class, 'create'])->name('admin.kuisioner.create');
+        Route::post('kuisioner/admin/store', [KuisionerController::class, 'store'])->name('admin.kuisioner.store');
+        Route::get('kuisioner/admin/{id}/edit', [KuisionerController::class, 'edit'])->name('admin.kuisioner.edit');
+        Route::put('kuisioner/admin/{id}', [KuisionerController::class, 'update'])->name('admin.kuisioner.update');
+        Route::delete('kuisioner/admin/{id}', [KuisionerController::class, 'destroy'])->name('admin.kuisioner.destroy');
+
         
         //DASHBOARD ADMIN
         // Pilih event terlebih dahulu
@@ -101,9 +124,17 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/export', [DashboardAdminController::class, 'exportExcel'])->name('admin.export');
 
         //laporan penjualan
-        Route::get('/laporanpenjualan', [LaporanPenjualanController::class, 'index'])->name('admin.laporan.penjualan');
-        Route::get('/laporan-penjualan', [LaporanPenjualanController::class, 'index'])->name('laporan.penjualan');
-        Route::get('/laporan-penjualan/{institusi?}', [LaporanPenjualanController::class, 'detail'])->name('laporan.penjualan.detail');
+        // Route::get('/laporanpenjualan', [LaporanPenjualanController::class, 'index'])->name('admin.laporan.penjualan');
+        // Route::get('/laporan-penjualan', [LaporanPenjualanController::class, 'index'])->name('laporan.penjualan');
+        // Route::get('/laporan-penjualan/{institusi?}', [LaporanPenjualanController::class, 'detail'])->name('laporan.penjualan.detail');
+        // Route::get('/laporan-penjualan/pilih', [LaporanPenjualanController::class, 'pilihEvent'])->name('laporan.penjualan.pilih');
+
+        Route::get('/laporan-penjualan/pilih', [LaporanPenjualanController::class, 'pilihEvent'])->name('laporan.penjualan.pilih');
+Route::get('/laporan-penjualan/event/{event}', [LaporanPenjualanController::class, 'index'])->name('laporan.penjualan');
+Route::get('/laporan-penjualan/event/{event}/detail/{institusi}', [LaporanPenjualanController::class, 'detail'])->name('laporan.penjualan.detail');
+
+        // Route::get('/event/{eventId}', [LaporanPenjualanController::class, 'index'])->name('laporan.penjualan');
+        // Route::get('/event/{eventId}/institusi/{institusi}', [LaporanPenjualanController::class, 'detail'])->name('detail');
 
         //kehairan
         Route::get('/kehadiran/event', [KehadiranController::class, 'event'])->name('kehadiran.event');
@@ -111,6 +142,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/kehadiran/mataLomba/{id}', [KehadiranController::class, 'mataLomba'])->name('kehadiran.mataLomba');
         Route::get('/admin/kehadiran/mata-lomba/{mataLombaId}', [KehadiranController::class, 'index'])->name('kehadiran.mata-lomba');
 
+        //pengajuan
+        Route::get('/pengajuan/admin', [PengajuanController::class, 'adminIndex'])->name('admin.pengajuan.index');
+        Route::put('/admin/pengajuan/{id}/update-status', [PengajuanController::class, 'updateStatus'])->name('admin.pengajuan.update');
+        Route::get('/admin/pengajuan/{id}', [PengajuanController::class, 'show'])->name('admin.pengajuan.show');
 
         // Route::get('/kehadiran', [KehadiranController::class, 'index'])->name('kehadiran.index');
         Route::get('/kehadiran/{id}/qr', [KehadiranController::class, 'showQR'])->name('admin.qr.show');
@@ -124,6 +159,24 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/transaksi', [PembayaranController::class, 'show'])->name('transaksi.index');
         Route::post('/admin/transaksi/bulk-action', [PembayaranController::class, 'bulkAction'])->name('admin.transaksi.bulkAction');
         Route::get('/verifikasi/qr/{id}', [PembayaranController::class, 'showQr'])->name('verifikasi.qr');
+
+        //sertif
+        // Route::get('/sertif', [SertifikatController::class, 'index'])->name('admin.sertifikat.index');
+        // Route::get('sertif/event/{id}', [SertifikatController::class, 'byEvent'])->name('admin.sertifikat.by-event');
+        // Route::post('sertif/upload-template', [SertifikatController::class, 'uploadTemplate'])->name('admin.sertifikat.upload');
+        // Route::post('/admin/sertifikat/update-posisi', [SertifikatController::class, 'updatePosisi'])->name('admin.sertifikat.update-posisi');
+        // Route::get('/admin/sertifikat/event/{id}/atur-posisi', [SertifikatController::class, 'aturPosisi'])->name('admin.sertifikat.atur-posisi');
+        // Route::post('sertif/generate', [SertifikatController::class, 'generate'])->name('admin.sertifikat.generate');
+
+        Route::get('/sertif', [SertifikatController::class, 'pilihEvent'])->name('sertifikat.pilihEvent');
+        Route::get('/sertifikat/{event}/upload', [SertifikatController::class, 'uploadForm'])->name('sertifikat.uploadForm');
+        Route::post('/sertifikat/{event}/upload', [SertifikatController::class, 'uploadTemplate'])->name('sertifikat.upload');
+        Route::get('/sertifikat/{event}/atur', [SertifikatController::class, 'aturPosisi'])->name('sertifikat.atur');
+        Route::post('/sertifikat/{event}/simpan', [SertifikatController::class, 'simpanPosisi'])->name('sertifikat.simpan');
+        Route::get('/sertifikat/generate', [SertifikatController::class, 'index'])->name('sertifikat.index');
+        Route::get('/sertifikat/generate/{event}', [SertifikatController::class, 'pesertaByEvent'])->name('sertifikat.pesertaByEvent');
+        Route::post('/sertifikat/generate/{peserta}', [SertifikatController::class, 'generateSingle'])->name('sertifikat.generateSingle');
+
 
         //jadwal
         Route::get('/jadwal', [PenjadwalanController::class, 'index'])->name('jadwal.index');

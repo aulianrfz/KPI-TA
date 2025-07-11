@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use App\Models\Pendaftar;
+use App\Models\Peserta;
+use App\Models\Kuisioner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -61,4 +63,52 @@ class MyEventController extends Controller
         return view('user.my-event.listcategory', compact('pendaftarList', 'search'));
     }
 
+    public function showDetail($id)
+    {
+        $pendaftar = Pendaftar::with([
+            'mataLomba.kategori.event',
+            'peserta.user',
+            'peserta.tim.peserta.jawabanKuisioner',
+            'peserta.jawabanKuisioner',
+        ])->findOrFail($id);
+
+        $eventId = optional($pendaftar->mataLomba?->kategori?->event)->id;
+
+        $kuisionerCount = $eventId
+            ? Kuisioner::where('event_id', $eventId)->count()
+            : 0;
+
+        return view('user.my-event.detail', compact('pendaftar', 'kuisionerCount'));
+    }
+
+    public function isi($pesertaId)
+    {
+        $peserta = Peserta::with('pendaftar.mataLomba.kategori.event')->findOrFail($pesertaId);
+        $kuisioners = Kuisioner::where('event_id', $peserta->pendaftar->mataLomba->kategori->event_id)->get();
+        
+        $jawabanTersimpan = $peserta->jawabanKuisioner->pluck('jawaban', 'pertanyaan_id');
+
+        return view('user.my-event.kuisioner', compact('peserta', 'kuisioners', 'jawabanTersimpan'));
+    }
+
+
+    public function simpan(Request $request, $pesertaId)
+    {
+        $peserta = Peserta::findOrFail($pesertaId);
+        $kuisioners = Kuisioner::where('event_id', $peserta->pendaftar->mataLomba->kategori->event_id)->get();
+
+        foreach ($kuisioners as $kuisioner) {
+            $jawaban = $request->input("jawaban_{$kuisioner->id}");
+            if ($jawaban) {
+                $peserta->jawabanKuisioner()->updateOrCreate(
+                    ['kuisioner_id' => $kuisioner->id],
+                    ['jawaban' => $jawaban]
+                );
+            }
+        }
+
+        return redirect()->route('events.list')->with('success', 'Kuisioner berhasil disimpan.');
+    }
+
+    
 }

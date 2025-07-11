@@ -23,9 +23,27 @@ use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
 
 class PembayaranController extends Controller
 {
-    public function index()
+    // public function index()
+    // {
+    //     $peserta = Peserta::with(['pendaftar.mataLomba', 'tim'])
+    //         ->where('user_id', Auth::id())
+    //         ->where(function ($query) {
+    //             $query->whereDoesntHave('tim')
+    //                 ->orWhereHas('bergabung', function ($q) {
+    //                     $q->where('posisi', 'Ketua'); 
+    //                 });
+    //         })
+    //         ->paginate(10);
+
+    //     return view('user.pembayaran.index', compact('peserta'));
+    // }
+
+    public function index(Request $request)
     {
-        $peserta = Peserta::with(['pendaftar.mataLomba', 'tim'])
+        $eventId = $request->input('event_id');
+        $search = $request->input('search');
+
+        $peserta = Peserta::with(['pendaftar.mataLomba.kategori.event', 'tim', 'membayar'])
             ->where('user_id', Auth::id())
             ->where(function ($query) {
                 $query->whereDoesntHave('tim')
@@ -33,12 +51,26 @@ class PembayaranController extends Controller
                         $q->where('posisi', 'Ketua'); 
                     });
             })
-            ->paginate(10);
+            ->whereHas('pendaftar', function ($query) use ($eventId, $search) {
+                $query->whereHas('mataLomba', function ($q) use ($eventId, $search) {
+                    if ($eventId) {
+                        $q->whereHas('kategori', function ($k) use ($eventId) {
+                            $k->where('event_id', $eventId);
+                        });
+                    }
 
-        return view('user.pembayaran.index', compact('peserta'));
+                    if ($search) {
+                        $q->where('nama_lomba', 'like', '%' . $search . '%');
+                    }
+                });
+            })
+            ->paginate(10)
+            ->appends($request->only('event_id', 'search'));
+
+        $events = Event::all();
+
+        return view('user.pembayaran.index', compact('peserta', 'events', 'eventId', 'search'));
     }
-
-
     public function bayar($id)
     {
         $peserta = Peserta::with([

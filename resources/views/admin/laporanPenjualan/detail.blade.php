@@ -3,12 +3,13 @@
 @section('content')
 <div class="container py-4">
     <h4 class="fw-bold mb-3">
-        <a href="{{ route('laporan.penjualan') }}" class="btn btn-sm btn-light me-2">&larr;</a> {{ $institusi }}
+        <a href="{{ route('laporan.penjualan', ['event' => $eventId]) }}" class="btn btn-sm btn-light me-2">&larr;</a> 
+        {{ $institusi }}
     </h4>
 
     <div class="card shadow-sm border-0 rounded-4 p-3 mb-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <form method="GET" class="w-50">
+            <form method="GET" action="{{ route('laporan.penjualan.detail', ['event' => $eventId, 'institusi' => urlencode($institusi)]) }}" class="w-50">
                 <div class="input-group">
                     <input type="text" name="search" class="form-control rounded-pill" placeholder="Search for something" value="{{ request('search') }}">
                     <button class="btn btn-primary ms-2 rounded-pill px-4">Search</button>
@@ -26,7 +27,7 @@
                         <th>Kategori</th>
                         <th>Mata Lomba</th>
                         <th>Nama Tim</th>
-                        <th>Action</th>
+                        <!-- <th>Action</th> -->
                     </tr>
                 </thead>
                 <tbody>
@@ -37,11 +38,11 @@
                             <td>{{ $pendaftar->peserta->jenis_peserta ?? '-' }}</td>
                             <td>{{ $pendaftar->mataLomba->kategori->nama_kategori ?? '-' }}</td>
                             <td>{{ $pendaftar->mataLomba->nama_lomba ?? '-' }}</td>
-                            <td>{{ $pendaftar->tim->nama_tim ?? '-' }}</td>
-                            <td>
+                            <td>{{ optional($pendaftar->peserta->bergabung->tim)->nama_tim ?? '-' }}</td>
+                            <!-- <td>
                                 <a href="#" class="btn btn-sm btn-primary"><i class="bi bi-pencil-square"></i></a>
                                 <a href="#" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></a>
-                            </td>
+                            </td> -->
                         </tr>
                     @empty
                         <tr>

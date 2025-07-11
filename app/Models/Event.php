@@ -25,6 +25,11 @@ class Event extends Model
         return $this->hasMany(KategoriLomba::class);
     }
 
+    public function sertifikatTemplate()
+    {
+        return $this->hasOne(SertifikatTemplate::class);
+    }
+
     // public function jadwal()
     // {
     //     return $this->hasMany(Jadwal::class, 'event_id');

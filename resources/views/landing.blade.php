@@ -6,15 +6,19 @@
     <div class="card shadow-sm rounded-4 overflow-hidden">
         <div id="bannerCarousel" class="carousel slide" data-aos="fade-up" data-bs-ride="carousel" data-bs-interval="2000">
             <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <img src="{{ asset('images/banner1.jpeg') }}" class="d-block w-100" style="height: 300px; object-fit: cover;" alt="Banner 1">
-                </div>
-                <div class="carousel-item">
-                    <img src="{{ asset('images/banner2.jpeg') }}" class="d-block w-100" style="height: 300px; object-fit: cover;" alt="Banner 2">
-                </div>
-                <div class="carousel-item">
-                    <img src="{{ asset('images/banner3.jpeg') }}" class="d-block w-100" style="height: 300px; object-fit: cover;" alt="Banner 3">
-                </div>
+                @forelse($activeEventsForBanner as $index => $event)
+                    <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+                        <img src="{{ asset('storage/' . $event->foto) }}" class="d-block w-100" style="height: 300px; object-fit: cover;" alt="{{ $event->nama_event }}">
+                    </div>
+                @empty
+                    <div class="carousel-item active">
+                        <img src="{{ asset('images/default-banner.jpeg') }}" class="d-block w-100" style="height: 300px; object-fit: cover;" alt="Default Banner">
+                        <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded-3 p-2">
+                            <h5>Tidak ada event aktif</h5>
+                            <p class="mb-0 small">Silakan cek kembali nanti.</p>
+                        </div>
+                    </div>
+                @endforelse
             </div>
         </div>
     </div>

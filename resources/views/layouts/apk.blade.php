@@ -292,6 +292,7 @@
             display: flex;
             align-items: center;
         }
+
     </style>
 </head>
 
@@ -316,7 +317,7 @@
                 <li class="nav-item mb-2"><a href="/kehadiran/event"
                         class="nav-link {{ request()->is('kehadiran/event*') ? 'active' : '' }}"><i
                             class="bi bi-clipboard-check-fill"></i><span>Daftar Hadir</span></a></li>
-                <li class="nav-item mb-2"><a href="/laporanpenjualan" class="nav-link {{ request()->is('laporanpenjualan*') ? 'active' : '' }}"><i class="bi bi-bar-chart-line-fill"></i><span>Laporan Penjualan</span></a></li>
+                <li class="nav-item mb-2"><a href="/laporan-penjualan/pilih" class="nav-link {{ request()->is('laporan-penjualan/pilih*') ? 'active' : '' }}"><i class="bi bi-bar-chart-line-fill"></i><span>Laporan Penjualan</span></a></li>
                 <li class="nav-item mb-2"><a href="{{ url('/listcrud') }}"
                         class="nav-link {{ request()->is('listcrud*') ? 'active' : '' }}"><i
                             class="bi bi-tags-fill"></i><span>CRUD</span></a></li>
@@ -327,7 +328,7 @@
                         <span>Penjadwalan</span>
                     </a>
                 </li>
-                <li class="nav-item mb-2"><a href="#" class="nav-link {{ request()->is('kuisioner*') ? 'active' : '' }}"><i class="bi bi-ui-checks-grid"></i><span>Kuisioner</span></a></li>
+                <li class="nav-item mb-2"><a href="/kuisioner/event" class="nav-link {{ request()->is('kuisioner/event*') ? 'active' : '' }}"><i class="bi bi-ui-checks-grid"></i><span>Kuisioner</span></a></li>
                 <li class="nav-item mb-2">
                     <a href="{{ route('juri.index') }}"
                         class="nav-link {{ request()->routeIs('juri.index') || request()->routeIs('juri.create') || request()->routeIs('juri.edit') ? 'active' : '' }}">
@@ -340,8 +341,8 @@
                         <i class="bi bi-geo-alt-fill"></i> <span>Venue</span>
                     </a>
                 </li>
-                <li class="nav-item mb-2"><a href="#" class="nav-link {{ request()->is('sertifikat*') ? 'active' : '' }}"><i class="bi bi-award-fill"></i><span>Sertifikat</span></a></li>
-                <li class="nav-item mb-2"><a href="#" class="nav-link {{ request()->is('pengajuan*') ? 'active' : '' }}"><i class="bi bi-box-arrow-in-up"></i><span>Pengajuan</span></a></li>
+                <li class="nav-item mb-2"><a href="/sertif" class="nav-link {{ request()->is('sertif*') ? 'active' : '' }}"><i class="bi bi-award-fill"></i><span>Sertifikat</span></a></li>
+                <li class="nav-item mb-2"><a href="/pengajuan/admin" class="nav-link {{ request()->is('pengajuan*') ? 'active' : '' }}"><i class="bi bi-box-arrow-in-up"></i><span>Pengajuan</span></a></li>
             </ul>
         </aside>
 
