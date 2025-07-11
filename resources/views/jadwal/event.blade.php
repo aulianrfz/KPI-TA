@@ -5,12 +5,12 @@
 
     <div class="container mt-5">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="fw-bold" data-aos="zoom-in" style="color: #0367A6;">Daftar Events</h4>
+            <h4 class="fw-bold" data-aos="zoom-in" style="color: #0367A6;">Daftar Events Jadwal</h4>
         </div>
         <div class="row">
             @foreach($events ?? [] as $event)
                 <div class="col-md-4 mb-4" data-aos="zoom-in-down" data-aos-delay="100">
-                    <a href="{{ route('jadwal.index', $event->id) }}">
+                    <a href="{{ route('jadwal.index', ['event' => $event->id]) }}">
                         <div class="card shadow-sm h-100 hover-shadow">
                             <img src="{{ $event->foto ? asset('storage/' . $event->foto) : asset('images/event.jpeg') }}"
                                 class="card-img-top" style="height: 180px; object-fit: cover;" alt="Event Image">

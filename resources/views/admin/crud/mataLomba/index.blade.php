@@ -38,6 +38,7 @@
                         <th>No</th>
                         <th>Nama Kategori</th>
                         <th>Nama Lomba</th>
+                        <th>Jurusan</th>
                         <th>Min Peserta</th>
                         <th>Maks Peserta</th>
                         <th>Maks Total</th>
@@ -53,6 +54,7 @@
                             <td>{{ $mataLombas->firstItem() + $index }}</td>
                             <td>{{ $mataLomba->kategori->nama_kategori ?? '-' }}</td>
                             <td>{{ $mataLomba->nama_lomba }}</td>
+                            <td>{{ $mataLomba->jurusan }}</td>
                             <td>{{ $mataLomba->min_peserta }}</td>
                             <td>{{ $mataLomba->maks_peserta }}</td>
                             <td>{{ $mataLomba->maks_total_peserta }}</td>

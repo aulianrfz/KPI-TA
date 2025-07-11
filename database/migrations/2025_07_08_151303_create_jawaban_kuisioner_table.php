@@ -22,6 +22,8 @@ return new class extends Migration
             $table->foreign('peserta_id')->references('id')->on('peserta')->onDelete('cascade');
             $table->foreign('kuisioner_id')->references('id')->on('kuisioner')->onDelete('cascade');
 
+            $table->unique(['peserta_id', 'kuisioner_id']);
+
         });
     }
 

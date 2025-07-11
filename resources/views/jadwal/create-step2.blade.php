@@ -230,95 +230,109 @@
 
         <h3 class="mb-3" style="font-size: 1.25rem; font-weight: 500;">Data yang diperlukan</h3>
 
-        <form action="{{ route('jadwal.create.step3') }}" method="POST">
-            @csrf
+       <form action="{{ route('jadwal.create.step3') }}" method="POST">
+    @csrf
 
-            @php
-                $isVenueAvailable = \App\Models\Venue::count() > 0;
-                $isMataLombaAvailable = \App\Models\MataLomba::count() > 0;
-                $isPesertaAvailable = \App\Models\Peserta::count() > 0;
-                $allDataAvailable = $isVenueAvailable && $isMataLombaAvailable && $isPesertaAvailable;
-            @endphp
+    @php
+        $eventId = session('jadwal_event_id');
 
-            {{-- Data Peserta --}}
-            <div class="data-item-row" data-target-dropdown="peserta-dropdown-content">
-                <span class="data-item-label">Data Peserta</span>
-                <div class="data-item-status">
-                    <div class="data-item-checkbox {{ $isPesertaAvailable ? '' : 'missing' }}">
-                        {!! $isPesertaAvailable ? '&#10003;' : '&#10007;' !!}
-                    </div>
-                    <span class="data-item-chevron">&rsaquo;</span>
-                </div>
-            </div>
-            <div id="peserta-dropdown-content" class="dropdown-content" style="display: none;">
-                @if($isPesertaAvailable)
-                    <label for="peserta" class="form-label visually-hidden">Pilih Peserta</label> {{-- Visually hidden label for accessibility --}}
-                    <select name="peserta" id="peserta" class="form-control">
-                        @foreach(\App\Models\Peserta::all() as $peserta)
-                            <option value="{{ $peserta->id }}">{{ $peserta->nama }} ({{ $peserta->nim }})</option>
-                        @endforeach
-                    </select>
-                @else
-                    <p class="text-muted mb-0">✘ Data peserta belum tersedia. Silakan tambahkan terlebih dahulu.</p>
-                @endif
-            </div>
+        $pesertaEvent = \App\Models\Peserta::whereHas('pendaftar.mataLomba.kategori', function ($q) use ($eventId) {
+            $q->where('event_id', $eventId);
+        })->get();
 
-            {{-- Data Lomba --}}
-            <div class="data-item-row" data-target-dropdown="lomba-dropdown-content">
-                <span class="data-item-label">Data Lomba</span>
-                <div class="data-item-status">
-                    <div class="data-item-checkbox {{ $isMataLombaAvailable ? '' : 'missing' }}">
-                        {!! $isMataLombaAvailable ? '&#10003;' : '&#10007;' !!}
-                    </div>
-                    <span class="data-item-chevron">&rsaquo;</span>
-                </div>
-            </div>
-            <div id="lomba-dropdown-content" class="dropdown-content" style="display: none;">
-                @if($isMataLombaAvailable)
-                    <label for="kategori_lomba" class="form-label visually-hidden">Pilih Kategori Lomba</label>
-                    <select name="kategori_lomba" id="kategori_lomba" class="form-control">
-                        @foreach(\App\Models\MataLomba::all() as $kategori)
-                            <option value="{{ $kategori->id }}">{{ $kategori->nama_lomba }}</option>
-                        @endforeach
-                    </select>
-                @else
-                    <p class="text-muted mb-0">✘ Data kategori lomba belum tersedia. Silakan tambahkan terlebih dahulu.</p>
-                @endif
-            </div>
+        $mataLombaEvent = \App\Models\MataLomba::whereHas('kategori', function ($q) use ($eventId) {
+            $q->where('event_id', $eventId);
+        })->get();
 
-            {{-- Data Venue --}}
-            <div class="data-item-row" data-target-dropdown="venue-dropdown-content">
-                <span class="data-item-label">Data Venue</span>
-                <div class="data-item-status">
-                    <div class="data-item-checkbox {{ $isVenueAvailable ? '' : 'missing' }}">
-                        {!! $isVenueAvailable ? '&#10003;' : '&#10007;' !!}
-                    </div>
-                    <span class="data-item-chevron">&rsaquo;</span>
-                </div>
-            </div>
-            <div id="venue-dropdown-content" class="dropdown-content" style="display: none;">
-                @if($isVenueAvailable)
-                    <label for="venue" class="form-label visually-hidden">Pilih Venue</label>
-                    <select name="venue" id="venue" class="form-control">
-                        @foreach(\App\Models\Venue::all() as $venue)
-                            <option value="{{ $venue->id }}">{{ $venue->name }}</option>
-                        @endforeach
-                    </select>
-                @else
-                    <p class="text-muted mb-0">✘ Data venue belum tersedia. Silakan tambahkan terlebih dahulu.</p>
-                @endif
-            </div>
-            
-            <div class="form-actions">
-                <button type="submit" class="btn btn-custom-primary" {{ !$allDataAvailable ? 'disabled' : '' }}>
-                    Next
-                </button>
-            </div>
+        $venueList = \App\Models\Venue::all();
 
-            @if(!$allDataAvailable)
-                <p class="text-danger mt-3 text-center">Lengkapi semua data sebelum melanjutkan ke penjadwalan.</p>
-            @endif
-        </form>
+        $isPesertaAvailable = $pesertaEvent->count() > 0;
+        $isMataLombaAvailable = $mataLombaEvent->count() > 0;
+        $isVenueAvailable = $venueList->count() > 0;
+
+        $allDataAvailable = $isPesertaAvailable && $isMataLombaAvailable && $isVenueAvailable;
+    @endphp
+
+    {{-- Data Peserta --}}
+    <div class="data-item-row" data-target-dropdown="peserta-dropdown-content">
+        <span class="data-item-label">Data Peserta</span>
+        <div class="data-item-status">
+            <div class="data-item-checkbox {{ $isPesertaAvailable ? '' : 'missing' }}">
+                {!! $isPesertaAvailable ? '&#10003;' : '&#10007;' !!}
+            </div>
+            <span class="data-item-chevron">&rsaquo;</span>
+        </div>
+    </div>
+    <div id="peserta-dropdown-content" class="dropdown-content" style="display: none;">
+        @if($isPesertaAvailable)
+            <label for="peserta" class="form-label visually-hidden">Pilih Peserta</label>
+            <select name="peserta" id="peserta" class="form-control">
+                @foreach($pesertaEvent as $peserta)
+                    <option value="{{ $peserta->id }}">{{ $peserta->nama }} ({{ $peserta->nim }})</option>
+                @endforeach
+            </select>
+        @else
+            <p class="text-muted mb-0">✘ Data peserta belum tersedia. Silakan tambahkan terlebih dahulu.</p>
+        @endif
+    </div>
+
+    {{-- Data Lomba --}}
+    <div class="data-item-row" data-target-dropdown="lomba-dropdown-content">
+        <span class="data-item-label">Data Lomba</span>
+        <div class="data-item-status">
+            <div class="data-item-checkbox {{ $isMataLombaAvailable ? '' : 'missing' }}">
+                {!! $isMataLombaAvailable ? '&#10003;' : '&#10007;' !!}
+            </div>
+            <span class="data-item-chevron">&rsaquo;</span>
+        </div>
+    </div>
+    <div id="lomba-dropdown-content" class="dropdown-content" style="display: none;">
+        @if($isMataLombaAvailable)
+            <label for="kategori_lomba" class="form-label visually-hidden">Pilih Kategori Lomba</label>
+            <select name="kategori_lomba" id="kategori_lomba" class="form-control">
+                @foreach($mataLombaEvent as $kategori)
+                    <option value="{{ $kategori->id }}">{{ $kategori->nama_lomba }}</option>
+                @endforeach
+            </select>
+        @else
+            <p class="text-muted mb-0">✘ Data kategori lomba belum tersedia. Silakan tambahkan terlebih dahulu.</p>
+        @endif
+    </div>
+
+    {{-- Data Venue --}}
+    <div class="data-item-row" data-target-dropdown="venue-dropdown-content">
+        <span class="data-item-label">Data Venue</span>
+        <div class="data-item-status">
+            <div class="data-item-checkbox {{ $isVenueAvailable ? '' : 'missing' }}">
+                {!! $isVenueAvailable ? '&#10003;' : '&#10007;' !!}
+            </div>
+            <span class="data-item-chevron">&rsaquo;</span>
+        </div>
+    </div>
+    <div id="venue-dropdown-content" class="dropdown-content" style="display: none;">
+        @if($isVenueAvailable)
+            <label for="venue" class="form-label visually-hidden">Pilih Venue</label>
+            <select name="venue" id="venue" class="form-control">
+                @foreach($venueList as $venue)
+                    <option value="{{ $venue->id }}">{{ $venue->name }}</option>
+                @endforeach
+            </select>
+        @else
+            <p class="text-muted mb-0">✘ Data venue belum tersedia. Silakan tambahkan terlebih dahulu.</p>
+        @endif
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-custom-primary" {{ !$allDataAvailable ? 'disabled' : '' }}>
+            Next
+        </button>
+    </div>
+
+    @if(!$allDataAvailable)
+        <p class="text-danger mt-3 text-center">Lengkapi semua data sebelum melanjutkan ke penjadwalan.</p>
+    @endif
+</form>
+
     </div>
 </div>
 
