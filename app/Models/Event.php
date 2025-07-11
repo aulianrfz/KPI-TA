@@ -18,6 +18,7 @@ class Event extends Model
         'tanggal',
         'tanggal_akhir',
         'foto',
+        'biaya'
     ];
 
     public function kategori()

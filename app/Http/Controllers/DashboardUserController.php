@@ -39,6 +39,8 @@ class DashboardUserController extends Controller
         $events = $query->get();
         $activeEventsForBanner = Event::whereDate('tanggal_akhir', '>=', Carbon::today())->get();
 
+        // dd( $activeEventsForBanner);
+
         return view('landing', compact('events', 'activeEventsForBanner'));
     }
 

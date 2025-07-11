@@ -11,6 +11,15 @@ use App\Models\Event;
 use App\Models\Institusi;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use App\Mail\QrCodeMail;
+use Illuminate\Support\Facades\Mail;
+use SimpleSoftwareIO\QrCode\Generator;
+use BaconQrCode\Renderer\Image\Png;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\Writer\PngWriter;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class PembimbingController extends Controller
 {
@@ -36,17 +45,16 @@ class PembimbingController extends Controller
             'visum' => 'nullable|file|mimes:pdf,jpg,png',
         ]);
 
-        // upload file
+        $event = Event::findOrFail($request->event_id);
+
         $suratTugasPath = null;
         if ($request->hasFile('surat_tugas')) {
             $suratTugasPath = $request->file('surat_tugas')->store('surat_tugas', 'public');
-            Log::debug('Surat tugas berhasil diupload', ['path' => $suratTugasPath]);
         }
 
         $visumPath = null;
         if ($request->hasFile('visum')) {
             $visumPath = $request->file('visum')->store('visum', 'public');
-            Log::debug('Visum berhasil diupload', ['path' => $visumPath]);
         }
 
         $pembimbing = Pembimbing::create([
@@ -60,35 +68,63 @@ class PembimbingController extends Controller
             'url_surat_tugas' => $suratTugasPath,
             'url_visum' => $visumPath,
         ]);
-        Log::debug('Data pembimbing berhasil disimpan', $pembimbing->toArray());
 
         $pendaftar = PendaftarPembimbing::create([
-            'event_id' => $request->event_id,
+            'event_id' => $event->id,
             'pembimbing_id' => $pembimbing->id,
             'url_qrCode' => null,
             'status_kehadiran' => null,
             'tanggal_kehadiran' => null,
         ]);
-        Log::debug('Data pendaftar pembimbing berhasil disimpan', $pendaftar->toArray());
 
-        // Buat invoice dan entri pembayaran default
-        $invoice = Invoice::create([
-            'total_tagihan' => 50000, // lo bisa ambil dari config atau event jika dinamis
-        ]);
+        // Generate QR
+        $encryptedId = encrypt('pembimbing_' . $pendaftar->id);
+        $qrContent = route('verifikasi.qr', ['id' => $encryptedId]);
 
-        PembayaranPembimbing::create([
-            'pembimbing_id' => $pembimbing->id,
-            'invoice_id' => $invoice->id,
-            'bukti_pembayaran' => null,
-            'status' => null,
-            'waktu' => now(),
-        ]);
-        Log::debug('Invoice dan pembayaran pembimbing berhasil dibuat', [
-            'invoice_id' => $invoice->id,
-            'pembimbing_id' => $pembimbing->id,
-        ]);
+        $result = Builder::create()
+            ->writer(new PngWriter())
+            ->data($qrContent)
+            ->encoding(new Encoding('UTF-8'))
+            ->size(300)
+            ->margin(10)
+            ->build();
 
-        return redirect()->route('dashboard')->with('success', 'Pendaftaran pembimbing berhasil!');
+        $eventName = Str::slug($event->nama_event ?? 'event', '_');
+        $filename = 'qr_codes/pembimbing_' . $pembimbing->id . '_' . $eventName . '.png';
+        Storage::disk('public')->put($filename, $result->getString());
+        $qrRelativePath = 'storage/' . $filename;
+        $qrPath = storage_path('app/public/' . $filename);
+
+        $pendaftar->update(['url_qrCode' => $qrRelativePath]);
+
+        if ($event->biaya > 0) {
+            // Buat invoice dan pembayaran
+            $invoice = Invoice::create([
+                'total_tagihan' => $event->biaya,
+            ]);
+
+            PembayaranPembimbing::create([
+                'pembimbing_id' => $pembimbing->id,
+                'invoice_id' => $invoice->id,
+                'bukti_pembayaran' => null,
+                'status' => null,
+                'waktu' => now(),
+            ]);
+            Log::debug('Invoice dan pembayaran pembimbing berhasil dibuat');
+        } else {
+            // langsung kirim email QR
+            Mail::to($pembimbing->email)->send(new QrCodeMail(
+                $pembimbing->nama_lengkap,
+                $event->nama_event,
+                null,
+                $qrPath
+            ));
+            Log::debug('Email QR pembimbing berhasil dikirim tanpa invoice karena event gratis');
+        }
+
+        
+
+        return view('user.pendaftaran.berhasil')->with('success', 'Pendaftaran berhasil!');
     }
 
 

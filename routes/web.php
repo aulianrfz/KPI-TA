@@ -45,6 +45,15 @@ Route::middleware('guest')->group(function () {
 
     Route::get('/register/admin', [AuthController::class, 'showAdminRegisterForm'])->name('register.admin.form');
     Route::post('/register/admin', [AuthController::class, 'registerAdmin'])->name('register.admin');
+
+    // forgot
+    Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
+    Route::post('/forgot-password', [AuthController::class, 'handleForgotPassword'])->name('password.email');
+
+    Route::get('/reset-password/{token}', [AuthController::class, 'showResetPasswordForm'])->name('password.reset.form');
+    Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.reset');
+
+
 });
 
 //profile
@@ -71,7 +80,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/pendaftaran/{id_mataLomba}', [PendaftaranController::class, 'showForm'])->name('pendaftaran.form');
         Route::post('/pendaftaran/store', [PendaftaranController::class, 'store'])->name('pendaftaran.store');
 
-         // dashboard myevent
+        // dashboard myevent
         Route::get('/my-event', [MyEventController::class, 'index'])->name('events.list');
         Route::get('/my-event/{eventId}/lomba', [MyEventController::class, 'detailEvent'])->name('events.lomba.detail');
         Route::get('/my-event/detail/{id}', [MyEventController::class, 'showDetail'])->name('my-event.detail');
@@ -90,12 +99,14 @@ Route::middleware('auth')->group(function () {
         //pembimbing
         Route::get('/pembimbing/daftar/{event}', [PembimbingController::class, 'create'])->name('pembimbing.create');
         Route::post('/pembimbing/daftar', [PembimbingController::class, 'store'])->name('pembimbing.store');
-        
+
         //pengajuan
         Route::get('/pengajuan', [PengajuanController::class, 'index'])->name('pengajuan.index');
         Route::get('/pengajuan/create', [PengajuanController::class, 'create'])->name('pengajuan.create');
         Route::post('/pengajuan', [PengajuanController::class, 'store'])->name('pengajuan.store');
-        Route::get('/pengajuan/retur', function () {return view('user.pengajuan.retur');})->name('pengajuan.retur');
+        Route::get('/pengajuan/retur', function () {
+            return view('user.pengajuan.retur');
+        })->name('pengajuan.retur');
 
 
     });
@@ -114,7 +125,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/listcrud', [DashboardAdminController::class, 'listCrud'])->name('admin.list.crud');
 
-         //kuisioner
+        //kuisioner
         Route::get('/kuisioner/event', [KuisionerController::class, 'selectEvent'])->name('kuisioner.select-event');
         Route::get('kuisioner/admin/event/{id}', [KuisionerController::class, 'byEvent'])->name('kuisioner.by-event');
         Route::get('kuisioner/admin/event/{id}/create', [KuisionerController::class, 'create'])->name('admin.kuisioner.create');
@@ -123,7 +134,7 @@ Route::middleware('auth')->group(function () {
         Route::put('kuisioner/admin/{id}', [KuisionerController::class, 'update'])->name('admin.kuisioner.update');
         Route::delete('kuisioner/admin/{id}', [KuisionerController::class, 'destroy'])->name('admin.kuisioner.destroy');
 
-        
+
         //sertif
         // Route::get('/sertif', [SertifikatController::class, 'index'])->name('admin.sertifikat.index');
         // Route::get('sertif/event/{id}', [SertifikatController::class, 'byEvent'])->name('admin.sertifikat.by-event');
@@ -141,7 +152,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/sertifikat/generate/{event}', [SertifikatController::class, 'pesertaByEvent'])->name('sertifikat.pesertaByEvent');
         Route::post('/sertifikat/generate/{peserta}', [SertifikatController::class, 'generateSingle'])->name('sertifikat.generateSingle');
 
-        
+
         //DASHBOARD ADMIN
         // Pilih event terlebih dahulu
         Route::get('/admin/dashboard', [DashboardAdminController::class, 'listEvents'])->name('dashboard.index');

@@ -286,6 +286,21 @@
                                     name="nama_pengirim"></div>
                             <div class="mb-4"><label for="catatan" class="form-label">Catatan (Opsional)</label><textarea
                                     class="form-control" id="catatan" name="catatan" rows="2"></textarea></div>
+                            <label for="bukti" class="form-label fw-semibold">Ceklis jika diperlukan</label>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="kwitansi_individu"
+                                    id="kwitansi_individu" value="1">
+                                <label class="form-check-label" for="kwitansi_individu">
+                                    Butuh Kwitansi per Individu
+                                </label>
+                            </div>
+                            <div class="form-check mb-4">
+                                <input class="form-check-input" type="checkbox" name="kwitansi_cap_basah"
+                                    id="kwitansi_cap_basah" value="1">
+                                <label class="form-check-label" for="kwitansi_cap_basah">
+                                    Butuh Kwitansi Dengan Cap dan Tanda Tangan Basah
+                                </label>
+                            </div>
                         </div>
                         <div class="text-center"><button type="submit" class="btn btn-success px-4">Submit</button></div>
                     </form>
