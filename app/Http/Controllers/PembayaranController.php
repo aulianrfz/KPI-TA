@@ -178,6 +178,9 @@ class PembayaranController extends Controller
             'bukti' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
 
+        $kwitansiIndividu = $request->has('kwitansi_individu');
+        $kwitansiCapBasah = $request->has('kwitansi_cap_basah');
+
         $file = $request->file('bukti');
         $filePath = $file->store('bukti_pembayaran', 'public');
 
@@ -210,6 +213,8 @@ class PembayaranController extends Controller
                     'bukti_pembayaran' => $filePath,
                     'status' => 'Menunggu Verifikasi',
                     'waktu' => now(),
+                    'kwitansi_individu' => $kwitansiIndividu,
+                    'kwitansi_cap_basah' => $kwitansiCapBasah,
                 ]
             );
 
@@ -235,6 +240,8 @@ class PembayaranController extends Controller
                     'bukti_pembayaran' => $filePath,
                     'status' => 'Menunggu Verifikasi',
                     'waktu' => now(),
+                    'kwitansi_individu' => $kwitansiIndividu,
+                    'kwitansi_cap_basah' => $kwitansiCapBasah,
                 ]
             );
         } else {
@@ -338,7 +345,7 @@ class PembayaranController extends Controller
     }
 
 
-    
+
     // public function show(Request $request)
     // {
     //     $query = Membayar::with(['peserta.pendaftar.mataLomba', 'invoice', 'mataLomba'])

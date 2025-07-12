@@ -17,6 +17,8 @@ class PembayaranPembimbing extends Model
         'bukti_pembayaran',
         'status',
         'waktu',
+        'kwitansi_individu',
+        'kwitansi_cap_basah',
     ];
 
     public function pembimbing()

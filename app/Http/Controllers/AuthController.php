@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Admin;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ResetPasswordLinkMail;
 
 class AuthController extends Controller
 {
@@ -101,6 +104,62 @@ class AuthController extends Controller
         return redirect()->route('login');
     }
 
+    public function showForgotPasswordForm()
+    {
+        return view('auth.forgot-password');
+    }
+
+    public function handleForgotPassword(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return back()->withErrors(['email' => 'Email tidak ditemukan dalam.']);
+        }
+
+        $token = Str::random(64);
+        $user->update(['reset_token' => $token]);
+
+        $link = route('password.reset.form', ['token' => $token]);
+
+        Mail::to($user->email)->send(new ResetPasswordLinkMail($user->first_name, $link));
+
+        return redirect()->route('login')->with('success', 'Link reset password telah dikirim ke email Anda.');
+    }
+
+    public function showResetPasswordForm($token)
+    {
+        $user = User::where('reset_token', $token)->first();
+
+        if (!$user) {
+            return redirect()->route('login')->withErrors(['token' => 'Token tidak valid atau sudah kadaluarsa. Silahkan lakukan reset password kembali!']);
+        }
+
+        return view('auth.reset-password', ['token' => $token]);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'password' => 'required|min:6|confirmed',
+        ]);
+
+        $user = User::where('reset_token', $request->token)->first();
+
+        if (!$user) {
+            return redirect()->route('login')->withErrors(['token' => 'Token tidak valid.']);
+        }
+
+        $user->update([
+            'password' => bcrypt($request->password),
+            'reset_token' => null,
+        ]);
+
+        return redirect()->route('login')->with('success', 'Password berhasil direset. Silakan login.');
+    }
 
     // Admin
     public function showAdminRegisterForm()
