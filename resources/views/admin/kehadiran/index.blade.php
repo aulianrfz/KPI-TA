@@ -3,7 +3,6 @@
 @section('title', 'Dashboard Kehadiran')
 
 @section('content')
-<div class="container mt-5">
     <div class="row g-3 mb-4">
         <div class="col-12 col-md-4">
             <div class="card rounded-4 h-100 shadow-sm">
@@ -40,7 +39,6 @@
         </div>
     </div>
 
-    <div class="container mt-5">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-2">
         <form method="GET" action="{{ route('kehadiran.mata-lomba', $mataLombaId) }}" class="w-100 w-md-auto">
             <div class="input-group" style="max-width: 400px;">
@@ -145,6 +143,4 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
 @endsection

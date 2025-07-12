@@ -1,7 +1,6 @@
 @extends('layouts.apk')
 
 @section('content')
-<div class="container py-4">
 
     <div class="d-flex align-items-center mb-3">
         <a href="{{ route('dashboard.by-event', $event->id) }}" class="btn btn-outline-primary me-2">
@@ -61,5 +60,4 @@
             </div>
         </div>
     </div>
-</div>
 @endsection

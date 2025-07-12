@@ -3,7 +3,6 @@
 @section('title', 'Pilih Pendaftar')
 
 @section('content')
-<div class="container py-4">
     <h4 class="fw-bold mb-4" style="color: #0367A6;">
         Pilih Jenis Pendaftar untuk Event: <span class="text">{{ $eventData->nama_event }}</span>
     </h4>
@@ -36,5 +35,4 @@
             </div>
         </div>
     </div>
-</div>
 @endsection

@@ -2,7 +2,6 @@
 
 @section('content')
 
-<div class="container mt-5">
     <div class="d-flex align-items-center mb-4">
         <a href="{{ route('kehadiran.kategori',1) }}" class="btn btn-outline-primary me-2">
             <i class="bi bi-arrow-left"></i>
@@ -12,7 +11,7 @@
 
     <div class="row">
         <div class="col-md-9 mx-auto">
-            <div class="row justify-content-center">
+            <div class="row justify-content">
                 @forelse ($events as $event)
                     <div class="col-md-4 mb-4 d-flex">
                         <div class="card border-0 shadow-sm h-100 w-100">
@@ -32,7 +31,6 @@
             </div>
         </div>
     </div>
-</div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

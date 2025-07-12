@@ -1,6 +1,5 @@
 @extends('layouts.apk')
 @section('content')
-<div class="container my-5">
     <h3 class="fw-bold mb-4">Upload Template Sertifikat - {{ $event->nama_event }}</h3>
 
     <form method="POST" action="{{ route('sertifikat.upload', $event->id) }}" enctype="multipart/form-data">
@@ -11,5 +10,4 @@
         </div>
         <button type="submit" class="btn btn-primary">Upload</button>
     </form>
-</div>
 @endsection

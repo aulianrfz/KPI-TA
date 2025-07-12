@@ -9,6 +9,7 @@ use App\Models\Pendaftar;
 use App\Models\Event;
 use App\Models\MataLomba;
 use App\Models\Tim;
+use App\Models\Bergabung;
 use App\Models\PendaftarPembimbing;
 use App\Models\Pembimbing;
 use App\Models\PendaftarSupporter;
@@ -147,6 +148,47 @@ class KelolaPendaftarController extends Controller
         return redirect()->route('admin.pendaftaran.peserta', $eventId)->with('success', 'Peserta berhasil diperbarui.');
     }
 
+    public function hapusPeserta($id)
+    {
+        $peserta = Peserta::findOrFail($id);
+        $bergabung = Bergabung::where('peserta_id', $id)->first();
+
+        if ($bergabung) {
+            $posisi = $bergabung->posisi;
+            $timId = $bergabung->tim_id;
+
+            if ($posisi === 'Ketua') {
+                $anggotaTim = Bergabung::where('tim_id', $timId)->pluck('peserta_id');
+
+                foreach ($anggotaTim as $pesertaTimId) {
+                    Peserta::find($pesertaTimId)?->delete();
+                }
+                Bergabung::where('tim_id', $timId)->delete();
+
+                return back()->with('success', 'Ketua dan seluruh anggota tim berhasil dihapus.');
+            } else {
+                $pendaftar = Pendaftar::where('peserta_id', $id)->first();
+                $mataLomba = $pendaftar?->mataLomba;
+                $minPeserta = $mataLomba?->min_peserta ?? 1;
+
+                $jumlahTim = Bergabung::where('tim_id', $timId)->count();
+
+                if ($jumlahTim - 1 < $minPeserta) {
+                    return back()->with('error', 'Tidak bisa menghapus. Tim akan kurang dari jumlah minimum peserta: ' . $minPeserta);
+                }
+
+                $bergabung->delete();
+                $peserta->delete();
+
+                return back()->with('success', 'Peserta berhasil dihapus.');
+            }
+        }
+
+        $peserta->delete();
+
+        return back()->with('success', 'Peserta berhasil dihapus.');
+    }
+
     public function editPembimbing($id)
     {
         $pendaftaran = PendaftarPembimbing::with('pembimbing')->findOrFail($id);
@@ -171,8 +213,12 @@ class KelolaPendaftarController extends Controller
             'nama_lengkap', 'nip', 'instansi', 'jabatan', 'no_hp', 'email'
         ]));
 
-        return back()->with('success', 'Data pembimbing berhasil diperbarui.');
+        $eventId = $pembimbing->pendaftaran()->first()?->event_id;
+
+        return redirect()->route('admin.pendaftaran.pendamping', $eventId)
+            ->with('success', 'Data pembimbing berhasil diperbarui.');
     }
+
 
     public function editSupporter($id)
     {
@@ -196,8 +242,12 @@ class KelolaPendaftarController extends Controller
             'nama', 'email', 'instansi', 'no_hp'
         ]));
 
-        return back()->with('success', 'Data supporter berhasil diperbarui.');
+        $eventId = $supporter->pendaftaran()->first()?->event_id;
+
+        return redirect()->route('admin.pendaftaran.supporter', $eventId)
+            ->with('success', 'Data supporter berhasil diperbarui.');
     }
+
 
     public function destroyPembimbing($id)
     {

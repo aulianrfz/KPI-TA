@@ -1,7 +1,6 @@
 @extends('layouts.apk')
 
 @section('content')
-<div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h4 class="fw-bold" data-aos="zoom-in" style="color: #0367A6;">Pilih Event untuk Lihat Peserta</h4>
     </div>
@@ -24,7 +23,6 @@
             </div>
         @endforeach
     </div>
-</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
 <script>

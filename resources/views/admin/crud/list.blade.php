@@ -2,10 +2,8 @@
 
 @section('content')
 
-    <div class="container py-5">
         <h2 class="fw-bold mb-4 text-primary">Manajemen Data</h2>
 
-        <div class="d-flex justify-content-center">
             <div class="row g-4 justify-content-center">
                 <div class="col-md-4">
                     <a href="{{ url('/kategori') }}" class="text-decoration-none">
@@ -67,7 +65,5 @@
                     </a>
                 </div>
             </div>
-        </div>
-    </div>
 
 @endsection

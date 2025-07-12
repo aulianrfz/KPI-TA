@@ -1,7 +1,6 @@
 @extends('layouts.apk')
 
 @section('content')
-<div class="container py-4">
     <h4 class="fw-bold mb-3">
         <a href="{{ route('laporan.penjualan', ['event' => $eventId]) }}" class="btn btn-sm btn-light me-2">&larr;</a> 
         {{ $institusi }}
@@ -26,8 +25,6 @@
                         <th>Tim/Individu</th>
                         <th>Kategori</th>
                         <th>Mata Lomba</th>
-                        <th>Nama Tim</th>
-                        <!-- <th>Action</th> -->
                     </tr>
                 </thead>
                 <tbody>
@@ -38,11 +35,6 @@
                             <td>{{ $pendaftar->peserta->jenis_peserta ?? '-' }}</td>
                             <td>{{ $pendaftar->mataLomba->kategori->nama_kategori ?? '-' }}</td>
                             <td>{{ $pendaftar->mataLomba->nama_lomba ?? '-' }}</td>
-                            <td>{{ optional($pendaftar->peserta->bergabung->tim)->nama_tim ?? '-' }}</td>
-                            <!-- <td>
-                                <a href="#" class="btn btn-sm btn-primary"><i class="bi bi-pencil-square"></i></a>
-                                <a href="#" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></a>
-                            </td> -->
                         </tr>
                     @empty
                         <tr>
@@ -67,5 +59,4 @@
             @endif
         </div>
     </div>
-</div>
 @endsection

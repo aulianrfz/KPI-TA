@@ -148,6 +148,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/pendaftaran/peserta/{id}/edit', [KelolaPendaftarController::class, 'editPeserta'])->name('pendaftaran.peserta.edit');
         Route::put('/admin/pendaftaran/peserta/{id}', [KelolaPendaftarController::class, 'updatePeserta'])->name('pendaftaran.peserta.update');
         Route::delete('/admin/pendaftaran/peserta/{id}', [KelolaPendaftarController::class, 'destroyPeserta'])->name('pendaftaran.peserta.destroy');
+        
+        //DELETE PESERTA
+        Route::delete('/peserta/{id}', [KelolaPendaftarController::class, 'hapusPeserta'])->name('pendaftaran.peserta.destroy');
+
         //eit pembimbing
         Route::get('/admin/pendaftaran/pembimbing/{id}/edit', [KelolaPendaftarController::class, 'editPembimbing'])->name('pendaftaran.pembimbing.edit');
         Route::put('/admin/pendaftaran/pembimbing/{id}', [KelolaPendaftarController::class, 'updatePembimbing'])->name('pendaftaran.pembimbing.update');

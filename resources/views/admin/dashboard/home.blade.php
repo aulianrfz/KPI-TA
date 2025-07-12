@@ -1,7 +1,6 @@
 @extends('layouts.apk')
 
 @section('content')
-<div class="container py-4">
 
     <div class="row g-3 mb-4">
         <div class="col-12 col-lg-6">
@@ -234,7 +233,6 @@
       </div>
     </div>
   </div>
-</div>
 
 <script>
     function updateClock() {

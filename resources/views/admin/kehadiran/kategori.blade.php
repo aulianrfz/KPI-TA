@@ -3,7 +3,6 @@
 @section('content')
 
 
-<div class="container mt-4">
     <div class="d-flex align-items-center mb-3">
         <a href="{{ route('kehadiran.event', $event->id) }}" class="btn btn-outline-primary me-2">
             <i class="bi bi-arrow-left"></i>
@@ -11,7 +10,7 @@
         <h5 class="mb-0 fw-bold text-uppercase">Kategori Lomba</h5>
     </div>
 
-    <div class="row justify-content-center mt-4">
+    <div class="row mt-4">
         @foreach ($categories as $index => $category)
             <div class="col-md-3 mb-4" data-aos="zoom-in" data-aos-delay="{{ $index * 100 }}">
                 <div class="card shadow-sm border-0 h-100">
@@ -24,7 +23,6 @@
             </div>
         @endforeach
     </div>
-</div>
 
 
 <!-- AOS JS -->

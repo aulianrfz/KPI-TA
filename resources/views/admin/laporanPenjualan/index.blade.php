@@ -3,7 +3,6 @@
 @section('title', 'Laporan Penjualan')
 
 @section('content')
-<div class="container py-4">
 
     {{-- Ringkasan Statistik --}}
     <div class="row g-3 mb-4">
@@ -122,5 +121,4 @@
             @endif
         </div>
     </div>
-</div>
 @endsection

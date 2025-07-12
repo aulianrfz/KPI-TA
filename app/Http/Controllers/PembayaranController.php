@@ -27,48 +27,63 @@ use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
 
 class PembayaranController extends Controller
 {
-    public function index()
-    {
-        $peserta = Peserta::with(['pendaftar.mataLomba', 'tim', 'membayar.invoice'])
-            ->where('user_id', Auth::id())
-            ->where(function ($query) {
-                $query->whereDoesntHave('tim')
-                    ->orWhereHas('bergabung', function ($q) {
-                        $q->where('posisi', 'Ketua');
-                    });
-            })
-            ->get()
-            ->map(function ($item) {
-                $latest = $item->membayar->sortByDesc('waktu')->first();
-                return (object) [
-                    'tipe' => 'Peserta',
-                    'nama_kategori' => optional($item->pendaftar->mataLomba)->nama_lomba ?? '-',
-                    'invoice_id' => optional($latest?->invoice)->id ?? '-',
-                    'status' => strtolower($latest->status ?? 'belum dibayar'),
-                    'created_at' => $item->created_at,
-                    'id' => $item->id,
-                ];
-            });
+public function index(Request $request)
+{
+    $search = $request->search;
+    $eventId = $request->event_id;
 
-        $pembimbing = Pembimbing::with(['pendaftaran.event', 'pembayaran.invoice'])
-            ->where('user_id', Auth::id())
-            ->get()
-            ->map(function ($item) {
-                $latest = $item->pembayaran->sortByDesc('waktu')->first();
-                return (object) [
-                    'tipe' => 'Pembimbing',
-                    'nama_kategori' => optional($item->pendaftaran->first()?->event)->nama_event ?? '-',
-                    'invoice_id' => optional($latest?->invoice)->id ?? '-',
-                    'status' => strtolower($latest->status ?? 'belum dibayar'),
-                    'created_at' => $item->created_at,
-                    'id' => $item->id,
-                ];
-            });
+    $peserta = Peserta::with(['pendaftar.mataLomba.kategori.event', 'tim', 'membayar.invoice'])
+        ->where('user_id', Auth::id())
+        ->where(function ($query) {
+            $query->whereDoesntHave('tim')
+                ->orWhereHas('bergabung', function ($q) {
+                    $q->where('posisi', 'Ketua');
+                });
+        })
+        ->get()
+        ->map(function ($item) {
+            $latest = $item->membayar->sortByDesc('waktu')->first();
+            return (object) [
+                'tipe' => 'Peserta',
+                'nama_kategori' => optional($item->pendaftar->mataLomba)->nama_lomba ?? '-',
+                'event_id' => optional($item->pendaftar->mataLomba->kategori)->event_id,
+                'invoice_id' => optional($latest?->invoice)->id ?? '-',
+                'status' => strtolower($latest->status ?? 'belum dibayar'),
+                'created_at' => $item->created_at,
+                'id' => $item->id,
+            ];
+        });
 
-        $pembayaranGabungan = $peserta->merge($pembimbing)->sortByDesc('created_at');
+    $pembimbing = Pembimbing::with(['pendaftaran.event', 'pembayaran.invoice'])
+        ->where('user_id', Auth::id())
+        ->get()
+        ->map(function ($item) {
+            $latest = $item->pembayaran->sortByDesc('waktu')->first();
+            return (object) [
+                'tipe' => 'Pembimbing',
+                'nama_kategori' => optional($item->pendaftaran->first()?->event)->nama_event ?? '-',
+                'event_id' => optional($item->pendaftaran->first()?->event)->id,
+                'invoice_id' => optional($latest?->invoice)->id ?? '-',
+                'status' => strtolower($latest->status ?? 'belum dibayar'),
+                'created_at' => $item->created_at,
+                'id' => $item->id,
+            ];
+        });
 
-        return view('user.pembayaran.index', compact('pembayaranGabungan'));
-    }
+    $pembayaranGabungan = $peserta->merge($pembimbing);
+
+    // Filter berdasarkan pencarian dan event
+    $pembayaranGabungan = $pembayaranGabungan->filter(function ($item) use ($search, $eventId) {
+        $matchSearch = !$search || stripos($item->nama_kategori, $search) !== false || stripos($item->invoice_id, $search) !== false;
+        $matchEvent = !$eventId || $item->event_id == $eventId;
+        return $matchSearch && $matchEvent;
+    })->sortByDesc('created_at');
+
+    $listEvent = \App\Models\Event::all();
+
+    return view('user.pembayaran.index', compact('pembayaranGabungan', 'listEvent'));
+}
+
 
     public function bayar($tipe, $id)
     {
