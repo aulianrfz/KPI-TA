@@ -27,6 +27,9 @@ use App\Http\Middleware\RoleMiddleware;
 use App\Http\Controllers\PengajuanController;
 use App\Http\Controllers\KuisionerController;
 use App\Http\Controllers\SertifikatController;
+use App\Http\Controllers\KelolaPendaftarController;
+
+
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -123,7 +126,31 @@ Route::middleware('auth')->group(function () {
         Route::put('kuisioner/admin/{id}', [KuisionerController::class, 'update'])->name('admin.kuisioner.update');
         Route::delete('kuisioner/admin/{id}', [KuisionerController::class, 'destroy'])->name('admin.kuisioner.destroy');
 
-        
+        //pendaftaran
+        Route::get('/admin/keloladaftar/byevent', [KelolaPendaftarController::class, 'pilihEvent'])->name('pendaftaran.pilih-event');
+        Route::get('/pendaftaran/event/{event}', [KelolaPendaftarController::class, 'pilihTipePendaftar'])->name('pendaftaran.pilih-tipe');
+
+        Route::get('/event/{event}/peserta', [KelolaPendaftarController::class, 'formPeserta'])->name('admin.pendaftaran.peserta');
+        Route::get('/event/{event}/pendamping', [KelolaPendaftarController::class, 'formPendamping'])->name('admin.pendaftaran.pendamping');
+        Route::get('/event/{event}/supporter', [KelolaPendaftarController::class, 'formSupporter'])->name('admin.pendaftaran.supporter');
+        //editpendaftar
+        Route::get('/admin/pendaftaran/peserta/{id}/edit', [KelolaPendaftarController::class, 'editPeserta'])->name('pendaftaran.peserta.edit');
+        Route::put('/admin/pendaftaran/peserta/{id}', [KelolaPendaftarController::class, 'updatePeserta'])->name('pendaftaran.peserta.update');
+        Route::delete('/admin/pendaftaran/peserta/{id}', [KelolaPendaftarController::class, 'destroyPeserta'])->name('pendaftaran.peserta.destroy');
+        //eit pembimbing
+        Route::get('/admin/pendaftaran/pembimbing/{id}/edit', [KelolaPendaftarController::class, 'editPembimbing'])->name('pendaftaran.pembimbing.edit');
+        Route::put('/admin/pendaftaran/pembimbing/{id}', [KelolaPendaftarController::class, 'updatePembimbing'])->name('pendaftaran.pembimbing.update');
+
+        //edit supporter
+        Route::get('/admin/pendaftaran/supporter/{id}/edit', [KelolaPendaftarController::class, 'editSupporter'])->name('pendaftaran.supporter.edit');
+        Route::put('/admin/pendaftaran/supporter/{id}', [KelolaPendaftarController::class, 'updateSupporter'])->name('pendaftaran.supporter.update');
+
+        // delete pembimbing
+        Route::delete('/admin/pendaftaran/pembimbing/{id}', [KelolaPendaftarController::class, 'destroyPembimbing'])->name('pendaftaran.pembimbing.destroy');
+
+        // delete supporter
+        Route::delete('/admin/pendaftaran/supporter/{id}', [KelolaPendaftarController::class, 'destroySupporter'])->name('pendaftaran.supporter.destroy');
+
         //sertif
         // Route::get('/sertif', [SertifikatController::class, 'index'])->name('admin.sertifikat.index');
         // Route::get('sertif/event/{id}', [SertifikatController::class, 'byEvent'])->name('admin.sertifikat.by-event');

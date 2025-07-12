@@ -88,7 +88,8 @@ class PembimbingController extends Controller
             'pembimbing_id' => $pembimbing->id,
         ]);
 
-        return redirect()->route('dashboard')->with('success', 'Pendaftaran pembimbing berhasil!');
+        return view('user.pendaftaran.berhasil')->with('success', 'Pendaftaran pembimbing berhasil!');
+
     }
 
 

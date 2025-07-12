@@ -309,7 +309,10 @@
                 <li class="nav-item mb-2"><a href="/admin/dashboard"
                         class="nav-link {{ request()->is('admin/dashboard') ? 'active' : '' }}"><i
                             class="bi bi-house-door-fill"></i><span>Home</span></a></li>
-                <li class="nav-item mb-2"><a href="#" class="nav-link {{ request()->is('pendaftaran*') ? 'active' : '' }}"><i class="bi bi-file-earmark-person-fill"></i><span>Pendaftaran</span></a></li>
+                <li class="nav-item mb-2"><a href="/admin/keloladaftar/byevent" class="nav-link {{ request()->is('admin/keloladaftar/byevent*') ? 'active' : '' }}">
+                    <i class="bi bi-receipt"></i>
+                    <span>Pendaftaran</span></a>
+                </li>
                 <li class="nav-item mb-2"><a href="/admin/transaksi/index"
                         class="nav-link {{ request()->is('admin/transaksi/index*') ? 'active' : '' }}"><i
                             class="bi bi-receipt"></i><span>Transaksi</span></a></li>

@@ -92,6 +92,21 @@ Route::middleware('auth')->group(function () {
         Route::get('/verifikasi/qr/{id}', [DashboardAdminController::class, 'verifikasiQR'])->name('verifikasi.qr');
         Route::get('/admin/export', [DashboardAdminController::class, 'exportExcel'])->name('admin.export');
 
+        //pendaftaran
+        Route::get('/admin/keloladaftar/byevent', [KelolaPendaftarController::class, 'pilihEvent'])->name('pendaftaran.pilih-event');
+        Route::get('/pendaftaran/event/{event}', [KelolaPendaftarController::class, 'pilihTipePendaftar'])->name('pendaftaran.pilih-tipe');
+
+        Route::get('/event/{event}/peserta', [KelolaPendaftarController::class, 'formPeserta'])->name('admin.pendaftaran.peserta');
+        Route::get('/event/{event}/pendamping', [KelolaPendaftarController::class, 'formPendamping'])->name('admin.pendaftaran.pendamping');
+        Route::get('/event/{event}/supporter', [KelolaPendaftarController::class, 'formSupporter'])->name('admin.pendaftaran.supporter');
+
+// Sudah benar
+Route::get('/admin/pendaftaran/peserta/{id}/edit', [KelolaPendaftarController::class, 'editPeserta'])->name('pendaftaran.peserta.edit');
+Route::put('/admin/pendaftaran/peserta/{id}', [KelolaPendaftarController::class, 'updatePeserta'])->name('pendaftaran.peserta.update');
+
+        Route::delete('/admin/pendaftaran/peserta/{id}', [KelolaPendaftarController::class, 'destroyPeserta'])->name('pendaftaran.peserta.destroy');
+
+        
         //laporan penjualan
         // Route::get('/laporanpenjualan', [LaporanPenjualanController::class, 'index'])->name('admin.laporan.penjualan');
         // Route::get('/laporan-penjualan', [LaporanPenjualanController::class, 'index'])->name('laporan.penjualan');

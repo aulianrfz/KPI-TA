@@ -86,6 +86,6 @@ class SupporterController extends Controller
         ));
 
 
-        return view('user.pendaftaran.berhasil')->with('success', 'Pendaftaran berhasil!');
+        return view('user.pendaftaran.berhasil')->with('success', 'Pendaftaran supporter berhasil!');
     }
 }
