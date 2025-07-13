@@ -16,10 +16,17 @@
             <label>Email</label>
             <input type="email" class="form-control" name="email" value="{{ $supporter->email }}" required>
         </div>
-
+        
         <div class="mb-3">
-            <label>Instansi</label>
-            <input type="text" class="form-control" name="instansi" value="{{ $supporter->instansi }}" required>
+        <label for="instansi" class="form-label">Instansi</label>
+            <select name="instansi" class="form-select" required>
+                <option value="">- Pilih Instansi -</option>
+                @foreach ($institusi as $inst)
+                    <option value="{{ $inst->nama_institusi }}" {{ $supporter->instansi == $inst->nama_institusi ? 'selected' : '' }}>
+                        {{ $inst->nama_institusi }}
+                    </option>
+                @endforeach
+            </select>
         </div>
 
         <div class="mb-3">

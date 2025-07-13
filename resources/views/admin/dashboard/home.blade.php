@@ -4,7 +4,7 @@
 
     <div class="row g-3 mb-4">
         <div class="col-12 col-lg-6">
-            <div class="card shadow-sm border-0 rounded-4 text-center py-4 px-2 bg-light h-100">
+            <div class="card shadow-sm border-0 rounded-4 text-center py-4 px-2 h-100">
                 <div class="card-body">
                     <div class="mb-3">
                         <i class="bi bi-sun fs-1 text-warning"></i>
@@ -233,6 +233,21 @@
       </div>
     </div>
   </div>
+</div>
+
+<div class="modal fade" id="scanErrorModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4">
+      <div class="modal-header">
+        <h5 class="modal-title text-danger">Data Tidak Ditemukan</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+      </div>
+      <div class="modal-body text-center">
+        <p id="scanErrorText" class="fw-semibold text-danger mb-0">Maaf, data tidak ditemukan atau tidak valid.</p>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
     function updateClock() {
@@ -257,6 +272,35 @@
     let html5QrcodeScanner = null;
     let scanInProgress = false;
 
+    function showErrorModal(message = "Maaf, data tidak ditemukan atau tidak valid.") {
+        document.getElementById("scanErrorText").innerText = message;
+
+        // Tutup modal scan QR
+        const scanModal = bootstrap.Modal.getInstance(document.getElementById('qrScanModal'));
+        if (scanModal) scanModal.hide();
+
+        // Tampilkan modal error
+        const errorModal = new bootstrap.Modal(document.getElementById('scanErrorModal'));
+        errorModal.show();
+
+        stopScanner();
+    }
+
+    function stopScanner() {
+        if (html5QrcodeScanner) {
+            html5QrcodeScanner.stop().then(() => {
+                html5QrcodeScanner.clear();
+                html5QrcodeScanner = null;
+                scanInProgress = false;
+            }).catch(err => {
+                console.error("Gagal stop scanner:", err);
+                scanInProgress = false;
+            });
+        } else {
+            scanInProgress = false;
+        }
+    }
+
     function onScanSuccess(decodedText, decodedResult) {
         if (scanInProgress) return;
         scanInProgress = true;
@@ -268,14 +312,12 @@
             const segments = url.pathname.split('/').filter(Boolean);
             pendaftarId = segments.pop();
         } catch (e) {
-            alert("QR code tidak valid (bukan URL).");
-            scanInProgress = false;
+            showErrorModal("QR code tidak valid (bukan URL).");
             return;
         }
 
         if (!pendaftarId) {
-            alert("QR code tidak valid: tidak ada ID.");
-            scanInProgress = false;
+            showErrorModal("QR code tidak valid: Data tidak sesuai.");
             return;
         }
 
@@ -293,6 +335,12 @@
             const namaText = document.getElementById("namaPesertaText");
             const namaLombaText = document.getElementById("namaMataLombaText");
             const fotoImg = document.getElementById("fotoKtmPreview");
+
+            if (!data || data.error || !data.nama_peserta) {
+                const errorMessage = data.error || "Data peserta tidak ditemukan.";
+                showErrorModal(errorMessage);
+                return;
+            }
 
             namaText.innerText = data.nama_peserta || '-';
             namaLombaText.innerText = data.nama_lomba || '-';
@@ -313,23 +361,11 @@
             const resultModal = new bootstrap.Modal(document.getElementById('scanResultModal'));
             resultModal.show();
 
-            if (html5QrcodeScanner) {
-                html5QrcodeScanner.stop().then(() => {
-                    html5QrcodeScanner.clear();
-                    html5QrcodeScanner = null;
-                    scanInProgress = false;
-                }).catch(err => {
-                    console.error("Gagal stop scanner:", err);
-                    scanInProgress = false;
-                });
-            } else {
-                scanInProgress = false;
-            }
+            stopScanner();
         })
         .catch(err => {
-            alert("Gagal memproses kehadiran.");
-            console.error(err);
-            scanInProgress = false;
+            console.error("Gagal memproses kehadiran:", err);
+            showErrorModal("Gagal memproses kehadiran.");
         });
     }
 
@@ -353,33 +389,23 @@
                 { fps: 10, qrbox: 250 },
                 onScanSuccess
             ).catch(error => {
-                alert("Tidak dapat mengakses kamera.");
-                console.error(error);
+                console.error("Kamera tidak dapat diakses:", error);
+                showErrorModal("Tidak dapat mengakses kamera.");
             });
         });
     });
 
-    modal.addEventListener('hidden.bs.modal', () => {
-        if (html5QrcodeScanner) {
-            html5QrcodeScanner.stop().then(() => {
-                html5QrcodeScanner.clear();
-                html5QrcodeScanner = null;
-                scanInProgress = false;
-            }).catch(console.error);
-        }
-    });
-
-    document.addEventListener('submit', function(e) {
-        if (e.target.id === 'qr-scan-form') {
-            e.preventDefault();
-        }
-    }, true);
+    modal.addEventListener('hidden.bs.modal', stopScanner);
 
     document.getElementById('scanResultModal').addEventListener('hidden.bs.modal', function () {
         location.reload();
     });
 
+    document.getElementById('scanErrorModal').addEventListener('hidden.bs.modal', function () {
+        scanInProgress = false;
+    });
 </script>
+
 
 
 

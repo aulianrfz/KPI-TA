@@ -142,7 +142,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/pendaftaran/event/{event}', [KelolaPendaftarController::class, 'pilihTipePendaftar'])->name('pendaftaran.pilih-tipe');
 
         Route::get('/event/{event}/peserta', [KelolaPendaftarController::class, 'formPeserta'])->name('admin.pendaftaran.peserta');
-        Route::get('/event/{event}/pendamping', [KelolaPendaftarController::class, 'formPendamping'])->name('admin.pendaftaran.pendamping');
+        Route::get('/admin/pendaftaran/pendamping/{event}', [KelolaPendaftarController::class, 'formPendamping'])->name('admin.pendaftaran.pendamping');
         Route::get('/event/{event}/supporter', [KelolaPendaftarController::class, 'formSupporter'])->name('admin.pendaftaran.supporter');
         //editpendaftar
         Route::get('/admin/pendaftaran/peserta/{id}/edit', [KelolaPendaftarController::class, 'editPeserta'])->name('pendaftaran.peserta.edit');

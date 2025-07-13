@@ -124,6 +124,4 @@ class PembimbingController extends Controller
 
         return view('user.pendaftaran.berhasil')->with('success', 'Pendaftaran berhasil!');
     }
-
-
 }

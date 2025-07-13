@@ -292,6 +292,10 @@
             display: flex;
             align-items: center;
         }
+        .card {
+            min-height: 140px;
+            
+        }
     </style>
 </head>
 

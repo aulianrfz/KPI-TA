@@ -166,127 +166,152 @@ class DashboardAdminController extends Controller
     //     ]);
     // }
 
-    public function markAsPresent(Request $request)
-    {
-        Log::info('[MARK AS PRESENT] Masuk ke markAsPresent() dengan data request:', $request->all());
+        public function markAsPresent(Request $request)
+        {
+            Log::info('[MARK AS PRESENT] Masuk ke markAsPresent() dengan data request:', $request->all());
 
-        if (!$request->has('id')) {
-            Log::warning('[MARK AS PRESENT] ID tidak ditemukan di request.');
-            return response()->json(['error' => "QR code tidak valid: tidak ada parameter 'id'"], 400);
-        }
-
-        try {
-            $decrypted = Crypt::decrypt($request->input('id'));
-            Log::info("[MARK AS PRESENT] ID berhasil didekripsi: {$decrypted}");
-        } catch (\Exception $e) {
-            Log::error('[MARK AS PRESENT] Gagal dekripsi ID QR code: ' . $e->getMessage());
-            return response()->json(['error' => 'QR code tidak valid: gagal mendekripsi ID.'], 400);
-        }
-
-        // Identifikasi tipe dan ambil ID numerik
-        if (str_starts_with($decrypted, 'peserta_')) {
-            $id = (int) str_replace('peserta_', '', $decrypted);
-            $pendaftar = Pendaftar::with('peserta', 'mataLomba')->find($id);
-
-            if (!$pendaftar) {
-                Log::warning("[MARK AS PRESENT] Peserta tidak ditemukan: ID {$id}");
-                return response()->json(['error' => 'Data peserta tidak ditemukan.'], 404);
+            if (!$request->has('id')) {
+                Log::warning('[MARK AS PRESENT] ID tidak ditemukan di request.');
+                return response()->json(['error' => "QR code tidak valid: tidak ada parameter 'id'"], 400);
             }
 
-            Log::info("[MARK AS PRESENT] Ditemukan sebagai PESERTA: {$pendaftar->peserta->nama_peserta}");
-            $urlFotoKtm = $pendaftar->peserta->url_ktm ? asset('storage/' . $pendaftar->peserta->url_ktm) : null;
+            $selectedEventId = session('selected_event');
+            if (!$selectedEventId) {
+                Log::warning('[MARK AS PRESENT] Tidak ada event yang dipilih di sesi.');
+                return response()->json(['error' => 'QR code tidak valid karena event belum dipilih.'], 400);
+            }
 
-            if ($pendaftar->status_kehadiran === 'Hadir') {
+            try {
+                $decrypted = Crypt::decrypt($request->input('id'));
+                Log::info("[MARK AS PRESENT] ID berhasil didekripsi: {$decrypted}");
+            } catch (\Exception $e) {
+                Log::error('[MARK AS PRESENT] Gagal dekripsi ID QR code: ' . $e->getMessage());
+                return response()->json(['error' => 'QR code tidak valid: gagal mendekripsi ID.'], 400);
+            }
+
+            // === PESERTA ===
+            if (str_starts_with($decrypted, 'peserta_')) {
+                $id = (int) str_replace('peserta_', '', $decrypted);
+                $pendaftar = Pendaftar::with('peserta', 'mataLomba.kategori.event')->find($id);
+
+                if (!$pendaftar) {
+                    Log::warning("[MARK AS PRESENT] Peserta tidak ditemukan: ID {$id}");
+                    return response()->json(['error' => 'Data peserta tidak ditemukan.'], 404);
+                }
+
+                if ($pendaftar->mataLomba->kategori->event_id != $selectedEventId) {
+                    Log::warning("[MARK AS PRESENT] QR peserta bukan dari event ini. Event QR: {$pendaftar->mataLomba->kategori->event_id}, Event aktif: {$selectedEventId}");
+                    return response()->json(['error' => 'QR code tidak sesuai dengan event yang dipilih.'], 403);
+                }
+
+                Log::info("[MARK AS PRESENT] Ditemukan sebagai PESERTA: {$pendaftar->peserta->nama_peserta}");
+
+                $urlFotoKtm = $pendaftar->peserta->url_ktm ? asset('storage/' . $pendaftar->peserta->url_ktm) : null;
+
+                if ($pendaftar->status_kehadiran === 'Hadir') {
+                    return response()->json([
+                        'message' => 'Peserta sudah ditandai hadir sebelumnya.',
+                        'nama_peserta' => $pendaftar->peserta->nama_peserta,
+                        'nama_lomba' => $pendaftar->mataLomba->nama_lomba,
+                        'foto_ktm' => $urlFotoKtm,
+                    ]);
+                }
+
+                $pendaftar->update([
+                    'status_kehadiran' => 'Hadir',
+                    'tanggal_kehadiran' => now()
+                ]);
+
                 return response()->json([
-                    'message' => 'Peserta sudah ditandai hadir sebelumnya.',
+                    'message' => 'Peserta berhasil ditandai hadir.',
                     'nama_peserta' => $pendaftar->peserta->nama_peserta,
                     'nama_lomba' => $pendaftar->mataLomba->nama_lomba,
                     'foto_ktm' => $urlFotoKtm,
                 ]);
             }
 
-            $pendaftar->update([
-                'status_kehadiran' => 'Hadir',
-                'tanggal_kehadiran' => now()
-            ]);
+            // === SUPPORTER ===
+            if (str_starts_with($decrypted, 'supporter_')) {
+                $id = (int) str_replace('supporter_', '', $decrypted);
+                $pendaftarSupporter = PendaftarSupporter::with('supporter', 'event')->find($id);
 
-            return response()->json([
-                'message' => 'Peserta berhasil ditandai hadir.',
-                'nama_peserta' => $pendaftar->peserta->nama_peserta,
-                'nama_lomba' => $pendaftar->mataLomba->nama_lomba,
-                'foto_ktm' => $urlFotoKtm,
-            ]);
-        }
+                if (!$pendaftarSupporter) {
+                    Log::warning("[MARK AS PRESENT] Supporter tidak ditemukan: ID {$id}");
+                    return response()->json(['error' => 'Data supporter tidak ditemukan.'], 404);
+                }
 
-        if (str_starts_with($decrypted, 'supporter_')) {
-            $id = (int) str_replace('supporter_', '', $decrypted);
-            $pendaftarSupporter = PendaftarSupporter::with('supporter', 'event')->find($id);
+                if ($pendaftarSupporter->event->id != $selectedEventId) {
+                    Log::warning("[MARK AS PRESENT] QR supporter bukan dari event ini. Event QR: {$pendaftarSupporter->event->id}, Event aktif: {$selectedEventId}");
+                    return response()->json(['error' => 'QR code tidak sesuai dengan event yang dipilih.'], 403);
+                }
 
-            if (!$pendaftarSupporter) {
-                Log::warning("[MARK AS PRESENT] Supporter tidak ditemukan: ID {$id}");
-                return response()->json(['error' => 'Data supporter tidak ditemukan.'], 404);
-            }
+                Log::info("[MARK AS PRESENT] Ditemukan sebagai SUPPORTER: {$pendaftarSupporter->supporter->nama}");
 
-            Log::info("[MARK AS PRESENT] Ditemukan sebagai SUPPORTER: {$pendaftarSupporter->supporter->nama}");
+                if ($pendaftarSupporter->status_kehadiran) {
+                    return response()->json([
+                        'message' => 'Supporter sudah ditandai hadir sebelumnya.',
+                        'nama_peserta' => $pendaftarSupporter->supporter->nama,
+                        'nama_lomba' => $pendaftarSupporter->event->nama_event,
+                        'foto_ktm' => null,
+                    ]);
+                }
 
-            if ($pendaftarSupporter->status_kehadiran) {
+                $pendaftarSupporter->update([
+                    'status_kehadiran' => 'Hadir',
+                    'tanggal_kehadiran' => now()
+                ]);
+
                 return response()->json([
-                    'message' => 'Supporter sudah ditandai hadir sebelumnya.',
+                    'message' => 'Supporter berhasil ditandai hadir.',
                     'nama_peserta' => $pendaftarSupporter->supporter->nama,
                     'nama_lomba' => $pendaftarSupporter->event->nama_event,
                     'foto_ktm' => null,
                 ]);
             }
 
-            $pendaftarSupporter->update([
-                'status_kehadiran' => 'Hadir',
-                'tanggal_kehadiran' => now()
-            ]);
+            // === PEMBIMBING ===
+            if (str_starts_with($decrypted, 'pembimbing_')) {
+                $id = (int) str_replace('pembimbing_', '', $decrypted);
+                $pendaftarPembimbing = PendaftarPembimbing::with('pembimbing', 'event')->find($id);
 
-            return response()->json([
-                'message' => 'Supporter berhasil ditandai hadir.',
-                'nama_peserta' => $pendaftarSupporter->supporter->nama,
-                'nama_lomba' => $pendaftarSupporter->event->nama_event,
-                'foto_ktm' => null,
-            ]);
-        }
+                if (!$pendaftarPembimbing) {
+                    Log::warning("[MARK AS PRESENT] Pembimbing tidak ditemukan: ID {$id}");
+                    return response()->json(['error' => 'Data pembimbing tidak ditemukan.'], 404);
+                }
 
-        if (str_starts_with($decrypted, 'pembimbing_')) {
-            $id = (int) str_replace('pembimbing_', '', $decrypted);
-            $pendaftarPembimbing = PendaftarPembimbing::with('pembimbing', 'event')->find($id);
+                if ($pendaftarPembimbing->event->id != $selectedEventId) {
+                    Log::warning("[MARK AS PRESENT] QR pembimbing bukan dari event ini. Event QR: {$pendaftarPembimbing->event->id}, Event aktif: {$selectedEventId}");
+                    return response()->json(['error' => 'QR code tidak sesuai dengan event yang dipilih.'], 403);
+                }
 
-            if (!$pendaftarPembimbing) {
-                Log::warning("[MARK AS PRESENT] Pembimbing tidak ditemukan: ID {$id}");
-                return response()->json(['error' => 'Data pembimbing tidak ditemukan.'], 404);
-            }
+                Log::info("[MARK AS PRESENT] Ditemukan sebagai PEMBIMBING: {$pendaftarPembimbing->pembimbing->nama_lengkap}");
 
-            Log::info("[MARK AS PRESENT] Ditemukan sebagai PEMBIMBING: {$pendaftarPembimbing->pembimbing->nama_lengkap}");
+                if ($pendaftarPembimbing->status_kehadiran) {
+                    return response()->json([
+                        'message' => 'Pembimbing sudah ditandai hadir sebelumnya.',
+                        'nama_peserta' => $pendaftarPembimbing->pembimbing->nama_lengkap,
+                        'nama_lomba' => $pendaftarPembimbing->event->nama_event,
+                        'foto_ktm' => null,
+                    ]);
+                }
 
-            if ($pendaftarPembimbing->status_kehadiran) {
+                $pendaftarPembimbing->update([
+                    'status_kehadiran' => 'Hadir',
+                    'tanggal_kehadiran' => now()
+                ]);
+
                 return response()->json([
-                    'message' => 'Pembimbing sudah ditandai hadir sebelumnya.',
+                    'message' => 'Pembimbing berhasil ditandai hadir.',
                     'nama_peserta' => $pendaftarPembimbing->pembimbing->nama_lengkap,
                     'nama_lomba' => $pendaftarPembimbing->event->nama_event,
                     'foto_ktm' => null,
                 ]);
             }
 
-            $pendaftarPembimbing->update([
-                'status_kehadiran' => 'Hadir',
-                'tanggal_kehadiran' => now()
-            ]);
-
-            return response()->json([
-                'message' => 'Pembimbing berhasil ditandai hadir.',
-                'nama_peserta' => $pendaftarPembimbing->pembimbing->nama_lengkap,
-                'nama_lomba' => $pendaftarPembimbing->event->nama_event,
-                'foto_ktm' => null,
-            ]);
+            Log::warning("[MARK AS PRESENT] Prefix ID tidak valid: {$decrypted}");
+            return response()->json(['error' => 'QR code tidak valid: format ID tidak dikenal.'], 400);
         }
 
-        Log::warning("[MARK AS PRESENT] Prefix ID tidak valid: {$decrypted}");
-        return response()->json(['error' => 'QR code tidak valid: format ID tidak dikenal.'], 400);
-    }
 
     public function showIdentitas($id)
     {

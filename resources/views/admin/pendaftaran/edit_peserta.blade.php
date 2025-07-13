@@ -11,31 +11,32 @@
 
         <div class="card mb-4">
             <div class="card-body">
+
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="nama_peserta" class="form-label">Nama</label>
+                        <label class="form-label">Nama Peserta</label>
                         <input type="text" class="form-control" name="nama_peserta" value="{{ $peserta->nama_peserta }}" required>
                     </div>
                     <div class="col-md-6">
-                        <label for="nim" class="form-label">NIM</label>
+                        <label class="form-label">NIM</label>
                         <input type="text" class="form-control" name="nim" value="{{ $peserta->nim }}" required>
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="email" class="form-label">Email</label>
+                        <label class="form-label">Email</label>
                         <input type="email" class="form-control" name="email" value="{{ $peserta->email }}" required>
                     </div>
                     <div class="col-md-6">
-                        <label for="no_hp" class="form-label">No HP</label>
+                        <label class="form-label">No HP</label>
                         <input type="text" class="form-control" name="no_hp" value="{{ $peserta->no_hp }}" required>
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="provinsi" class="form-label">Provinsi</label>
+                        <label class="form-label">Provinsi Institusi</label>
                         <select name="provinsi" class="form-select" required>
                             <option value="">- Pilih Provinsi -</option>
                             @foreach ($provinsi as $prov)
@@ -46,7 +47,7 @@
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label for="institusi" class="form-label">Institusi</label>
+                        <label class="form-label">Institusi</label>
                         <select name="institusi" class="form-select" required>
                             <option value="">- Pilih Institusi -</option>
                             @foreach ($institusi as $inst)
@@ -58,8 +59,8 @@
                     </div>
                 </div>
 
-                <div class="col-md-6 mb-3">
-                    <label for="prodi" class="form-label">Prodi</label>
+                <div class="mb-3">
+                    <label class="form-label">Program Studi</label>
                     <select name="prodi" class="form-select" required>
                         <option value="">- Pilih Prodi -</option>
                         @foreach ($prodi as $jur)
@@ -70,15 +71,18 @@
                     </select>
                 </div>
 
-                <div class="row mb-3">
-                    <div class="col-md-12">
-                        <label class="form-label">Tanda Tangan Baru (Opsional)</label>
-                        <div class="border p-2">
-                            <canvas id="signature-pad" width="600" height="150" style="border:1px solid #ccc; width:100%; height:150px;"></canvas>
-                        </div>
-                        <input type="hidden" name="signature" id="signature">
-                        <button type="button" id="clear-signature" class="btn btn-danger btn-sm mt-2">Hapus Tanda Tangan</button>
+                <div class="mb-3">
+                    <label class="form-label">Upload KTM Baru (Opsional)</label>
+                    <input type="file" class="form-control" name="url_ktm" accept="image/*,application/pdf">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Tanda Tangan Baru (Opsional)</label>
+                    <div class="border p-2">
+                        <canvas id="signature-pad" width="600" height="150" style="border:1px solid #ccc; width:100%; height:150px;"></canvas>
                     </div>
+                    <input type="hidden" name="signature" id="signature">
+                    <button type="button" id="clear-signature" class="btn btn-danger btn-sm mt-2">Hapus Tanda Tangan</button>
                 </div>
 
             </div>

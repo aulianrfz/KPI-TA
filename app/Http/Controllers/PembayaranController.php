@@ -279,7 +279,6 @@ public function index(Request $request)
         $search = $request->input('search');
         $sortOrder = $request->input('sort', 'desc');
 
-        // Peserta
         $queryPeserta = Membayar::with(['peserta.pendaftar.mataLomba.kategori.event', 'invoice', 'mataLomba'])
             ->whereHas('peserta.pendaftar.mataLomba.kategori', function ($q) use ($eventId) {
                 $q->where('event_id', $eventId);
