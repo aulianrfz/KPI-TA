@@ -27,62 +27,59 @@ use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
 
 class PembayaranController extends Controller
 {
-public function index(Request $request)
-{
-    $search = $request->search;
-    $eventId = $request->event_id;
+    public function index(Request $request)
+    {
+        $search = $request->search;
+        $eventId = $request->event_id;
 
-    $peserta = Peserta::with(['pendaftar.mataLomba.kategori.event', 'tim', 'membayar.invoice'])
-        ->where('user_id', Auth::id())
-        ->where(function ($query) {
-            $query->whereDoesntHave('tim')
-                ->orWhereHas('bergabung', function ($q) {
-                    $q->where('posisi', 'Ketua');
-                });
-        })
-        ->get()
-        ->map(function ($item) {
-            $latest = $item->membayar->sortByDesc('waktu')->first();
-            return (object) [
-                'tipe' => 'Peserta',
-                'nama_kategori' => optional($item->pendaftar->mataLomba)->nama_lomba ?? '-',
-                'event_id' => optional($item->pendaftar->mataLomba->kategori)->event_id,
-                'invoice_id' => optional($latest?->invoice)->id ?? '-',
-                'status' => strtolower($latest->status ?? 'belum dibayar'),
-                'created_at' => $item->created_at,
-                'id' => $item->id,
-            ];
-        });
+        $peserta = Peserta::with(['pendaftar.mataLomba.kategori.event', 'tim', 'membayar.invoice'])
+            ->where('user_id', Auth::id())
+            ->where(function ($query) {
+                $query->whereDoesntHave('tim')
+                    ->orWhereHas('bergabung', function ($q) {
+                        $q->where('posisi', 'Ketua');
+                    });
+            })
+            ->get()
+            ->map(function ($item) {
+                $latest = $item->membayar->sortByDesc('waktu')->first();
 
-    $pembimbing = Pembimbing::with(['pendaftaran.event', 'pembayaran.invoice'])
-        ->where('user_id', Auth::id())
-        ->get()
-        ->map(function ($item) {
-            $latest = $item->pembayaran->sortByDesc('waktu')->first();
-            return (object) [
-                'tipe' => 'Pembimbing',
-                'nama_kategori' => optional($item->pendaftaran->first()?->event)->nama_event ?? '-',
-                'event_id' => optional($item->pendaftaran->first()?->event)->id,
-                'invoice_id' => optional($latest?->invoice)->id ?? '-',
-                'status' => strtolower($latest->status ?? 'belum dibayar'),
-                'created_at' => $item->created_at,
-                'id' => $item->id,
-            ];
-        });
+                // tambahkan properti langsung ke model
+                $item->tipe = 'Peserta';
+                $item->nama_kategori = optional($item->pendaftar->mataLomba)->nama_lomba ?? '-';
+                $item->event_id = optional($item->pendaftar->mataLomba->kategori)->event_id;
+                $item->invoice_id = optional($latest?->invoice)->id ?? '-';
+                $item->status_pembayaran = strtolower($latest->status ?? 'belum dibayar');
+                return $item;
+            });
 
-    $pembayaranGabungan = $peserta->merge($pembimbing);
+        $pembimbing = Pembimbing::with(['pendaftaran.event', 'pembayaran.invoice'])
+            ->where('user_id', Auth::id())
+            ->get()
+            ->map(function ($item) {
+                $latest = $item->pembayaran->sortByDesc('waktu')->first();
 
-    // Filter berdasarkan pencarian dan event
-    $pembayaranGabungan = $pembayaranGabungan->filter(function ($item) use ($search, $eventId) {
-        $matchSearch = !$search || stripos($item->nama_kategori, $search) !== false || stripos($item->invoice_id, $search) !== false;
-        $matchEvent = !$eventId || $item->event_id == $eventId;
-        return $matchSearch && $matchEvent;
-    })->sortByDesc('created_at');
+                $item->tipe = 'Pembimbing';
+                $item->nama_kategori = optional($item->pendaftaran->first()?->event)->nama_event ?? '-';
+                $item->event_id = optional($item->pendaftaran->first()?->event)->id;
+                $item->invoice_id = optional($latest?->invoice)->id ?? '-';
+                $item->status_pembayaran = strtolower($latest->status ?? 'belum dibayar');
+                return $item;
+            });
 
-    $listEvent = \App\Models\Event::all();
+        $pembayaranGabungan = $peserta->merge($pembimbing);
 
-    return view('user.pembayaran.index', compact('pembayaranGabungan', 'listEvent'));
-}
+        $pembayaranGabungan = $pembayaranGabungan->filter(function ($item) use ($search, $eventId) {
+            $matchSearch = !$search || stripos($item->nama_kategori, $search) !== false || stripos($item->invoice_id, $search) !== false;
+            $matchEvent = !$eventId || $item->event_id == $eventId;
+            return $matchSearch && $matchEvent;
+        })->sortByDesc('created_at');
+
+        $listEvent = \App\Models\Event::all();
+
+        return view('user.pembayaran.index', compact('pembayaranGabungan', 'listEvent'));
+    }
+
 
 
     public function bayar($tipe, $id)
@@ -295,17 +292,14 @@ public function index(Request $request)
         $queryPeserta->orderBy('waktu', in_array($sortOrder, ['asc', 'desc']) ? $sortOrder : 'desc');
 
         $pesertaData = $queryPeserta->get()->map(function ($item) {
-            return (object) [
-                'id' => 'peserta_' . $item->id,
-                'nama' => $item->peserta->nama_peserta ?? '-',
-                'institusi' => $item->peserta->institusi ?? '-',
-                'invoice_id' => $item->invoice->id ?? '-',
-                'lomba' => $item->peserta->pendaftar->mataLomba->nama_lomba ?? '-',
-                'status' => $item->peserta->pendaftar->status ?? 'Pending',
-                'waktu' => $item->waktu,
-                'bukti' => $item->bukti_pembayaran,
-                'tipe' => 'Peserta',
-            ];
+            $item->tipe = 'Peserta';
+            $item->nama = $item->peserta->nama_peserta ?? '-';
+            $item->institusi = $item->peserta->institusi ?? '-';
+            $item->invoice_id = $item->invoice->id ?? '-';
+            $item->lomba = $item->peserta->pendaftar->mataLomba->nama_lomba ?? '-';
+            $item->status = $item->peserta->pendaftar->status ?? 'Pending';
+            $item->bukti = $item->bukti_pembayaran;
+            return $item;
         });
 
         // Pembimbing
@@ -325,17 +319,15 @@ public function index(Request $request)
         $queryPembimbing->orderBy('waktu', in_array($sortOrder, ['asc', 'desc']) ? $sortOrder : 'desc');
 
         $pembimbingData = $queryPembimbing->get()->map(function ($item) {
-            return (object) [
-                'id' => 'pembimbing_' . $item->id,
-                'nama' => $item->pembimbing->nama_lengkap ?? '-',
-                'institusi' => $item->pembimbing->institusi ?? '-',
-                'invoice_id' => $item->invoice->id ?? '-',
-                'lomba' => '-', // pembimbing ga punya nama lomba
-                'status' => $item->pembimbing->status ?? 'Pending',
-                'waktu' => $item->waktu,
-                'bukti' => $item->bukti_pembayaran,
-                'tipe' => 'Pembimbing',
-            ];
+            $item->tipe = 'Pembimbing';
+            $item->nama = $item->pembimbing->nama_lengkap ?? '-';
+            $item->institusi = $item->pembimbing->institusi ?? '-';
+            $item->invoice_id = $item->invoice->id ?? '-';
+            $item->lomba = '-';
+            $item->status = $item->pembimbing->status ?? 'Pending';
+            $item->bukti = $item->bukti_pembayaran;
+            return $item;
+
         });
 
         // Gabungkan dan paginasi manual
@@ -393,9 +385,11 @@ public function index(Request $request)
         $status = $action === 'approve' ? 'Sudah Membayar' : 'Ditolak';
 
         foreach ($ids as $fullId) {
-            if (str_starts_with($fullId, 'peserta_')) {
-                $id = (int) str_replace('peserta_', '', $fullId);
-                $membayar = Membayar::with('peserta.pendaftar', 'peserta.tim.peserta', 'peserta.mataLomba.kategori.event')->find($id);
+            [$tipe, $id] = explode('|', $fullId);
+            $id = (int) $id;
+
+            if ($tipe === 'Peserta') {
+                $membayar = Membayar::with('peserta.pendaftar.mataLomba.kategori.event', 'peserta.tim.peserta')->find($id);
 
                 if (!$membayar || !$membayar->peserta)
                     continue;
@@ -422,14 +416,12 @@ public function index(Request $request)
                             ->margin(10)
                             ->build();
 
-                        // ✅ GUNAKAN SLUG EVENT DALAM NAMA FILE
                         $eventName = Str::slug($pendaftar->mataLomba->kategori->event->nama_event ?? 'event', '_');
                         $filename = 'qr_codes/pendaftar_' . $pendaftar->id . '_' . $eventName . '.png';
 
-                        // ✅ SIMPAN RELATIVE PATH (BUKAN asset())
                         Storage::disk('public')->put($filename, $result->getString());
                         $qrRelativePath = 'storage/' . $filename;
-                        $qrPath = storage_path('app/public/' . $filename); // path lokal untuk email
+                        $qrPath = storage_path('app/public/' . $filename);
 
                         $pendaftar->update(['url_qrCode' => $qrRelativePath]);
 
@@ -445,17 +437,15 @@ public function index(Request $request)
 
                     $membayar->update(['status' => $status]);
                 }
-            } elseif (str_starts_with($fullId, 'pembimbing_')) {
-                $id = (int) str_replace('pembimbing_', '', $fullId);
+
+            } elseif ($tipe === 'Pembimbing') {
                 $pembayaran = PembayaranPembimbing::with('pembimbing')->find($id);
 
                 if ($pembayaran && $pembayaran->pembimbing) {
                     if ($action === 'approve') {
-                        // cari data pendaftar_pembimbing
                         $pendaftarPembimbing = PendaftarPembimbing::with('event')->where('pembimbing_id', $pembayaran->pembimbing->id)->first();
 
                         if ($pendaftarPembimbing) {
-                            // generate QR
                             $encryptedId = encrypt('pembimbing_' . $pembayaran->pembimbing->id);
                             $qrContent = route('verifikasi.qr', ['id' => $encryptedId]);
 
@@ -473,17 +463,15 @@ public function index(Request $request)
                             Storage::disk('public')->put($filename, $result->getString());
 
                             $qrRelativePath = 'storage/' . $filename;
-                            $qrPath = storage_path('app/public/' . $filename); // path lokal untuk email
+                            $qrPath = storage_path('app/public/' . $filename);
 
                             $pendaftarPembimbing->update(['url_qrCode' => $qrRelativePath]);
 
-                            // ambil nama event
                             $namaEvent = $pendaftarPembimbing->event->nama_event ?? 'Nama Event';
 
-                            // kirim email
                             if ($pembayaran->pembimbing->email) {
                                 Mail::to($pembayaran->pembimbing->email)->send(new QrCodeMail(
-                                    $pembayaran->pembimbing->nama_lengkap,      // ini yang jadi nama utama
+                                    $pembayaran->pembimbing->nama_lengkap,
                                     $namaEvent,
                                     null,
                                     $qrPath
@@ -495,8 +483,9 @@ public function index(Request $request)
                     $pembayaran->update(['status' => $status]);
                 }
             }
-
         }
+
         return redirect()->back()->with('success', 'Status pembayaran berhasil diperbarui.');
     }
+
 }

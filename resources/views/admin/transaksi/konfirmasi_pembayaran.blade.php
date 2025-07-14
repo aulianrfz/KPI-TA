@@ -62,6 +62,8 @@
                                 <th>Institusi</th>
                                 <th>Nama Lomba</th>
                                 <th>Bukti Pembayaran</th>
+                                <th>Kwitansi Individu</th>
+                                <th>Kwitansi Cap Basah</th>
                                 <th>Status</th>
                                 <th>Waktu</th>
                             </tr>
@@ -70,7 +72,7 @@
                             @forelse($transaksi as $item)
                                 <tr>
                                     <td><input type="checkbox" class="form-check-input" name="ids[]"
-                                            value="{{ strtolower($item->tipe) . '_' . $item->id }}">
+                                            value="{{ $item->tipe }}|{{ $item->id }}">
                                     </td>
                                     <td>{{ $item->nama }}</td>
                                     <td>{{ $item->tipe }}</td>
@@ -86,6 +88,12 @@
                                         @else
                                             <span class="text-muted">Tidak ada</span>
                                         @endif
+                                    </td>
+                                    <td>
+                                        {{ $item->kwitansi_individu ? 'Butuh' : 'Tidak Butuh' }}
+                                    </td>
+                                    <td>
+                                        {{ $item->kwitansi_cap_basah ? 'Butuh' : 'Tidak Butuh' }}
                                     </td>
                                     <td>
                                         @php

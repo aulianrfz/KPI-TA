@@ -26,7 +26,7 @@ class PembimbingController extends Controller
 
     public function create(Event $event)
     {
-        $institusi = Institusi::all(); // ambil semua data instansi
+        $institusi = Institusi::all(); 
         return view('user.pendaftaran.formpembimbing', compact('event', 'institusi'));
     }
     public function store(Request $request)
@@ -44,6 +44,15 @@ class PembimbingController extends Controller
             'surat_tugas' => 'nullable|file|mimes:pdf,jpg,png',
             'visum' => 'nullable|file|mimes:pdf,jpg,png',
         ]);
+
+        if ($request->nip) {
+            $existingPembimbing = Pembimbing::where('nip', $request->nip)->first();
+            if ($existingPembimbing) {
+                return back()
+                    ->withErrors(['nip' => 'NIP/NIK ' . $existingPembimbing->nip . ' sudah terdaftar.'])
+                    ->withInput();
+            }
+        }
 
         $event = Event::findOrFail($request->event_id);
 
@@ -77,7 +86,7 @@ class PembimbingController extends Controller
             'tanggal_kehadiran' => null,
         ]);
 
-        // Generate QR
+        // QR Code generation ...
         $encryptedId = encrypt('pembimbing_' . $pendaftar->id);
         $qrContent = route('verifikasi.qr', ['id' => $encryptedId]);
 
@@ -98,7 +107,6 @@ class PembimbingController extends Controller
         $pendaftar->update(['url_qrCode' => $qrRelativePath]);
 
         if ($event->biaya > 0) {
-            // Buat invoice dan pembayaran
             $invoice = Invoice::create([
                 'total_tagihan' => $event->biaya,
             ]);
@@ -112,7 +120,6 @@ class PembimbingController extends Controller
             ]);
             Log::debug('Invoice dan pembayaran pembimbing berhasil dibuat');
         } else {
-            // langsung kirim email QR
             Mail::to($pembimbing->email)->send(new QrCodeMail(
                 $pembimbing->nama_lengkap,
                 $event->nama_event,
@@ -124,4 +131,5 @@ class PembimbingController extends Controller
 
         return view('user.pendaftaran.berhasil')->with('success', 'Pendaftaran berhasil!');
     }
+
 }
