@@ -1,0 +1,72 @@
+@extends('layouts.apk')
+
+@section('title', 'Kehadiran Supporter')
+
+@section('content')
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold text-uppercase">Kehadiran Supporter</h4>
+    <a href="{{ route('kehadiran.pilih-jenis.event', $eventId) }}" class="btn btn-outline-primary">
+        <i class="bi bi-arrow-left"></i> Kembali
+    </a>
+</div>
+
+<form method="GET" class="row g-2 mb-4">
+    <div class="col-md-4">
+        <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Cari nama atau instansi...">
+    </div>
+    <div class="col-md-3">
+        <select name="sort" class="form-select" onchange="this.form.submit()">
+            <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Terbaru</option>
+            <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Terlama</option>
+        </select>
+    </div>
+    <div class="col-md-auto">
+        <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i> Filter</button>
+        <a href="{{ route('kehadiran.jenis', [$eventId, 'supporter']) }}" class="btn btn-secondary">Reset</a>
+    </div>
+</form>
+
+<div class="card shadow-sm border-0 rounded-4">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table align-middle text-center mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>Instansi</th>
+                        <th>Email</th>
+                        <th>Waktu</th>
+                        <th>QR Code</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($pendaftar as $i => $p)
+                        <tr>
+                            <td>{{ $i + 1 + ($pendaftar->currentPage()-1)*$pendaftar->perPage() }}</td>
+                            <td>{{ $p->supporter->nama ?? '-' }}</td>
+                            <td>{{ $p->supporter->instansi ?? '-' }}</td>
+                            <td>{{ $p->supporter->email ?? '-' }}</td>
+                            <td>{{ optional($p->tanggal_kehadiran)->format('H:i') ?? '-' }}</td>
+                            <td><img src="{{ asset($p->url_qrCode) }}" width="50" alt="QR"></td>
+                            <td>
+                                <span class="badge {{ $p->status_kehadiran === 'Hadir' ? 'bg-success' : 'bg-danger' }}">
+                                    {{ $p->status_kehadiran ?? 'Belum Hadir' }}
+                                </span>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="text-muted">Data tidak ditemukan.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        <div class="p-3">
+            {{ $pendaftar->withQueryString()->links() }}
+        </div>
+    </div>
+</div>
+@endsection

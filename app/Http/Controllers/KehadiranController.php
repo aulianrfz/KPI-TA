@@ -42,6 +42,108 @@ class KehadiranController extends Controller
         return view('admin.kehadiran.mataLomba', compact('events'));
     }
 
+
+    public function pilihJenisByEvent($eventId)
+    {
+        $event = Event::findOrFail($eventId);
+        return view('admin.kehadiran.pilih_jenis', compact('event'));
+    }
+
+    public function kehadiranJenis(Request $request, $eventId, $jenis)
+    {
+        $search = $request->input('search');
+        $sort = $request->input('sort', 'desc');
+
+        if ($jenis === 'supporter') {
+            $pendaftar = \App\Models\PendaftarSupporter::with('supporter')
+                ->where('event_id', $eventId)
+                // ->whereNotNull('url_qrCode')
+                // ->where('url_qrCode', '!=', '0')
+                ->when($search, function ($query) use ($search) {
+                    $query->whereHas('supporter', function ($q) use ($search) {
+                        $q->where('nama', 'like', "%$search%")
+                            ->orWhere('instansi', 'like', "%$search%");
+                    });
+                })
+                ->orderBy('created_at', $sort)
+                ->paginate(10);
+
+            return view('admin.kehadiran.index_supporter', compact('pendaftar', 'eventId'));
+        }
+
+        if ($jenis === 'pendamping') {
+            $pendaftar = \App\Models\PendaftarPembimbing::with('pembimbing')
+                ->where('event_id', $eventId)
+                ->whereNotNull('url_qrCode')
+                ->where('url_qrCode', '!=', '0')
+                ->when($search, function ($query) use ($search) {
+                    $query->whereHas('pembimbing', function ($q) use ($search) {
+                        $q->where('nama_lengkap', 'like', "%$search%")
+                            ->orWhere('instansi', 'like', "%$search%");
+                    });
+                })
+                ->orderBy('created_at', $sort)
+                ->paginate(10);
+
+            return view('admin.kehadiran.index_pembimbing', compact('pendaftar', 'eventId'));
+        }
+
+        abort(404);
+    }
+
+
+    // public function pilihJenis($mataLombaId)
+    // {
+    //     $mataLomba = MataLomba::with('kategori.event')->findOrFail($mataLombaId);
+    //     return view('admin.kehadiran.pilih_jenis', compact('mataLomba'));
+    // }
+
+    // public function kehadiranJenis(Request $request, $mataLombaId, $jenis)
+    // {
+    //     if ($jenis === 'peserta') {
+    //         return $this->index($request, $mataLombaId);
+    //     }
+
+    //     $search = $request->input('search');
+    //     $sort = $request->input('sort', 'desc');
+
+    //     if ($jenis === 'supporter') {
+    //         $pendaftar = \App\Models\PendaftarSupporter::with('supporter')
+    //             ->whereHas('supporter')
+    //             ->whereNotNull('url_qrCode')
+    //             ->where('url_qrCode', '!=', '0')
+    //             ->when($search, function ($query) use ($search) {
+    //                 $query->whereHas('supporter', function ($q) use ($search) {
+    //                     $q->where('nama', 'like', "%$search%")
+    //                     ->orWhere('instansi', 'like', "%$search%");
+    //                 });
+    //             })
+    //             ->orderBy('created_at', $sort)
+    //             ->paginate(10);
+
+    //         return view('admin.kehadiran.index_supporter', compact('pendaftar', 'mataLombaId'));
+    //     }
+
+    //     if ($jenis === 'pendamping') {
+    //         $pendaftar = \App\Models\PendaftarPembimbing::with('pembimbing')
+    //             ->whereHas('pembimbing')
+    //             ->whereNotNull('url_qrCode')
+    //             ->where('url_qrCode', '!=', '0')
+    //             ->when($search, function ($query) use ($search) {
+    //                 $query->whereHas('pembimbing', function ($q) use ($search) {
+    //                     $q->where('nama_lengkap', 'like', "%$search%")
+    //                     ->orWhere('instansi', 'like', "%$search%");
+    //                 });
+    //             })
+    //             ->orderBy('created_at', $sort)
+    //             ->paginate(10);
+
+    //         return view('admin.kehadiran.index_pembimbing', compact('pendaftar', 'mataLombaId'));
+    //     }
+
+    //     abort(404);
+    // }
+
     public function index(Request $request, $mataLombaId)
     {
         session(['selected_event' => $mataLombaId]);

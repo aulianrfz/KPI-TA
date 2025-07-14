@@ -207,23 +207,41 @@ Route::middleware('auth')->group(function () {
         Route::get('/laporan-penjualan/event/{event}/detail/{institusi}', [LaporanPenjualanController::class, 'detail'])->name('laporan.penjualan.detail');
 
 
-        //kehairan
+        // //kehairan
+        // Route::get('/kehadiran/event', [KehadiranController::class, 'event'])->name('kehadiran.event');
+        // Route::get('/kehadiran/kategori/{kategori_id}', [KehadiranController::class, 'kategori'])->name('kehadiran.kategori');
+        // Route::get('/kehadiran/mataLomba/{id}', [KehadiranController::class, 'mataLomba'])->name('kehadiran.mataLomba');
+        // Route::get('/admin/kehadiran/mata-lomba/{mataLombaId}', [KehadiranController::class, 'index'])->name('kehadiran.mata-lomba');
+        // // Route::get('/admin/kehadiran/pilih-jenis/{mataLombaId}', [KehadiranController::class, 'pilihJenis'])->name('kehadiran.pilih-jenis');
+        // Route::get('/kehadiran/event/{eventId}/jenis', [KehadiranController::class, 'pilihJenisByEvent'])->name('kehadiran.pilih-jenis.event');
+
+        // // Tampilkan index berdasarkan jenis
+        // Route::get('/admin/kehadiran/{mataLombaId}/{jenis}', [KehadiranController::class, 'kehadiranJenis'])->name('kehadiran.jenis');
+
+        // Halaman awal kehadiran: pilih event
         Route::get('/kehadiran/event', [KehadiranController::class, 'event'])->name('kehadiran.event');
-        Route::get('/kehadiran/kategori/{kategori_id}', [KehadiranController::class, 'kategori'])->name('kehadiran.kategori');
-        Route::get('/kehadiran/mataLomba/{id}', [KehadiranController::class, 'mataLomba'])->name('kehadiran.mataLomba');
+
+        // Setelah pilih event: pilih jenis
+        Route::get('/kehadiran/event/{eventId}/jenis', [KehadiranController::class, 'pilihJenisByEvent'])->name('kehadiran.pilih-jenis.event');
+
+        // Jika peserta → pilih kategori → mata lomba → index peserta
+        Route::get('/kehadiran/kategori/{eventId}', [KehadiranController::class, 'kategori'])->name('kehadiran.kategori');
+        Route::get('/kehadiran/mataLomba/{kategori_id}', [KehadiranController::class, 'mataLomba'])->name('kehadiran.mataLomba');
         Route::get('/admin/kehadiran/mata-lomba/{mataLombaId}', [KehadiranController::class, 'index'])->name('kehadiran.mata-lomba');
 
-        //pengajuan
-        Route::get('/pengajuan/admin', [PengajuanController::class, 'adminIndex'])->name('admin.pengajuan.index');
-        Route::put('/admin/pengajuan/{id}/update-status', [PengajuanController::class, 'updateStatus'])->name('admin.pengajuan.update');
-        Route::get('/admin/pengajuan/{id}', [PengajuanController::class, 'show'])->name('admin.pengajuan.show');
-
+        // Jika pendamping atau supporter → langsung tampil
+        Route::get('/kehadiran/event/{eventId}/{jenis}', [KehadiranController::class, 'kehadiranJenis'])->name('kehadiran.jenis');
 
         // Route::get('/kehadiran', [KehadiranController::class, 'index'])->name('kehadiran.index');
         Route::get('/kehadiran/{id}/qr', [KehadiranController::class, 'showQR'])->name('admin.qr.show');
         Route::get('/kehadiran/{id}/edit', [KehadiranController::class, 'edit'])->name('kehadiran.edit');
         Route::put('/kehadiran/{id}', [KehadiranController::class, 'update'])->name('kehadiran.update');
         Route::get('/kehadiran-export', [KehadiranController::class, 'exportExcel'])->name('kehadiran.export');
+
+        //pengajuan
+        Route::get('/pengajuan/admin', [PengajuanController::class, 'adminIndex'])->name('admin.pengajuan.index');
+        Route::put('/admin/pengajuan/{id}/update-status', [PengajuanController::class, 'updateStatus'])->name('admin.pengajuan.update');
+        Route::get('/admin/pengajuan/{id}', [PengajuanController::class, 'show'])->name('admin.pengajuan.show');
 
         //transaksi
         Route::get('/admin/transaksi/index', [PembayaranController::class, 'listEvents'])->name('transaksi.index');

@@ -19,7 +19,7 @@
                                 style="height: 180px; object-fit: cover;" alt="{{ $event->nama_mataLomba }}">
                             <div class="card-body text-center">
                                 <h6 class="fw-bold">{{ $event->nama_lomba }}</h6>
-                                <a href="{{ route('kehadiran.mata-lomba', $event->id) }}" class="btn btn-primary btn-sm w-100 mt-2">Pilih</a>
+                                <a href="{{ route('kehadiran.mata-lomba', parameters: $event->id) }}" class="btn btn-primary btn-sm w-100 mt-2">Pilih</a>
                             </div>
                         </div>
                     </div>
