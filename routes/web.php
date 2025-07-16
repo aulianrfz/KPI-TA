@@ -89,6 +89,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/my-event/detail/{id}', [MyEventController::class, 'showDetail'])->name('my-event.detail');
         Route::get('/kuisioner/isi/{peserta}', [MyEventController::class, 'isi'])->name('kuisioner.isi');
         Route::post('/kuisioner/simpan/{peserta}', [MyEventController::class, 'simpan'])->name('kuisioner.simpan');
+        Route::get('/sertifikat/download/{id}', [SertifikatController::class, 'generateSingle'])->name('sertifikat.download')->middleware('auth');
 
         // pembayaran
         Route::get('/pembayaran', [PembayaranController::class, 'index'])->name('pembayaran.index');
@@ -136,6 +137,8 @@ Route::middleware('auth')->group(function () {
         Route::get('kuisioner/admin/{id}/edit', [KuisionerController::class, 'edit'])->name('admin.kuisioner.edit');
         Route::put('kuisioner/admin/{id}', [KuisionerController::class, 'update'])->name('admin.kuisioner.update');
         Route::delete('kuisioner/admin/{id}', [KuisionerController::class, 'destroy'])->name('admin.kuisioner.destroy');
+        Route::get('/admin/kuisioner/export/{eventId}', [KuisionerController::class, 'exportExcel'])->name('admin.kuisioner.export');
+
 
         //pendaftaran
         Route::get('/admin/keloladaftar/byevent', [KelolaPendaftarController::class, 'pilihEvent'])->name('pendaftaran.pilih-event');

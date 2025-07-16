@@ -56,7 +56,7 @@
                     <tbody>
                         @forelse ($pesertas as $peserta)
                             <tr>
-                                <td>{{ $peserta->nama }}</td>
+                                <td>{{ $peserta->nama_peserta }}</td>
                                 <td>{{ $peserta->email }}</td>
                                 <td>
                                     @if($peserta->sertifikat_generated)

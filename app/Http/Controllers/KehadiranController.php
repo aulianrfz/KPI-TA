@@ -9,6 +9,8 @@ use App\Models\Peserta;
 use App\Models\Event;
 use App\Models\KategoriLomba;
 use App\Models\MataLomba;
+use App\Models\PendaftarSupporter;
+use App\Models\PendaftarPembimbing;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\KehadiranExport;
 use Carbon\Carbon;
@@ -55,42 +57,31 @@ class KehadiranController extends Controller
         $sort = $request->input('sort', 'desc');
 
         if ($jenis === 'supporter') {
-            $pendaftar = \App\Models\PendaftarSupporter::with('supporter')
+            $pendaftar = PendaftarSupporter::with('supporter')
                 ->where('event_id', $eventId)
-                // ->whereNotNull('url_qrCode')
-                // ->where('url_qrCode', '!=', '0')
-                ->when($search, function ($query) use ($search) {
-                    $query->whereHas('supporter', function ($q) use ($search) {
-                        $q->where('nama', 'like', "%$search%")
-                            ->orWhere('instansi', 'like', "%$search%");
-                    });
-                })
+                ->whereNotNull('url_qrCode')
+                ->when($search, fn($q)=> $q->whereHas('supporter', fn($q2)=> $q2->where('nama','like',"%$search%")->orWhere('instansi','like',"%$search%")))
                 ->orderBy('created_at', $sort)
                 ->paginate(10);
 
-            return view('admin.kehadiran.index_supporter', compact('pendaftar', 'eventId'));
+            $totalSupporter = $pendaftar->total();
+            return view('admin.kehadiran.index_supporter', compact('pendaftar','eventId','totalSupporter'));
         }
 
         if ($jenis === 'pendamping') {
-            $pendaftar = \App\Models\PendaftarPembimbing::with('pembimbing')
+            $pendaftar = PendaftarPembimbing::with('pembimbing')
                 ->where('event_id', $eventId)
                 ->whereNotNull('url_qrCode')
-                ->where('url_qrCode', '!=', '0')
-                ->when($search, function ($query) use ($search) {
-                    $query->whereHas('pembimbing', function ($q) use ($search) {
-                        $q->where('nama_lengkap', 'like', "%$search%")
-                            ->orWhere('instansi', 'like', "%$search%");
-                    });
-                })
+                ->when($search, fn($q)=> $q->whereHas('pembimbing', fn($q2)=> $q2->where('nama_lengkap','like',"%$search%")->orWhere('instansi','like',"%$search%")))
                 ->orderBy('created_at', $sort)
                 ->paginate(10);
 
-            return view('admin.kehadiran.index_pembimbing', compact('pendaftar', 'eventId'));
+            $totalPendamping = $pendaftar->total();
+            return view('admin.kehadiran.index_pembimbing', compact('pendaftar','eventId','totalPendamping'));
         }
 
         abort(404);
     }
-
 
     // public function pilihJenis($mataLombaId)
     // {

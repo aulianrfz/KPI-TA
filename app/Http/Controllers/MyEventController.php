@@ -63,6 +63,25 @@ class MyEventController extends Controller
         return view('user.my-event.listcategory', compact('pendaftarList', 'search'));
     }
 
+    // public function showDetail($id)
+    // {
+    //     $pendaftar = Pendaftar::with([
+    //         'mataLomba.kategori.event',
+    //         'peserta.user',
+    //         'peserta.tim.peserta.jawabanKuisioner',
+    //         'peserta.jawabanKuisioner',
+    //     ])->findOrFail($id);
+
+    //     $eventId = optional($pendaftar->mataLomba?->kategori?->event)->id;
+
+    //     $kuisionerCount = $eventId
+    //         ? Kuisioner::where('event_id', $eventId)->count()
+    //         : 0;
+
+    //     return view('user.my-event.detail', compact('pendaftar', 'kuisionerCount'));
+    // }
+
+    
     public function showDetail($id)
     {
         $pendaftar = Pendaftar::with([
@@ -78,7 +97,24 @@ class MyEventController extends Controller
             ? Kuisioner::where('event_id', $eventId)->count()
             : 0;
 
-        return view('user.my-event.detail', compact('pendaftar', 'kuisionerCount'));
+        $peserta = $pendaftar->peserta;
+        $daftarPeserta = collect();
+
+        if ($peserta && $peserta->tim->isNotEmpty()) {
+            $daftarPeserta = $peserta->tim->first()->peserta ?? collect();
+        } elseif ($peserta) {
+            $daftarPeserta = collect([$peserta]);
+        }
+
+        $selesaiKuisioner = $daftarPeserta->every(function ($anggota) use ($kuisionerCount) {
+            return $anggota->jawabanKuisioner->count() >= $kuisionerCount;
+        });
+
+        return view('user.my-event.detail', compact(
+            'pendaftar',
+            'kuisionerCount',
+            'selesaiKuisioner'
+        ));
     }
 
     public function isi($pesertaId)

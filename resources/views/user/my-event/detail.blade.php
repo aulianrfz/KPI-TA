@@ -3,6 +3,7 @@
 @section('content')
 <div class="container-fluid py-4">
     <div class="row">
+        {{-- Sidebar --}}
         <div class="col-md-2 d-none d-md-block bg-light border-end p-3">
             <ul class="nav flex-column mt-4">
                 <li class="nav-item mb-3">
@@ -18,11 +19,12 @@
             </ul>
         </div>
 
+        {{-- Main Content --}}
         <div class="col-md-10">
             <div class="card shadow-sm border-0 mb-4">
                 <div class="card-body">
                     <h4 class="fw-bold mb-4 text-center text-primary">
-                        <i class="bi bi-award-fill me-2"  style="color: #0367A6"></i>{{ $pendaftar->mataLomba->nama_lomba ?? 'Nama Lomba' }}
+                        <i class="bi bi-award-fill me-2" style="color: #0367A6"></i>{{ $pendaftar->mataLomba->nama_lomba ?? 'Nama Lomba' }}
                     </h4>
 
                     <div class="table-responsive">
@@ -32,6 +34,7 @@
                                     <th class="text-start">Nama Peserta</th>
                                     <th>Kuisioner</th>
                                     <th>Kehadiran</th>
+                                    <th>Sertifikat</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -47,28 +50,35 @@
                                 @endphp
 
                                 @forelse ($daftarPeserta as $anggota)
+                                    @php
+                                        $jawabanCount = $anggota->jawabanKuisioner->count();
+                                        $statusHadir = $anggota->pendaftar?->status_kehadiran ?? null;
+                                        $kuisionerSelesai = $kuisionerCount > 0 && $jawabanCount >= $kuisionerCount;
+                                    @endphp
+
                                     <tr class="text-center">
+                                        {{-- Nama --}}
                                         <td class="text-start fw-semibold">{{ $anggota->nama_peserta ?? '-' }}</td>
 
+                                        {{-- Kuisioner --}}
                                         <td>
-                                            @php
-                                                $jawabanCount = $anggota->jawabanKuisioner->count();
-                                            @endphp
-                                            @if ($kuisionerCount > 0 && $jawabanCount >= $kuisionerCount)
+                                            @if ($kuisionerSelesai)
                                                 <span class="badge bg-success-subtle text-success rounded-pill px-3 py-2">
                                                     <i class="bi bi-check-circle me-1"></i> Selesai
                                                 </span>
-                                            @else
+                                            @elseif ($statusHadir === 'Hadir')
                                                 <a href="{{ route('kuisioner.isi', ['peserta' => $anggota->id]) }}" class="btn btn-sm btn-outline-primary">
                                                     <i class="bi bi-pencil-square me-1"></i> Isi Kuisioner
                                                 </a>
+                                            @else
+                                                <button class="btn btn-sm btn-outline-secondary" disabled title="Isi kuisioner setelah hadir">
+                                                    <i class="bi bi-pencil-square me-1"></i> Isi Kuisioner
+                                                </button>
                                             @endif
                                         </td>
 
+                                        {{-- Kehadiran --}}
                                         <td>
-                                            @php
-                                                $statusHadir = $anggota->pendaftar?->status_kehadiran ?? null;
-                                            @endphp
                                             @if ($statusHadir === 'Hadir')
                                                 <span class="badge bg-success-subtle text-success rounded-pill px-3 py-2">
                                                     <i class="bi bi-person-check-fill me-1"></i> Hadir
@@ -79,10 +89,23 @@
                                                 </span>
                                             @endif
                                         </td>
+
+                                        {{-- Sertifikat --}}
+                                        <td>
+                                            @if ($kuisionerSelesai)
+                                                <a href="{{ route('sertifikat.download', $anggota->id) }}" class="btn btn-sm btn-success">
+                                                    <i class="bi bi-download me-1"></i> Download Sertifikat
+                                                </a>
+                                            @else
+                                                <button class="btn btn-sm btn-outline-secondary" disabled title="Selesaikan kuisioner">
+                                                    <i class="bi bi-lock me-1"></i> Belum Selesai
+                                                </button>
+                                            @endif
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="3" class="text-center text-muted">Belum ada peserta terdaftar.</td>
+                                        <td colspan="4" class="text-center text-muted">Belum ada peserta terdaftar.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

@@ -26,6 +26,20 @@
     </div>
 </form>
 
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card rounded-4 h-100 shadow-sm">
+            <div class="card-body d-flex flex-column justify-content-between p-4" style="min-height: 130px;">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="fw-semibold mb-0" style="color: #0ea5e9;">Total Pendamping</h6>
+                    <i class="bi bi-person-check-fill fs-3" style="color: #0ea5e9;"></i>
+                </div>
+                <div class="fs-1 fw-bold">{{ $totalPendamping }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="card shadow-sm border-0 rounded-4">
     <div class="card-body p-0">
         <div class="table-responsive">

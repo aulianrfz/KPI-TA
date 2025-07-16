@@ -10,21 +10,42 @@
     </a>
 </div>
 
-<form method="GET" class="row g-2 mb-4">
-    <div class="col-md-4">
-        <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Cari nama atau instansi...">
-    </div>
-    <div class="col-md-3">
-        <select name="sort" class="form-select" onchange="this.form.submit()">
-            <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Terbaru</option>
-            <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Terlama</option>
-        </select>
-    </div>
-    <div class="col-md-auto">
-        <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i> Filter</button>
-        <a href="{{ route('kehadiran.jenis', [$eventId, 'supporter']) }}" class="btn btn-secondary">Reset</a>
+<form method="GET" class="mb-4">
+    <div class="row g-3 align-items-center">
+        <div class="col-md-5 col-lg-4">
+            <input type="text" name="search" value="{{ request('search') }}"
+                class="form-control" placeholder="Cari nama atau instansi...">
+        </div>
+        <div class="col-md-3 col-lg-2">
+            <select name="sort" class="form-select">
+                <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Terbaru</option>
+                <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Terlama</option>
+            </select>
+        </div>
+        <div class="col-auto d-flex gap-2">
+            <button class="btn btn-primary" type="submit">
+                <i class="bi bi-search"></i> Filter
+            </button>
+            <a href="{{ route('kehadiran.jenis', [$eventId, 'supporter']) }}" class="btn btn-secondary">
+                Reset
+            </a>
+        </div>
     </div>
 </form>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card rounded-4 h-100 shadow-sm">
+            <div class="card-body d-flex flex-column justify-content-between p-4" style="min-height: 130px;">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="fw-semibold mb-0" style="color: #0ea5e9;">Total Supporter</h6>
+                    <i class="bi bi-people-fill fs-3" style="color: #0ea5e9;"></i>
+                </div>
+                <div class="fs-1 fw-bold">{{ $totalSupporter }}</div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="card shadow-sm border-0 rounded-4">
     <div class="card-body p-0">

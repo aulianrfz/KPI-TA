@@ -19,6 +19,30 @@
             </div>
         @endif
 
+        {{-- CARD STATISTIK --}}
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card border-0 shadow-sm p-4">
+                    <h5 class="fw-bold mb-3 text-primary">
+                        <i class="bi bi-clipboard-check me-2"></i> Statistik Kuisioner
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Total Pendaftar:</strong> {{ $totalPendaftar }}</p>
+                            <p><strong>Sudah Mengisi Kuisioner:</strong> {{ $jumlahJawaban }}</p>
+                            <p><strong>Belum Mengisi Kuisioner:</strong> {{ $totalPendaftar - $jumlahJawaban }}</p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <a href="{{ route('admin.kuisioner.export', $event->id) }}" class="btn btn-success">
+                                <i class="bi bi-download me-1"></i> Download Excel Hasil
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- TABLE PERTANYAAN --}}
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
                 <thead class="table-light">
@@ -60,6 +84,7 @@
     </div>
 </div>
 
+{{-- MODAL TAMBAH --}}
 <div class="modal fade" id="modalTambahKuisioner" tabindex="-1" aria-labelledby="modalTambahKuisionerLabel" aria-hidden="true">
     <div class="modal-dialog">
         <form action="{{ route('admin.kuisioner.store') }}" method="POST" class="modal-content">
@@ -83,6 +108,7 @@
     </div>
 </div>
 
+{{-- MODAL EDIT --}}
 @foreach($kuisioners as $kuisioner)
 <div class="modal fade" id="modalEditKuisioner{{ $kuisioner->id }}" tabindex="-1" aria-labelledby="modalEditKuisionerLabel{{ $kuisioner->id }}" aria-hidden="true">
     <div class="modal-dialog">

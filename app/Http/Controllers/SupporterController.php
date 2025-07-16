@@ -49,7 +49,7 @@ class SupporterController extends Controller
             'event_id' => $request->event_id,
             'supporter_id' => $supporter->id,
             'url_qrCode' => null,
-            'status_kehadiran' => false,
+            'status_kehadiran' => null,
         ]);
 
         // generate QR
@@ -72,7 +72,7 @@ class SupporterController extends Controller
         $qrRelativePath = 'storage/' . $filename;
         $qrPath = storage_path('app/public/' . $filename); // buat email
 
-        $supporter->update(['url_qrCode' => $qrRelativePath]);
+        $pendaftarSupporter->update(['url_qrCode' => $qrRelativePath]);
 
         // ambil nama event
         $event = Event::find($request->event_id);
