@@ -14,6 +14,8 @@ class SertifikatTemplate extends Model
         'nama_file',
         'posisi_x',
         'posisi_y',
+        'font',
+        'font_dompdf',
     ];
 
     public function event()

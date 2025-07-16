@@ -19,7 +19,8 @@
                     font-size: 24px;
                     cursor: move;
                     left: {{ $template->posisi_x }}px;
-                    top: {{ $template->posisi_y }}px;">
+                    top: {{ $template->posisi_y }}px;
+                    font-family: {{ $template->font ?? 'sans-serif' }};">
             Nama Peserta
         </div>
     </div>
@@ -28,7 +29,53 @@
         @csrf
         <input type="hidden" name="x" id="xPos" value="{{ $template->posisi_x }}">
         <input type="hidden" name="y" id="yPos" value="{{ $template->posisi_y }}">
-        <button type="submit" class="btn btn-success">
+
+        <div class="mb-3">
+            <label for="font" class="form-label fw-semibold">Pilih Font</label>
+            @php
+            $fontGroups = [
+                'Sans-serif' => [
+                    'Arial, sans-serif' => 'Arial',
+                    'Helvetica, sans-serif' => 'Helvetica',
+                    'Tahoma, sans-serif' => 'Tahoma',
+                    'Verdana, sans-serif' => 'Verdana',
+                    'Impact, sans-serif' => 'Impact',
+                ],
+                'Serif' => [
+                    '"Times New Roman", serif' => 'Times New Roman',
+                    'Georgia, serif' => 'Georgia',
+                ],
+                'Monospace' => [
+                    '"Courier New", monospace' => 'Courier New',
+                    'monospace' => 'Monospace (Default)',
+                ],
+                'Cursive & Script' => [
+                    '"Comic Sans MS", cursive' => 'Comic Sans MS',
+                    'cursive' => 'Cursive (Default)',
+                ],
+                'Default System' => [
+                    'sans-serif' => 'Sans-serif (Default)',
+                    'serif' => 'Serif (Default)',
+                ],
+            ];
+
+            @endphp
+            <select name="font" id="font" class="form-select text-center" style="max-width: 350px; margin: auto;">
+                @foreach($fontGroups as $groupLabel => $fonts)
+                    <optgroup label="{{ $groupLabel }}">
+                        @foreach($fonts as $value => $label)
+                            <option value="{{ $value }}"
+                                style="font-family: {{ $value }};"
+                                {{ $template->font === $value ? 'selected' : '' }}>
+                                {{ $label }}
+                            </option>
+                        @endforeach
+                    </optgroup>
+                @endforeach
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-success mt-2">
             <i class="bi bi-check-circle me-1"></i> Simpan Posisi
         </button>
     </form>
@@ -40,6 +87,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const container = document.querySelector('.position-relative');
     const xInput = document.getElementById('xPos');
     const yInput = document.getElementById('yPos');
+    const fontSelect = document.getElementById('font');
 
     let isDragging = false;
 
@@ -67,6 +115,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         xInput.value = Math.floor(x);
         yInput.value = Math.floor(y);
+    });
+
+    fontSelect.addEventListener('change', function () {
+        namePreview.style.fontFamily = this.value;
     });
 });
 </script>

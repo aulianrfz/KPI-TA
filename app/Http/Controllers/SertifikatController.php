@@ -61,16 +61,49 @@ class SertifikatController extends Controller
     public function simpanPosisi(Request $request, $id)
     {
         $template = SertifikatTemplate::where('event_id', $id)->firstOrFail();
+
+        $browserFont = $request->font ?? 'sans-serif';
+        $dompdfFontMap = [
+            'Arial, sans-serif' => 'Helvetica',
+            'Helvetica, sans-serif' => 'Helvetica',
+            'Tahoma, sans-serif' => 'Tahoma',
+            'Verdana, sans-serif' => 'Verdana',
+            '"Trebuchet MS", sans-serif' => 'TrebuchetMS',
+            '"Segoe UI", sans-serif' => 'SegoeUI',
+            'Calibri, sans-serif' => 'Calibri',
+            '"Century Gothic", sans-serif' => 'CenturyGothic',
+            '"Arial Black", sans-serif' => 'ArialBlack',
+            'Impact, sans-serif' => 'Impact',
+            '"Times New Roman", serif' => 'Times-Roman',
+            'Georgia, serif' => 'Georgia',
+            'Garamond, serif' => 'Garamond',
+            '"Palatino Linotype", serif' => 'PalatinoLinotype',
+            'Cambria, serif' => 'Cambria',
+            '"Courier New", monospace' => 'Courier',
+            '"Lucida Console", monospace' => 'LucidaConsole',
+            'monospace' => 'Courier',
+            '"Comic Sans MS", cursive' => 'ComicSansMS',
+            '"Brush Script MT", cursive' => 'BrushScriptMT',
+            '"Lucida Handwriting", cursive' => 'LucidaHandwriting',
+            '"Segoe Script", cursive' => 'SegoeScript',
+            '"Pacifico", cursive' => 'Pacifico',
+            '"Dancing Script", cursive' => 'DancingScript',
+            'sans-serif' => 'Helvetica',
+            'serif' => 'Times-Roman',
+            'cursive' => 'ComicSansMS',
+        ];
+
         $template->update([
             'posisi_x' => $request->x,
             'posisi_y' => $request->y,
+            'font' => $browserFont,
+            'font_dompdf' => $dompdfFontMap[$browserFont] ?? 'Helvetica',
         ]);
 
         return redirect()
-                ->route('sertifikat.pesertaByEvent', $id)
-            ->with('success', 'Posisi berhasil disimpan.');
+            ->route('sertifikat.pesertaByEvent', $id)
+            ->with('success', 'Posisi dan font berhasil disimpan.');
     }
-
 
     public function index()
     {
