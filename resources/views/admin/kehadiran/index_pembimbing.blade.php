@@ -10,19 +10,33 @@
     </a>
 </div>
 
-<form method="GET" class="row g-2 mb-4">
-    <div class="col-md-4">
-        <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Cari nama atau instansi...">
-    </div>
-    <div class="col-md-3">
-        <select name="sort" class="form-select" onchange="this.form.submit()">
-            <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Terbaru</option>
-            <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Terlama</option>
-        </select>
-    </div>
-    <div class="col-md-auto">
-        <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i> Filter</button>
-        <a href="{{ route('kehadiran.jenis', [$eventId, 'pendamping']) }}" class="btn btn-secondary">Reset</a>
+<form method="GET" class="mb-4">
+    <div class="row g-2 align-items-center">
+        <div class="col-md-6 col-lg-5">
+            <input
+                type="text"
+                name="search"
+                value="{{ request('search') }}"
+                class="form-control form-control-sm"
+                placeholder="Cari nama atau instansi..."
+                style="height: 40px;"
+            >
+        </div>
+
+        <div class="col-md-6 col-lg-7 d-flex justify-content-md-end align-items-center gap-2">
+            <select name="sort" class="form-select form-select-sm" style="width: 150px; height: 40px;">
+                <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Terbaru</option>
+                <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Terlama</option>
+            </select>
+
+            <button class="btn btn-sm btn-primary d-flex align-items-center gap-1" type="submit" style="height: 40px;">
+                <i class="bi bi-search"></i> Filter
+            </button>
+
+            <a href="{{ route('kehadiran.jenis', [$eventId, 'pendamping']) }}" class="btn btn-sm btn-secondary" style="height: 40px;">
+                Reset
+            </a>
+        </div>
     </div>
 </form>
 

@@ -11,27 +11,36 @@
 </div>
 
 <form method="GET" class="mb-4">
-    <div class="row g-3 align-items-center">
-        <div class="col-md-5 col-lg-4">
-            <input type="text" name="search" value="{{ request('search') }}"
-                class="form-control" placeholder="Cari nama atau instansi...">
+    <div class="row g-2 align-items-center">
+        <div class="col-md-6 col-lg-5">
+            <input
+                type="text"
+                name="search"
+                value="{{ request('search') }}"
+                class="form-control form-control-sm"
+                placeholder="Cari nama atau instansi..."
+                style="height: 40px;"
+            >
         </div>
-        <div class="col-md-3 col-lg-2">
-            <select name="sort" class="form-select">
+
+        <div class="col-md-6 col-lg-7 d-flex justify-content-md-end align-items-center gap-2">
+            <select name="sort" class="form-select form-select-sm" style="width: 150px; height: 40px;">
                 <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Terbaru</option>
                 <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Terlama</option>
             </select>
-        </div>
-        <div class="col-auto d-flex gap-2">
-            <button class="btn btn-primary" type="submit">
+
+            <button class="btn btn-sm btn-primary d-flex align-items-center gap-1" type="submit" style="height: 40px;">
                 <i class="bi bi-search"></i> Filter
             </button>
-            <a href="{{ route('kehadiran.jenis', [$eventId, 'supporter']) }}" class="btn btn-secondary">
+
+            <a href="{{ route('kehadiran.jenis', [$eventId, 'supporter']) }}" class="btn btn-sm btn-secondary" style="height: 40px;">
                 Reset
             </a>
         </div>
     </div>
 </form>
+
+
 
 <div class="row mb-4">
     <div class="col-12">
