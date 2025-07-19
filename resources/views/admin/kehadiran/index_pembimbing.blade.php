@@ -76,7 +76,9 @@
                             <td>{{ $p->pembimbing->nama_lengkap ?? '-' }}</td>
                             <td>{{ $p->pembimbing->instansi ?? '-' }}</td>
                             <td>{{ $p->pembimbing->nip ?? '-' }}</td>
-                            <td>{{ optional($p->tanggal_kehadiran)->format('H:i') ?? '-' }}</td>
+                            <td>
+                                {{ $p->tanggal_kehadiran ? \Carbon\Carbon::parse($p->tanggal_kehadiran)->format('d-m-Y H:i') : '-' }}
+                            </td>
                             <td><img src="{{ asset($p->url_qrCode) }}" width="50" alt="QR"></td>
                             <td>
                                 <span class="badge {{ $p->status_kehadiran === 'Hadir' ? 'bg-success' : 'bg-danger' }}">
