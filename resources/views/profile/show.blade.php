@@ -43,7 +43,11 @@
 
         <div class="d-flex justify-content-between">
             <a href="{{ route('profile.edit') }}" class="btn btn-primary">Edit Profil</a>
-            <a href="{{ route('pengajuan.index') }}" class="btn btn-outline-primary">Ajukan Pengajuan</a>
+            <div class="d-flex justify-content-between">
+                @if(Auth::user()->role === 'user')
+                        <a href="{{ route('pengajuan.index') }}" class="btn btn-outline-primary">Ajukan Pengajuan</a>
+                @endif
+            </div>
         </div>
     </div>
 </div>
