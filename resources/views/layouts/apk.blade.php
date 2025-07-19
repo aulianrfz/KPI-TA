@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title ?? 'Dashboard' }}</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -144,7 +144,15 @@
         }
 
         .content-body {
-            padding: 2rem; /* Disesuaikan agar tidak ada padding ganda dari main-content jika tidak perlu */
+            padding: 1rem;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .content-body {
+                padding: 2rem;
+            }
         }
 
         .navbar-left {
