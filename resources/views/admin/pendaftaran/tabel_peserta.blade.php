@@ -127,8 +127,12 @@
                         <td>{{ $p->peserta->nama_peserta ?? '-' }}</td>
                         <td>{{ $p->peserta->jenis_peserta ?? '-' }}</td>
                         <td>
-                            {{ $p->created_at->format('d/m/Y') }}<br>
-                            <small class="text-muted">{{ $p->created_at->format('H:i') }}</small>
+                            @if($p->created_at)
+                                {{ $p->created_at->format('d/m/Y') }}<br>
+                                <small class="text-muted">{{ $p->created_at->format('H:i') }}</small>
+                            @else
+                                -
+                            @endif
                         </td>
                         <td>{{ $p->mataLomba->nama_lomba ?? '-' }}</td>
                         <td>

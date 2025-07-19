@@ -356,7 +356,7 @@
                     <li class="nav-item mb-2">
                         <a href="{{ route('superadmin.admin.manage') }}"
                             class="nav-link {{ request()->routeIs('superadmin.admin.manage') ? 'active' : '' }}">
-                            <i class="bi bi-person-gear-fill"></i><span>Manage Admin</span>
+                            <i class="bi bi-shield-lock-fill"></i><span>Manage Admin</span>
                         </a>
                     </li>
                 @endif

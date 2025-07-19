@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\mataLomba;
+use App\Models\MataLomba;
 use App\Models\KategoriLomba;
 use App\Models\Venue;
 use Illuminate\Http\Request;
