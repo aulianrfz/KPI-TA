@@ -1,7 +1,7 @@
 <nav class="bg-white border-bottom shadow-sm">
     <div class="container-fluid py-2 px-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
 
-        <a class="fw-bold text-primary text-decoration-none me-3" href="#" style="white-space: nowrap; font-size: 1rem;">
+        <a class="fw-bold text-primary text-decoration-none me-3 flex-shrink-0" href="{{ route('landing') }}" style="white-space: nowrap; font-size: clamp(0.85rem, 1.2vw, 1.2rem);">
             LOGO APP
         </a>
 
@@ -16,7 +16,7 @@
                     </div>
                 </form>
             @elseif(Auth::user()->role === 'admin')
-                <div class="text-primary fw-bold text-center flex-grow-1 small text-nowrap">
+                <div class="text-primary fw-bold text-center flex-grow-1 small text-nowrap" style="font-size: clamp(0.8rem, 1.2vw, 1rem);">
                     Kompetisi Pariwisata Indonesia
                 </div>
             @endif
@@ -41,9 +41,7 @@
                     <a href="{{ route('events.list') }}" class="btn btn-primary btn-sm" style="background-color: #0367A6; border-color: #0367A6;">
                         My Event
                     </a>
-                @endif
-
-                @if(Auth::user()->role === 'admin')
+                @elseif(Auth::user()->role === 'admin')
                     <a href="{{ route('dashboard.index') }}" class="btn btn-outline-primary btn-sm" style="border-color: #0367A6;">
                         Home
                     </a>
