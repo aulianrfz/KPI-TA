@@ -2,189 +2,265 @@
 
 @section('content')
 
-    <div class="container mt-5">
-        <div class="row gx-4 align-items-center">
-            <div class="col-md-6 mb-4 mb-md-0">
-                <img src="{{ $events->foto ? asset('storage/' . $events->foto) : asset('images/event.jpeg') }}"
-                    class="img-fluid rounded-4" style="object-fit: cover; width: 140%;" alt="Event Image">
-            </div>
-            <div class="col-md-5">
-                <div class="card shadow-sm rounded-4 mb-4">
-                    <div class="card-body text-center p-4">
-                        <h5 class="fw-bold mb-5">{{ $events->nama_event }}</h5>
-                        <div class="d-flex align-items-center mb-3">
-                            <i class="bi bi-geo-alt-fill text-primary me-2"></i>
-                            <small>{{ $events->penyelenggara }}</small>
-                        </div>
-                        @php
-                            use Carbon\Carbon;
+<style>
+    .event-image {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+        border-radius: 1rem;
+    }
 
-                            $start = Carbon::parse($events->tanggal);
-                            $end = Carbon::parse($events->tanggal_akhir);
+    .event-info-card {
+        border-radius: 1rem;
+    }
 
-                            if ($start->month === $end->month && $start->year === $end->year) {
-                                $tanggalFormatted = $start->day . '–' . $end->day . ' ' . $start->translatedFormat('F Y');
-                            } else {
-                                $tanggalFormatted = $start->translatedFormat('d F Y') . ' – ' . $end->translatedFormat('d F Y');
-                            }
-                        @endphp
+    .event-title {
+        font-size: 1.5rem;
+    }
 
-                        <div class="d-flex align-items-center mb-3">
-                            <i class="bi bi-calendar-date text-primary me-2"></i>
-                            <small>{{ $tanggalFormatted }}</small>
-                        </div>
+    .event-icon-text {
+        font-size: 0.9rem;
+    }
+
+    .event-btn {
+        height: 50px;
+        font-size: 1rem;
+    }
+
+    .event-description-text,
+    .event-section-title {
+        font-size: 1rem;
+    }
+
+    @media (max-width: 576px) {
+        .event-image {
+            width: 100%;
+            height: auto;
+        }
+
+        .event-title {
+            font-size: 1rem;
+        }
+
+        .event-icon-text {
+            font-size: 0.7rem;
+        }
+
+        .event-btn {
+            height: 40px;
+            font-size: 0.8rem;
+        }
+
+        .modal-dialog {
+            max-width: 92%;
+            margin: 1rem auto;
+        }
+
+        .modal-content {
+            padding: 0.5rem;
+        }
+
+        .modal-title {
+            font-size: 1rem;
+        }
+
+        .modal-body,
+        .modal-footer,
+        .modal-header {
+            font-size: 0.8rem;
+        }
+
+        .modal-footer .btn,
+        .modal-body .btn,
+        .modal-header .btn {
+            font-size: 0.8rem !important;
+        }
+
+        .form-select,
+        .form-label {
+            font-size: 0.8rem;
+        }
+
+        .event-description-text,
+        .event-section-title {
+            font-size: 0.85rem;
+        }
+    }
+</style>
+
+
+<div class="container mt-5">
+    <div class="row g-2 g-md-4 align-items-center">
+        <div class="col-6 col-md-6">
+            <img src="{{ $events->foto ? asset('storage/' . $events->foto) : asset('images/event.jpeg') }}"
+                alt="Event Image" class="event-image">
+        </div>
+
+        <div class="col-6 col-md-6">
+            <div class="card shadow-sm event-info-card mb-3">
+                <div class="card-body text-center p-3">
+                    <h5 class="fw-bold event-title mb-4">{{ $events->nama_event }}</h5>
+                    <div class="d-flex align-items-center justify-content-center mb-2">
+                        <i class="bi bi-geo-alt-fill text-primary me-2"></i>
+                        <small class="event-icon-text">{{ $events->penyelenggara }}</small>
                     </div>
-                </div>
-                <div class="card shadow-sm rounded-4">
-                    <div class="card-body text-center p-">
-                        @php
-                            $today = \Carbon\Carbon::today();
-                            $endDate = \Carbon\Carbon::parse($events->tanggal_akhir);
-                            $canRegister = $today->lte($endDate);
-                        @endphp
 
-                        @if ($canRegister)
-                            @auth
-                                <!-- <a href="{{ route('event.list', $events->id) }}" 
-                                                                                                                                            class="btn btn-success w-100" 
-                                                                                                                                            style="background-color: #2CC384; border-color: #2CC384; height: 50px;">
-                                                                                                                                            Daftar Sekarang
-                                                                                                                                        </a> -->
-                                <button type="button" class="btn btn-success w-100"
-                                    style="background-color: #2CC384; border-color: #2CC384; height: 50px;" data-bs-toggle="modal"
-                                    data-bs-target="#modalPilihPeran">
-                                    Daftar Sekarang
-                                </button>
-                            @else
-                                <button class="btn btn-secondary w-100" id="showLoginModalBtn" style="height: 50px;">
-                                    Daftar
-                                </button>
-                            @endauth
+                    @php
+                        use Carbon\Carbon;
+
+                        $start = Carbon::parse($events->tanggal);
+                        $end = Carbon::parse($events->tanggal_akhir);
+
+                        if ($start->month === $end->month && $start->year === $end->year) {
+                            $tanggalFormatted = $start->day . '–' . $end->day . ' ' . $start->translatedFormat('F Y');
+                        } else {
+                            $tanggalFormatted = $start->translatedFormat('d F Y') . ' – ' . $end->translatedFormat('d F Y');
+                        }
+                    @endphp
+
+                    <div class="d-flex align-items-center justify-content-center mb-4">
+                        <i class="bi bi-calendar-date text-primary me-2"></i>
+                        <small class="event-icon-text">{{ $tanggalFormatted }}</small>
+                    </div>
+
+                    @php
+                        $today = \Carbon\Carbon::today();
+                        $endDate = \Carbon\Carbon::parse($events->tanggal_akhir);
+                        $canRegister = $today->lte($endDate);
+                    @endphp
+
+                    @if ($canRegister)
+                        @auth
+                            <button type="button" class="btn btn-success w-100 event-btn"
+                                style="background-color: #2CC384; border-color: #2CC384;" data-bs-toggle="modal"
+                                data-bs-target="#modalPilihPeran">
+                                Daftar Sekarang
+                            </button>
                         @else
-                            <button class="btn btn-secondary w-100" id="showEventDateModalBtn" style="height: 50px;">
+                            <button class="btn btn-secondary w-100 event-btn" id="showLoginModalBtn">
                                 Daftar
                             </button>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="mt-5">
-            <h5 class="fw-semibold mb-3">Tentang {{ $events->nama_event }}</h5>
-            <p>{{ $events->deskripsi }}</p>
-        </div>
-    </div>
-
-    <div class="modal fade" id="eventDateAlertModal" tabindex="-1" aria-labelledby="eventDateAlertLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Pendaftaran Tidak Tersedia</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    Maaf, pendaftaran tidak bisa dilakukan karena event sudah berakhir.
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                        @endauth
+                    @else
+                        <button class="btn btn-secondary w-100 event-btn" id="showEventDateModalBtn">
+                            Daftar
+                        </button>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
 
+    <div class="mt-5">
+        <h5 class="fw-semibold mb-3 event-section-title">Tentang {{ $events->nama_event }}</h5>
+        <p class="event-description-text">{{ $events->deskripsi }}</p>
+    </div>
 
-    <div class="modal fade" id="loginAlertModal" tabindex="-1" aria-labelledby="loginAlertModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="loginAlertModalLabel">Pemberitahuan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Silakan login terlebih dahulu untuk melanjutkan.
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                    <a href="{{ route('login') }}" class="btn btn-primary">Login</a>
-                </div>
+</div>
+
+<div class="modal fade" id="loginAlertModal" tabindex="-1" aria-labelledby="loginAlertModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content rounded-4">
+            <div class="modal-header">
+                <h5 class="modal-title">Pemberitahuan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Silakan login terlebih dahulu untuk melanjutkan.
+            </div>
+            <div class="modal-footer">
+                <a href="{{ route('login') }}" class="btn btn-primary w-100">Login</a>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Modal Pilih Peran -->
-    <!-- Modal Pilih Peran -->
-    <div class="modal fade" id="modalPilihPeran" tabindex="-1" aria-labelledby="modalPilihPeranLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content rounded-4">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalPilihPeranLabel">Daftar Sebagai</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="peran" class="form-label">Pilih Peran</label>
-                        <select class="form-select" id="peran" required>
-                            <option value="" disabled selected>-- Pilih --</option>
-                            <option value="peserta">Peserta</option>
-                            <option value="pembimbing">Pembimbing</option>
-                            <option value="supporter">Supporter</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" id="btnLanjutkan" class="btn btn-success w-100">Lanjutkan</button>
-                </div>
+<div class="modal fade" id="eventDateAlertModal" tabindex="-1" aria-labelledby="eventDateAlertModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content rounded-4">
+            <div class="modal-header">
+                <h5 class="modal-title">Pendaftaran Tidak Tersedia</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Maaf, pendaftaran tidak bisa dilakukan karena event sudah berakhir.
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary w-100" data-bs-dismiss="modal">Tutup</button>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var showLoginModalBtn = document.getElementById('showLoginModalBtn');
-            var showEventDateModalBtn = document.getElementById('showEventDateModalBtn');
+<div class="modal fade" id="modalPilihPeran" tabindex="-1" aria-labelledby="modalPilihPeranLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4">
+            <div class="modal-header">
+                <h5 class="modal-title">Daftar Sebagai</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="peran" class="form-label">Pilih Peran</label>
+                    <select class="form-select" id="peran" required>
+                        <option value="" disabled selected>-- Pilih --</option>
+                        <option value="peserta">Peserta</option>
+                        <option value="pembimbing">Pembimbing</option>
+                        <option value="supporter">Supporter</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnLanjutkan" class="btn btn-success w-100">Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-            if (showLoginModalBtn) {
-                showLoginModalBtn.addEventListener('click', function () {
-                    var loginModal = new bootstrap.Modal(document.getElementById('loginAlertModal'));
-                    loginModal.show();
-                });
-            }
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const loginBtn = document.getElementById('showLoginModalBtn');
+        const dateBtn = document.getElementById('showEventDateModalBtn');
+        const lanjutBtn = document.getElementById('btnLanjutkan');
 
-            if (showEventDateModalBtn) {
-                showEventDateModalBtn.addEventListener('click', function () {
-                    var eventDateModal = new bootstrap.Modal(document.getElementById('eventDateAlertModal'));
-                    eventDateModal.show();
-                });
-            }
+        if (loginBtn) {
+            loginBtn.addEventListener('click', () => {
+                const modal = new bootstrap.Modal(document.getElementById('loginAlertModal'));
+                modal.show();
+            });
+        }
 
-            // ini biar nunggu DOM-nya ready
-            document.getElementById('btnLanjutkan').addEventListener('click', function () {
+        if (dateBtn) {
+            dateBtn.addEventListener('click', () => {
+                const modal = new bootstrap.Modal(document.getElementById('eventDateAlertModal'));
+                modal.show();
+            });
+        }
+
+        if (lanjutBtn) {
+            lanjutBtn.addEventListener('click', () => {
                 const peran = document.getElementById('peran').value;
-
-                if (!peran) {
-                    alert("Silakan pilih peran terlebih dahulu.");
-                    return;
-                }
+                if (!peran) return alert('Silakan pilih peran terlebih dahulu.');
 
                 const eventId = "{{ $events->id }}";
-                let targetUrl = '';
+                let url = "";
 
                 switch (peran) {
                     case 'peserta':
-                        targetUrl = "{{ route('event.list', ['eventId' => $events->id]) }}";
+                        url = "{{ route('event.list', ['eventId' => $events->id]) }}";
                         break;
                     case 'pembimbing':
-                        targetUrl = "/pembimbing/daftar/" + eventId;
+                        url = `/pembimbing/daftar/${eventId}`;
                         break;
                     case 'supporter':
-                        targetUrl = "/supporter/daftar/" + eventId;
+                        url = `/supporter/daftar/${eventId}`;
                         break;
                 }
 
-                window.location.href = targetUrl;
+                window.location.href = url;
             });
-        });
-    </script>
+        }
+    });
+</script>
 
 @endsection

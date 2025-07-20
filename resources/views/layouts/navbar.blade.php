@@ -1,5 +1,5 @@
 <nav class="bg-white border-bottom shadow-sm">
-    <div class="container-fluid py-2 px-3">
+    <div class="container-fluid py-3 px-3">
         <div class="row w-100 align-items-center g-2 flex-wrap">
 
             <div class="col-auto d-flex align-items-center">
