@@ -1,18 +1,18 @@
 <nav class="bg-white border-bottom shadow-sm">
     <div class="container-fluid py-3 px-3">
-        <div class="row w-100 align-items-center g-2 flex-wrap">
+        <div class="row w-100 align-items-center justify-content-between gx-2 flex-nowrap">
 
-            <div class="col-auto d-flex align-items-center">
+            <div class="col-auto d-flex align-items-center flex-shrink-0">
                 <a class="fw-bold text-primary text-decoration-none" href="#" style="white-space: nowrap; font-size: 1rem;">
                     <span class="d-inline d-md-none" style="font-size: 0.85rem;">LOGO</span>
                     <span class="d-none d-md-inline" style="font-size: 1.2rem;">LOGO APP</span>
                 </a>
             </div>
 
-            @auth
-                @if(Auth::user()->role === 'user')
-                    <div class="col">
-                        <form method="GET" action="{{ url()->current() }}" class="w-100">
+            <div class="col d-flex justify-content-center align-items-center">
+                @auth
+                    @if(Auth::user()->role === 'user')
+                        <form method="GET" action="{{ url()->current() }}" class="w-100" style="max-width: 300px;">
                             <div class="input-group input-group-sm">
                                 <input type="text" name="search" class="form-control form-control-sm"
                                     placeholder="Cari event..." value="{{ request('search') }}"
@@ -22,15 +22,15 @@
                                 </button>
                             </div>
                         </form>
-                    </div>
-                @elseif(Auth::user()->role === 'admin')
-                    <div class="col text-center text-primary fw-bold small d-none d-md-block">
-                        Kompetisi Pariwisata Indonesia
-                    </div>
-                @endif
-            @endauth
+                    @elseif(Auth::user()->role === 'admin')
+                        <div class="text-primary fw-bold small text-center">
+                            Kompetisi Pariwisata Indonesia
+                        </div>
+                    @endif
+                @endauth
+            </div>
 
-            <div class="col-auto d-flex align-items-center gap-2 flex-shrink-0 flex-wrap justify-content-end">
+            <div class="col-auto d-flex align-items-center gap-2 flex-shrink-0 justify-content-end">
 
                 @guest
                     <a href="{{ route('login') }}" class="btn btn-outline-secondary btn-sm"
@@ -67,6 +67,7 @@
                             alt="Profile" class="rounded-circle" width="26" height="26">
                     </a>
                 @endauth
+
             </div>
         </div>
     </div>
