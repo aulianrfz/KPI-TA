@@ -32,8 +32,16 @@
                     <div class="card event-card shadow-sm h-100 hover-shadow text-center">
                         <img src="{{ $event->foto ? asset('storage/' . $event->foto) : asset('images/event.jpeg') }}" class="card-img-top" alt="Event Image">
                         <div class="card-body px-1 py-2">
-                            <h6 class="card-title fw-bold mb-1">{{ Str::limit($event->nama_event, 20) }}</h6>
-                            <p class="card-text"><small>{{ Str::limit($event->penyelenggara, 18) }}</small></p>
+                            <h6 class="card-title fw-bold mb-1">
+                                <span class="d-none d-sm-inline">{{ $event->nama_event }}</span>
+                                <span class="d-inline d-sm-none">{{ \Illuminate\Support\Str::limit($event->nama_event, 20) }}</span>
+                            </h6>
+                            <p class="card-text mb-0">
+                                <small>
+                                    <span class="d-none d-sm-inline">{{ $event->penyelenggara }}</span>
+                                    <span class="d-inline d-sm-none">{{ \Illuminate\Support\Str::limit($event->penyelenggara, 18) }}</span>
+                                </small>
+                            </p>
                         </div>
                     </div>
                 </a>
