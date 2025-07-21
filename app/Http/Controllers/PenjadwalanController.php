@@ -2480,7 +2480,7 @@ class PenjadwalanController extends Controller
                     $solutions[] = $currentSolution;
 
                     $versionNumber = count($solutions);
-                    Log::info("Solusi ke-{$versionNumber}: " . json_encode($currentSolution));
+                    // Log::info("Solusi ke-{$versionNumber}: " . json_encode($currentSolution));
 
                     //Berhenti hanya jika solusi sudah cukup
                     return true;
