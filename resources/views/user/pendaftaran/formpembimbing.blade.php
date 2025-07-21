@@ -31,7 +31,7 @@
                             <input type="text" class="form-control" name="nama_lengkap" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">NIP</label>
+                            <label class="form-label">NIP/NIK</label>
                             <input type="text" class="form-control" name="nip" required>
                         </div>
                     </div>
