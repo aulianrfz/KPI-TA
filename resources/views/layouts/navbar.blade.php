@@ -3,7 +3,7 @@
         <div class="row w-100 align-items-center justify-content-between gx-2 flex-nowrap">
 
             <div class="col-auto d-flex align-items-center flex-shrink-0">
-                <a class="fw-bold text-primary text-decoration-none" href="#" style="white-space: nowrap; font-size: 1rem;">
+                <a class="fw-bold text-primary text-decoration-none" href="{{ route('landing') }}" style="white-space: nowrap; font-size: 1rem;">
                     <span class="d-inline d-md-none" style="font-size: 0.85rem;">LOGO</span>
                     <span class="d-none d-md-inline" style="font-size: 1.2rem;">LOGO APP</span>
                 </a>
