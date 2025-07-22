@@ -15,7 +15,7 @@
             <div class="card border-0 shadow rounded-4 p-4">
                 <ol class="fs-6 text-secondary" style="line-height: 1.9;">
                     <li>
-                        Pembatalan <strong>H-Pelaksanaan lomba sampai H-34</strong> sebelum pelaksanaan lomba, maka biaya yang sudah dibayarkan <span class="text-danger fw-semibold">tidak bisa dikembalikan</span>.
+                        Pembatalan <strong>H-Pelaksanaan lomba sampai H-14</strong> sebelum pelaksanaan lomba, maka biaya yang sudah dibayarkan <span class="text-danger fw-semibold">tidak bisa dikembalikan</span>.
                     </li>
                     <li>
                         Pembatalan maksimal <strong>H-14 lomba sampai H-30 hari</strong> sebelum pelaksanaan lomba, maka biaya yang sudah dibayarkan akan dikembalikan <span class="text-primary fw-semibold">50%</span> dari biaya pendaftaran yang sudah dibayarkan.
