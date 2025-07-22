@@ -285,10 +285,9 @@
                         @endif
                         @endforeach
 
-                        <!-- <div class="d-flex justify-content-between mt-5">
-                            <a href="javascript:history.back()" class="btn btn-previous">Previous step</a>
+                        <div class="d-flex justify-content-between mt-5">
                             <button type="submit" class="btn btn-submit">Submit</button>
-                        </div> -->
+                        </div>
                     </form>
 
 
