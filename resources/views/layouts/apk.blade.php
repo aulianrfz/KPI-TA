@@ -332,7 +332,9 @@
                 <li class="nav-item mb-2"><a href="/kehadiran/event"
                         class="nav-link {{ request()->is('kehadiran/event*') ? 'active' : '' }}"><i
                             class="bi bi-clipboard-check-fill"></i><span>Daftar Hadir</span></a></li>
-                <li class="nav-item mb-2"><a href="/laporan-penjualan/pilih" class="nav-link {{ request()->is('laporan-penjualan/pilih*') ? 'active' : '' }}"><i class="bi bi-bar-chart-line-fill"></i><span>Laporan Penjualan</span></a></li>
+                <li class="nav-item mb-2"><a href="/laporan-penjualan/pilih" 
+                        class="nav-link {{ request()->is('laporan-penjualan/pilih*') ? 'active' : '' }}"><i 
+                            class="bi bi-bar-chart-line-fill"></i><span>Laporan Penjualan</span></a></li>
                 <li class="nav-item mb-2"><a href="{{ url('/listcrud') }}"
                         class="nav-link {{ request()->is('listcrud*') ? 'active' : '' }}"><i
                             class="bi bi-tags-fill"></i><span>CRUD</span></a></li>
@@ -385,7 +387,7 @@
                     function isGeneralRoute(): bool {
                         return request()->is('admin/dashboard') ||
                             request()->is('kehadiran/event*') ||
-                            request()->is('pendaftaran/event*') ||
+                            request()->is('admin/keloladaftar/byeven*') ||
                             request()->is('admin/transaksi/index*') ||
                             request()->is('kuisioner*') ||
                             request()->is('listcrud*') ||
@@ -400,7 +402,7 @@
                             request()->routeIs('venue.*') ||
                             request()->is('sertifikat*') ||
                             request()->is('pengajuan*') ||
-                            request()->is('laporan/penjualan*');
+                            request()->is('laporan-penjualan/pilih*');
                     }
 
                     $selectedEventId = session('selected_event');
@@ -411,12 +413,14 @@
                     if ($eventName) {
                         if (request()->routeIs('dashboard.by-event')) {
                             $headerTitle = 'KPI: ' . $eventName;
-                        } elseif (request()->is('kehadiran/event*')) {
+                        } elseif (request()->is('kehadiran*')) {
                             $headerTitle = 'Kehadiran: ' . $eventName;
                         } elseif (request()->is('pendaftaran*')) {
                             $headerTitle = 'Pendaftaran: ' . $eventName;
                         } elseif (request()->is('admin/transaksi*')) {
                             $headerTitle = 'Transaksi: ' . $eventName;
+                        } elseif (request()->is('laporan-penjualan*')) {
+                            $headerTitle = 'Laporan Penjualan: ' . $eventName;
                         } else {
                             $headerTitle = $eventName;
                         }
@@ -429,13 +433,13 @@
                             $headerTitle = 'Home';
                         } elseif (str_starts_with($routeName, 'dashboard.by-event')) {
                             $headerTitle = 'Event KPI';
-                        } elseif (str_starts_with($path, 'pendaftaran')) {
+                        } elseif (str_starts_with($path, 'admin/keloladaftar/byeven')) {
                             $headerTitle = 'Pendaftaran';
                         } elseif (str_starts_with($path, 'admin/transaksi')) {
                             $headerTitle = 'Transaksi';
                         } elseif (str_starts_with($path, 'kehadiran/event')) {
                             $headerTitle = 'Daftar Hadir';
-                        } elseif (str_starts_with($path, 'laporan/penjualan')) {
+                        } elseif (str_starts_with($path, 'laporan-penjualan/pilih')) {
                             $headerTitle = 'Laporan Penjualan';
                         } elseif (str_starts_with($path, 'listcrud')) {
                             $headerTitle = 'CRUD';

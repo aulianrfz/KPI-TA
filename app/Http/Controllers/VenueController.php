@@ -9,11 +9,20 @@ use Carbon\Carbon;
 
 class VenueController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $venues = Venue::all();
+        $query = Venue::query();
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where('name', 'LIKE', "%{$search}%");
+        }
+
+        $venues = $query->paginate(10)->withQueryString();
+
         return view('venue.index', compact('venues'));
     }
+
 
     public function create()
     {

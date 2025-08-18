@@ -30,6 +30,7 @@ class LaporanPenjualanController extends Controller
 
     public function index(Request $request, $eventId)
     {
+        session(['selected_event' => $eventId]);
         $search = $request->input('search');
         $sort = $request->input('sort', 'asc');
 
