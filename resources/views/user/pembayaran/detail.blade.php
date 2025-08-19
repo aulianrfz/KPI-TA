@@ -211,19 +211,26 @@
                                 <div class="card-body">
                                     <p class="mb-2">Silakan lakukan transfer ke rekening berikut:</p>
 
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/BRI_2020.svg/1280px-BRI_2020.svg.png"
-                                        alt="Logo Bank" class="mb-3" style="max-height: 25px;">
+                                    {{-- <img
+                                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/BRI_2020.svg/1280px-BRI_2020.svg.png"
+                                        alt="Logo Bank" class="mb-3" style="max-height: 25px;"> --}}
+
+                                    <div class="mb-2">
+                                        <small class="text-muted d-block">Bank</small>
+                                        <span class="fw-bold fs-6">{{ $rekening->nama_bank ?? '-' }}</span>
+                                    </div>
 
                                     <div class="mb-2">
                                         <small class="text-muted d-block">Atas Nama</small>
-                                        <span class="fw-bold fs-6">[Nama Pemilik Rekening]</span>
+                                        <span class="fw-bold fs-6">{{ $rekening->nama_rekening ?? '-' }}</span>
                                     </div>
                                     <div class="mb-3">
                                         <small class="text-muted d-block">Nomor Rekening</small>
                                         <div class="input-group">
-                                            <span class="fw-bold fs-5" id="nomor-rekening">[Isi Nomor Rekening]</span>
+                                            <span class="fw-bold fs-5"
+                                                id="nomor-rekening">{{ $rekening->no_rekening ?? '-' }}</span>
                                             <button class="btn btn-sm btn-outline-secondary ms-3" type="button"
-                                                onclick="copyToClipboard('[Isi Nomor Rekening]', this)">
+                                                onclick="copyToClipboard('{{ $rekening->no_rekening ?? '' }}', this)">
                                                 <i class="bi bi-clipboard"></i> Salin
                                             </button>
                                         </div>

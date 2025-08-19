@@ -18,7 +18,6 @@ use App\Models\Tim;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 
-
 class LaporanPenjualanController extends Controller
 {
 
