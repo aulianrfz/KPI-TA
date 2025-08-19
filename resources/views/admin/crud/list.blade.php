@@ -83,8 +83,8 @@
                 <div class="card custom-card bg-gradient-footer text-white h-100">
                     <div class="card-body text-center">
                         <i class="bi bi-link-45deg display-5 mb-3"></i>
-                        <h5 class="card-title fw-semibold">Footer Links</h5>
-                        <p class="card-text">Kelola link footer</p>
+                        <h5 class="card-title fw-semibold">Links</h5>
+                        <p class="card-text">Kelola link untuk footer dan header</p>
                     </div>
                 </div>
             </a>
