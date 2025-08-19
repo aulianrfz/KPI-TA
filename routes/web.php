@@ -240,9 +240,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/kehadiran-export', [KehadiranController::class, 'exportExcel'])->name('kehadiran.export');
 
         //pengajuan
-        Route::get('/pengajuan/admin', [PengajuanController::class, 'adminIndex'])->name('admin.pengajuan.index');
+        Route::get('/admin/pengajuan/{eventId}', [PengajuanController::class, 'adminIndex'])->name('pengajuan.adminIndex');
         Route::put('/admin/pengajuan/{id}/update-status', [PengajuanController::class, 'updateStatus'])->name('admin.pengajuan.update');
         Route::get('/admin/pengajuan/{id}', [PengajuanController::class, 'show'])->name('admin.pengajuan.show');
+        Route::get('/pengajuan/event', [PengajuanController::class, 'pilihEvent'])->name('pengajuan.event');
 
         //transaksi
         Route::get('/admin/transaksi/index', [PembayaranController::class, 'listEvents'])->name('transaksi.index');

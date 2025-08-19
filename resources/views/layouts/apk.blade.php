@@ -431,9 +431,9 @@
                     <li class="nav-item mb-2"><a href="/sertif"
                             class="nav-link {{ request()->is('sertif*') ? 'active' : '' }}"><i
                                 class="bi bi-award-fill"></i><span>Sertifikat</span></a></li>
-                    <li class="nav-item mb-2"><a href="/pengajuan/admin"
-                            class="nav-link {{ request()->is('pengajuan*') ? 'active' : '' }}"><i
-                                class="bi bi-box-arrow-in-up"></i><span>Pengajuan</span></a></li>
+                    <li class="nav-item mb-2"><a href="{{ route('pengajuan.event') }}" 
+                            class="nav-link {{ request()->is('admin/pengajuan*') ? 'active' : '' }}">
+                                <i class="bi bi-box-arrow-in-up"></i><span>Pengajuan</span></a></li>
                     @php $role = auth()->user()->role; @endphp
                     {{-- menu approve admin (hanya superadmin) --}}
                     @if($role === 'superadmin')

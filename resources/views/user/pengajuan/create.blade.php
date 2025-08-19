@@ -5,10 +5,27 @@
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card shadow-sm rounded-4 p-4">
-                <h4 class="fw-bold mb-4"  style="color: #0367A6">Ajukan Pengajuan Baru</h4>
+                <h4 class="fw-bold mb-4" style="color: #0367A6">Ajukan Pengajuan Baru</h4>
 
                 <form method="POST" action="{{ route('pengajuan.store') }}">
                     @csrf
+
+                    <div class="mb-3">
+                        <label for="peserta_id" class="form-label">Peserta</label>
+                        <select name="peserta_id" class="form-select @error('peserta_id') is-invalid @enderror" required>
+                            <option value="">-- Pilih Peserta --</option>
+                            @foreach($pesertaList as $peserta)
+                                <option value="{{ $peserta->id }}" {{ old('peserta_id') == $peserta->id ? 'selected' : '' }}>
+                                    {{ $peserta->nama_peserta }} - 
+                                    {{ optional($peserta->pendaftar->mataLomba)->nama_lomba ?? 'Tanpa Lomba' }}
+                                    (Event: {{ optional($peserta->pendaftar->mataLomba->kategori->event)->nama_event ?? '-' }})
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('peserta_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
 
                     <div class="mb-3">
                         <label for="jenis" class="form-label">Jenis Pengajuan</label>

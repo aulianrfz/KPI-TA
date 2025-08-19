@@ -14,6 +14,7 @@ class Pengajuan extends Model
 
     protected $fillable = [
         'user_id',
+        'peserta_id',
         'jenis',
         'deskripsi',
         'status'
@@ -22,5 +23,10 @@ class Pengajuan extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function peserta()
+    {
+        return $this->belongsTo(Peserta::class, 'peserta_id');
     }
 }

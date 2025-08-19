@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pengajuan;
+use App\Models\Peserta;
+use App\Models\Pendaftar;
+use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,26 +25,41 @@ class PengajuanController extends Controller
         return view('user.pengajuan.index', compact('pengajuans', 'jenisList'));
     }
 
+
     public function create()
     {
-        return view('user.pengajuan.create');
+        $pesertaList = Peserta::where('user_id', Auth::id())
+            ->with('pendaftar.mataLomba.kategori.event')
+            ->get();
+
+        return view('user.pengajuan.create', compact('pesertaList'));
     }
+
 
     public function store(Request $request)
     {
         $request->validate([
+            'peserta_id' => 'required|exists:peserta,id',
             'jenis' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
         ]);
 
         Pengajuan::create([
             'user_id' => Auth::id(),
+            'peserta_id' => $request->peserta_id,
             'jenis' => $request->jenis,
             'deskripsi' => $request->deskripsi,
         ]);
 
         return redirect()->route('pengajuan.index')->with('success', 'Pengajuan berhasil diajukan.');
     }
+
+    public function pilihEvent()
+    {
+        $events = Event::all();
+        return view('admin.pengajuan.pilih_event', compact('events'));
+    }
+
 
     public function adminIndex(Request $request)
     {
