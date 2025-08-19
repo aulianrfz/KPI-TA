@@ -36,10 +36,15 @@ class EventController extends Controller
             'tanggal_akhir' => 'required|date|after_or_equal:tanggal',
             'tanggal' => 'required|Date',
             'foto' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+            'biaya' => 'nullable|numeric|min:0'
         ]);
 
         if ($request->hasFile('foto')) {
             $validated['foto'] = $request->file('foto')->store('event_foto', 'public');
+        }
+
+        if (empty($validated['biaya'])) {
+            $validated['biaya'] = 0;
         }
 
         Event::create($validated);
@@ -61,10 +66,15 @@ class EventController extends Controller
             'tanggal' => 'required|Date',
             'tanggal_akhir' => 'required|date|after_or_equal:tanggal',
             'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'biaya' => 'nullable|numeric|min:0'
         ]);
 
         if ($request->hasFile('foto')) {
             $validated['foto'] = $request->file('foto')->store('event_foto', 'public');
+        }
+
+        if (empty($validated['biaya'])) {
+            $validated['biaya'] = 0;
         }
 
         $listevent->update($validated);

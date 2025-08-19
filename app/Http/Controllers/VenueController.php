@@ -9,11 +9,20 @@ use Carbon\Carbon;
 
 class VenueController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $venues = Venue::all();
+        $query = Venue::query();
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where('name', 'LIKE', "%{$search}%");
+        }
+
+        $venues = $query->paginate(10)->withQueryString();
+
         return view('venue.index', compact('venues'));
     }
+
 
     public function create()
     {
@@ -46,20 +55,25 @@ class VenueController extends Controller
     }
     public function update(Request $request, Venue $venue)
     {
-        // konversi waktu dari format 12 jam ke 24 jam
-        $request->merge([
-            'waktu_mulai_tersedia' => Carbon::parse($request->input('waktu_mulai_tersedia'))->format('H:i'),
-            'waktu_berakhir_tersedia' => Carbon::parse($request->input('waktu_berakhir_tersedia'))->format('H:i'),
-        ]);
+        $data = $request->all();
+
+        // konversi waktu hanya kalau ada inputnya
+        if ($request->filled('waktu_mulai_tersedia')) {
+            $data['waktu_mulai_tersedia'] = Carbon::parse($request->input('waktu_mulai_tersedia'))->format('H:i');
+        }
+
+        if ($request->filled('waktu_berakhir_tersedia')) {
+            $data['waktu_berakhir_tersedia'] = Carbon::parse($request->input('waktu_berakhir_tersedia'))->format('H:i');
+        }
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'tanggal_tersedia' => 'required|date',
-            'waktu_mulai_tersedia' => 'required|date_format:H:i',
-            'waktu_berakhir_tersedia' => 'required|date_format:H:i|after:waktu_mulai_tersedia',
+            'tanggal_tersedia' => 'nullable|date',
+            'waktu_mulai_tersedia' => 'nullable|date_format:H:i',
+            'waktu_berakhir_tersedia' => 'nullable|date_format:H:i|after:waktu_mulai_tersedia',
         ]);
 
-        $venue->update($validated);
+        $venue->update(array_merge($validated, $data));
 
         return redirect()->route('venue.index')->with('success', 'Venue berhasil diperbarui');
     }

@@ -1,37 +1,78 @@
 <footer class="mt-5 py-5" style="background: linear-gradient(90deg, #0367A6, #3F9BBF);">
     <div class="container">
+        @php
+            $brand = \App\Models\Link::where('type', 'brand')->first();
+            $brandLabel = $brand ? $brand->label : 'Nama.com';
+            $brandUrl = $brand ? (preg_match('/^https?:\/\//', $brand->url) ? $brand->url : 'https://' . ltrim($brand->url, '/')) : '#';
+        @endphp
+
         <div class="row text-white">
             <div class="col-12 col-md-4 mb-4">
-                <div class="fw-bold fs-5 fs-md-3">Nama.com</div>
-            </div>
-
-            <div class="col-6 col-md-4 mb-4">
-                <div class="footer-links">
-                    <p class="mb-1"><a href="#" class="text-white text-decoration-none small">About</a></p>
-                    <p class="mb-1"><a href="#" class="text-white text-decoration-none small">How it works</a></p>
-                    <p class="mb-1"><a href="#" class="text-white text-decoration-none small">Careers</a></p>
-                    <p class="mb-1"><a href="#" class="text-white text-decoration-none small">Press</a></p>
-                    <p class="mb-1"><a href="#" class="text-white text-decoration-none small">Blog</a></p>
-                    <p class="mb-1"><a href="#" class="text-white text-decoration-none small">Forum</a></p>
+                <div class="fw-bold fs-5 fs-md-3">
+                    <a href="{{ $brandUrl }}" class="text-white text-decoration-none" target="_blank">
+                        {{ $brandLabel }}
+                    </a>
                 </div>
             </div>
 
             <div class="col-6 col-md-4 mb-4">
                 <div class="footer-links">
-                    <p class="mb-1"><a href="#" class="text-white text-decoration-none small">Partner with us</a></p>
-                    <p class="mb-1"><a href="#" class="text-white text-decoration-none small">Affiliate program</a></p>
-                    <p class="mb-1"><a href="#" class="text-white text-decoration-none small">Community partners</a></p>
-                    <p class="mb-1"><a href="#" class="text-white text-decoration-none small">Promotions</a></p>
-                    <p class="mb-1"><a href="#" class="text-white text-decoration-none small">Integrations</a></p>
-                    <p class="mb-1"><a href="#" class="text-white text-decoration-none small">Loyalty program</a></p>
+                    @php
+                        $linksSection1 = \App\Models\Link::where('type', 'link')->take(6)->get();
+                    @endphp
+
+                    @foreach($linksSection1 as $link)
+                        @php
+                            $url = preg_match('/^https?:\/\//', $link->url) ? $link->url : 'https://' . ltrim($link->url, '/');
+                        @endphp
+                        <p class="mb-1">
+                            <a href="{{ $url }}" class="text-white text-decoration-none small" target="_blank">
+                                {{ $link->label }}
+                            </a>
+                        </p>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="col-6 col-md-4 mb-4">
+                <div class="footer-links">
+                    @php
+                        $linksSection2 = \App\Models\Link::where('type', 'link')->skip(6)->take(6)->get();
+                    @endphp
+
+                    @foreach($linksSection2 as $link)
+                        @php
+                            $url = preg_match('/^https?:\/\//', $link->url) ? $link->url : 'https://' . ltrim($link->url, '/');
+                        @endphp
+                        <p class="mb-1">
+                            <a href="{{ $url }}" class="text-white text-decoration-none small" target="_blank">
+                                {{ $link->label }}
+                            </a>
+                        </p>
+                    @endforeach
                 </div>
             </div>
         </div>
 
         <div class="mt-3 d-flex justify-content-center gap-3">
-            <a href="#"><img src="https://img.icons8.com/ios-glyphs/24/ffffff/twitter--v1.png" alt="Twitter" class="img-fluid" style="max-width: 24px;"></a>
-            <a href="#"><img src="https://img.icons8.com/ios-glyphs/24/ffffff/instagram-new.png" alt="Instagram" class="img-fluid" style="max-width: 24px;"></a>
-            <a href="#"><img src="https://img.icons8.com/ios-glyphs/24/ffffff/facebook-new.png" alt="Facebook" class="img-fluid" style="max-width: 24px;"></a>
+            @php
+                $socialLinks = \App\Models\Link::where('type', 'social')->get();
+            @endphp
+
+            @foreach($socialLinks as $social)
+                @php
+                    $url = preg_match('/^https?:\/\//', $social->url) ? $social->url : 'https://' . ltrim($social->url, '/');
+                @endphp
+                <a href="{{ $url }}" target="_blank">
+                    @if(filter_var($social->icon, FILTER_VALIDATE_URL))
+                        <img src="{{ $social->icon }}" alt="{{ $social->label }}" class="img-fluid" style="max-width: 24px;">
+                    @elseif($social->icon)
+                        <img src="{{ asset($social->icon) }}" alt="{{ $social->label }}" class="img-fluid" style="max-width: 24px;">
+                    @else
+                        <span class="text-white small">{{ $social->label }}</span>
+                    @endif
+                </a>
+            @endforeach
         </div>
     </div>
 </footer>

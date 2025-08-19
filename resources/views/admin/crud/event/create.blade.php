@@ -31,6 +31,13 @@
             <label for="tanggal_akhir" class="form-label">Tanggal Selesai Pendaftran</label>
             <input type="date" name="tanggal_akhir" class="form-control" required>
         </div>
+
+        <div class="mb-3">
+            <label for="biaya" class="form-label">Biaya Untuk Pembimbing(opsional)</label>
+            <input type="number" name="biaya" class="form-control" step="0.01" min="0" value="0">
+            <small class="text-muted">Kosongkan atau isi dengan angka, default 0</small>
+        </div>
+        
         
         <div class="mb-3">
             <label for="foto" class="form-label">Foto</label>

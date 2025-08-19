@@ -41,4 +41,8 @@ class Event extends Model
         return $this->hasOne(SertifikatTemplate::class);
     }
 
+    public function rekeningPembayaran()
+    {
+        return $this->hasOne(RekeningPembayaran::class, 'event_id');
+    }
 }

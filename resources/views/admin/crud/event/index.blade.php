@@ -20,7 +20,7 @@
                     >
                 </div>
                 <button type="submit" class="btn btn-success">
-                <i class="fa fa-search"></i>
+                    <i class="fa fa-search"></i>
                 </button>
             </div>
         </form>
@@ -35,8 +35,8 @@
                     <th>No</th>
                     <th>Nama Event</th>
                     <th>Lokasi Penyelenggara</th>
-                    <th>Mulai Pendaftran Pada Tanggal</th>
-                    <th>Selesai Pendaftran Pada Tanggal</th>
+                    <th>Mulai Pendaftaran</th>
+                    <th>Selesai Pendaftaran</th>
                     <th>Foto</th>
                     <th>Aksi</th>
                 </tr>
@@ -56,35 +56,40 @@
                         @endif
                     </td>
                     <td>
-                        <a href="{{ route('listevent.edit', $event->id) }}" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></a>
-                        <form action="{{ route('listevent.destroy', $event->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus event ini?')">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
-                        </form>
+                        <a href="{{ route('listevent.edit', $event->id) }}" class="btn btn-warning btn-sm">
+                            <i class="fa fa-edit"></i>
+                        </a>
+
+                        @if(\Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($event->tanggal_akhir)))
+                            <form action="{{ route('listevent.destroy', $event->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus event ini?')">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
+                            </form>
+                        @endif
                     </td>
                 </tr>
                 @empty
-                <tr><td colspan="6" class="text-center">Belum ada data.</td></tr>
+                <tr><td colspan="7" class="text-center">Belum ada data.</td></tr>
                 @endforelse
             </tbody>
         </table>
 
         <div class="d-flex justify-content-end align-items-center mt-3 gap-2">
-        <span class="small text-muted mb-0">
-            Page {{ $events->currentPage() }} of {{ $events->lastPage() }}
-        </span>
-        @if ($events->onFirstPage())
-            <span class="btn btn-sm btn-light disabled" style="pointer-events: none;">‹</span>
-        @else
-            <a href="{{ $events->previousPageUrl() }}" class="btn btn-sm btn-outline-secondary">‹</a>
-        @endif
-        @if ($events->hasMorePages())
-            <a href="{{ $events->nextPageUrl() }}" class="btn btn-sm btn-outline-secondary">›</a>
-        @else
-            <span class="btn btn-sm btn-light disabled" style="pointer-events: none;">›</span>
-        @endif
-    </div>
+            <span class="small text-muted mb-0">
+                Page {{ $events->currentPage() }} of {{ $events->lastPage() }}
+            </span>
+            @if ($events->onFirstPage())
+                <span class="btn btn-sm btn-light disabled" style="pointer-events: none;">‹</span>
+            @else
+                <a href="{{ $events->previousPageUrl() }}" class="btn btn-sm btn-outline-secondary">‹</a>
+            @endif
+            @if ($events->hasMorePages())
+                <a href="{{ $events->nextPageUrl() }}" class="btn btn-sm btn-outline-secondary">›</a>
+            @else
+                <span class="btn btn-sm btn-light disabled" style="pointer-events: none;">›</span>
+            @endif
+        </div>
     </div>
 </div>
 @endsection

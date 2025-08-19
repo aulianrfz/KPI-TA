@@ -2,12 +2,25 @@
     <div class="container-fluid py-3 px-3">
         <div class="row w-100 align-items-center justify-content-between gx-2 flex-nowrap">
 
+            @php
+                $logoLink = \App\Models\Link::where('type', 'logo')->first();
+            @endphp
+
             <div class="col-auto d-flex align-items-center flex-shrink-0">
-                <a class="fw-bold text-primary text-decoration-none" href="{{ route('landing') }}" style="white-space: nowrap; font-size: 1rem;">
-                    <span class="d-inline d-md-none" style="font-size: 0.85rem;">LOGO</span>
-                    <span class="d-none d-md-inline" style="font-size: 1.2rem;">LOGO APP</span>
+                <a class="fw-bold text-primary text-decoration-none d-flex align-items-center"
+                    href="{{ route('landing') }}" style="white-space: nowrap; font-size: 1rem;">
+                    @if($logoLink && $logoLink->icon)
+                        @if(filter_var($logoLink->icon, FILTER_VALIDATE_URL))
+                            <img src="{{ $logoLink->icon }}" alt="Logo" class="me-2" style="height:24px;">
+                        @else
+                            <img src="{{ asset($logoLink->icon) }}" alt="Logo" class="me-2" style="height:24px;">
+                        @endif
+                    @endif
+
+                    
                 </a>
             </div>
+
 
             <div class="col d-flex justify-content-center align-items-center">
                 @auth
@@ -15,8 +28,7 @@
                         <form method="GET" action="{{ url()->current() }}" class="w-100" style="max-width: 300px;">
                             <div class="input-group input-group-sm">
                                 <input type="text" name="search" class="form-control form-control-sm"
-                                    placeholder="Cari event..." value="{{ request('search') }}"
-                                    style="font-size: 0.75rem;">
+                                    placeholder="Cari event..." value="{{ request('search') }}" style="font-size: 0.75rem;">
                                 <button type="submit" class="btn btn-sm text-white" style="background-color: #0367A6;">
                                     <i class="bi bi-search" style="font-size: 0.85rem;"></i>
                                 </button>

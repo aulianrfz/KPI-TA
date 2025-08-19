@@ -11,6 +11,7 @@ use App\Models\PembayaranPembimbing;
 use App\Models\PendaftarPembimbing;
 use App\Models\Invoice;
 use App\Models\Event;
+use App\Models\RekeningPembayaran;
 use App\Mail\QrCodeMail;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
@@ -56,6 +57,10 @@ class PembayaranController extends Controller
         $pembimbing = Pembimbing::with(['pendaftaran.event', 'pembayaran.invoice'])
             ->where('user_id', Auth::id())
             ->get()
+            // hanya ambil pembimbing yg punya pembayaran dan ada invoice
+            ->filter(function ($item) {
+                return $item->pembayaran->isNotEmpty() && $item->pembayaran->first()->invoice !== null;
+            })
             ->map(function ($item) {
                 $latest = $item->pembayaran->sortByDesc('waktu')->first();
 
@@ -66,6 +71,7 @@ class PembayaranController extends Controller
                 $item->status_pembayaran = strtolower($latest->status ?? 'belum dibayar');
                 return $item;
             });
+
 
         $pembayaranGabungan = $peserta->merge($pembimbing);
 
@@ -142,6 +148,9 @@ class PembayaranController extends Controller
             $batas_pembayaran = $batasWaktu->format('d M Y');
             $mataLomba = $peserta->mataLomba;
 
+            $eventId = $peserta->pendaftar?->mataLomba?->kategori->event_id;
+            $rekening = RekeningPembayaran::where('event_id', $eventId)->first();
+
             return view('user.pembayaran.detail', compact(
                 'tipe',
                 'peserta',
@@ -150,9 +159,9 @@ class PembayaranController extends Controller
                 'batas_pembayaran',
                 'mataLomba',
                 'invoice',
-                'pesertaSatuInvoice'
+                'pesertaSatuInvoice',
+                'rekening'
             ));
-
         } elseif ($tipe === 'pembimbing') {
             $pembimbing = Pembimbing::with(['pendaftaran.event', 'pembayaran.invoice'])->findOrFail($id);
             $pembayaranPertama = $pembimbing->pembayaran->first();
@@ -165,12 +174,17 @@ class PembayaranController extends Controller
             $jumlah_peserta = 1;
             $batas_pembayaran = $pembimbing->created_at->addDays(3)->format('d M Y');
 
+            $eventId = $pembimbing->pendaftaran->first()?->event_id;
+            $rekening = RekeningPembayaran::where('event_id', $eventId)->first();
+
+
             return view('user.pembayaran.detail', compact(
                 'tipe',
                 'pembimbing',
                 'jumlah_peserta',
                 'batas_pembayaran',
-                'invoice'
+                'invoice',
+                'rekening'
             ) + [
                 'peserta' => null,
                 'tim' => null,
@@ -229,7 +243,6 @@ class PembayaranController extends Controller
                     'kwitansi_cap_basah' => $kwitansiCapBasah,
                 ]
             );
-
         } elseif ($tipe === 'pembimbing') {
             $pembimbing = Pembimbing::with('pendaftaran')->findOrFail($id);
 
@@ -311,8 +324,8 @@ class PembayaranController extends Controller
 
         if ($search) {
             $queryPembimbing->whereHas('pembimbing', function ($q) use ($search) {
-                $q->where('nama_pembimbing', 'like', "%{$search}%")
-                    ->orWhere('institusi', 'like', "%{$search}%");
+                $q->where('nama_lengkap', 'like', "%{$search}%")
+                    ->orWhere('instansi', 'like', "%{$search}%");
             });
         }
 
@@ -327,7 +340,6 @@ class PembayaranController extends Controller
             $item->status = $item->pembimbing->status ?? 'Pending';
             $item->bukti = $item->bukti_pembayaran;
             return $item;
-
         });
 
         // Gabungkan dan paginasi manual
@@ -437,7 +449,6 @@ class PembayaranController extends Controller
 
                     $membayar->update(['status' => $status]);
                 }
-
             } elseif ($tipe === 'Pembimbing') {
                 $pembayaran = PembayaranPembimbing::with('pembimbing')->find($id);
 
@@ -487,5 +498,4 @@ class PembayaranController extends Controller
 
         return redirect()->back()->with('success', 'Status pembayaran berhasil diperbarui.');
     }
-
 }

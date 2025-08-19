@@ -28,6 +28,8 @@ use App\Http\Controllers\PengajuanController;
 use App\Http\Controllers\KuisionerController;
 use App\Http\Controllers\SertifikatController;
 use App\Http\Controllers\KelolaPendaftarController;
+use App\Http\Controllers\RekeningPembayaranController;
+use App\Http\Controllers\LinkController;
 
 
 
@@ -55,8 +57,6 @@ Route::middleware('guest')->group(function () {
 
     Route::get('/reset-password/{token}', [AuthController::class, 'showResetPasswordForm'])->name('password.reset.form');
     Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.reset');
-
-
 });
 
 //profile
@@ -111,8 +111,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/pengajuan/retur', function () {
             return view('user.pengajuan.retur');
         })->name('pengajuan.retur');
-
-
     });
 
     // ADMIN ROUTES
@@ -151,7 +149,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/pendaftaran/peserta/{id}/edit', [KelolaPendaftarController::class, 'editPeserta'])->name('pendaftaran.peserta.edit');
         Route::put('/admin/pendaftaran/peserta/{id}', [KelolaPendaftarController::class, 'updatePeserta'])->name('pendaftaran.peserta.update');
         Route::delete('/admin/pendaftaran/peserta/{id}', [KelolaPendaftarController::class, 'destroyPeserta'])->name('pendaftaran.peserta.destroy');
-        
+
         //DELETE PESERTA
         Route::delete('/peserta/{id}', [KelolaPendaftarController::class, 'hapusPeserta'])->name('pendaftaran.peserta.destroy');
 
@@ -287,6 +285,14 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/generate-variabel-x', [PenjadwalanController::class, 'generateVariabelX']);
         Route::delete('/jadwal/{id}/delete', [PenjadwalanController::class, 'destroyJadwal'])->name('jadwal.destroyJadwal');
+
+        //rek pembayaran
+        Route::get('/rek-pembayaran', [RekeningPembayaranController::class, 'pilihEvent'])->name('rek-pembayaran.pilih-event');
+        Route::get('/rek-pembayaran/{event}', [RekeningPembayaranController::class, 'manage'])->name('rek-pembayaran.manage');
+        Route::post('/rek-pembayaran/{event}', [RekeningPembayaranController::class, 'storeOrUpdate'])->name('rek-pembayaran.store');
+
+        //links
+        Route::resource('links', LinkController::class);
     });
 });
 
@@ -308,20 +314,6 @@ Route::get('/import-excel', [ImportExcelController::class, 'import_excel']);
 Route::post('/import-excel', [ImportExcelController::class, 'import_excel_post'])->name('import_excel_post');
 
 Route::post('/generate-schedule', [PenjadwalanController::class, 'generateSchedule']);
-
-
-Route::get('/test-email', function () {
-    try {
-        Mail::raw('Ini adalah email percobaan dari Laravel.', function ($message) {
-            $message->to('aulianurulf25@gmail.com')
-                ->subject('Tes Email dari Laravel');
-        });
-
-        return 'Email berhasil dikirim.';
-    } catch (\Exception $e) {
-        return 'Gagal kirim email: ' . $e->getMessage();
-    }
-});
 
 // nyoba halaman sukses
 // Route::get('/sukses', [PendaftaranController::class, 'sukses']);

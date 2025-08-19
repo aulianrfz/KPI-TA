@@ -33,6 +33,7 @@ class KelolaPendaftarController extends Controller
 
     public function pilihTipePendaftar($event)
     {
+        session(['selected_event' => $event]);
         $eventData = Event::findOrFail($event);
         return view('admin.pendaftaran.pilih_tipe', compact('eventData'));
     }

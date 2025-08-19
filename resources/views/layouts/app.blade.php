@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LOGO APP</title>
+    <title>Gatevent</title>
 
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -13,18 +14,33 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
+    @php
+        $logoLink = \App\Models\Link::where('type', 'logo')->first();
+    @endphp
+
+    @if($logoLink && $logoLink->icon)
+        @if(filter_var($logoLink->icon, FILTER_VALIDATE_URL))
+            <link rel="icon" href="{{ $logoLink->icon }}" type="image/png">
+        @else
+            <link rel="icon" href="{{ asset($logoLink->icon) }}" type="image/png">
+        @endif
+    @else
+        <link rel="icon" href="{{ asset('images/logo.png') }}" type="image/png">
+    @endif
+
+
     <style>
         /* ======================================================= */
         /* BAGIAN CSS YANG DIPERBAIKI */
         /* ======================================================= */
 
 
-        
+
 
 
         a {
             text-decoration: none;
-            color: inherit; 
+            color: inherit;
         }
 
         /* PERBAIKAN: Aturan body sekarang bersih dari position dan padding-bottom */
@@ -32,6 +48,7 @@
             font-family: 'Segoe UI', sans-serif;
             background-color: #f8f9fa;
         }
+
         /* ATURAN LAMA YANG SEHARUSNYA DIHAPUS:
         body {
             ...
@@ -47,6 +64,7 @@
             color: white;
             width: 100%;
         }
+
         /* ATURAN LAMA YANG SEHARUSNYA DIHAPUS:
         footer {
             ...
@@ -67,7 +85,7 @@
         .footer-links p {
             margin: 0.25rem 0;
         }
-        
+
         /* ======================================================= */
         /* SEMUA KODE CSS ANDA YANG LAIN DIBAWAH INI (TIDAK ADA YANG DIHAPUS) */
         /* ======================================================= */
@@ -81,8 +99,8 @@
         }
 
         .upcoming-events a {
-            text-decoration: none; 
-            color: inherit; 
+            text-decoration: none;
+            color: inherit;
         }
 
         /* ATURAN LAMA YANG SEHARUSNYA DIHAPUS:
@@ -231,4 +249,5 @@
         });
     </script>
 </body>
+
 </html>

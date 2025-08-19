@@ -18,7 +18,6 @@ use App\Models\Tim;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 
-
 class LaporanPenjualanController extends Controller
 {
 
@@ -30,6 +29,7 @@ class LaporanPenjualanController extends Controller
 
     public function index(Request $request, $eventId)
     {
+        session(['selected_event' => $eventId]);
         $search = $request->input('search');
         $sort = $request->input('sort', 'asc');
 
